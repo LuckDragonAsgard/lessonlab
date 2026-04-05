@@ -1185,7 +1185,8 @@
       <div class="header-tags">VTLM 2.0 · Victorian Curriculum 2.0</div>
     </div>
   </div>
-  <div style="display:flex;gap:8px;">
+  <div style="display:flex;gap:8px;align-items:center;">
+    <select id="schoolProfileSelect" onchange="switchSchoolProfile(this.value)" title="Switch school profile" style="padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;max-width:200px;cursor:pointer;background:white;color:var(--text);"></select>
     <button class="settings-btn" id="pickerToggle" title="Random Student Picker">🎲</button>
     <button class="settings-btn" id="darkModeToggle">🌙</button>
     <button class="settings-btn" id="settingsToggle">⚙ School Settings</button>
@@ -1676,10 +1677,15 @@
     <h2 style="color:#D84315;margin-bottom:5px;">🏫 School Template</h2>
     <p style="font-size:12px;color:#666;margin-bottom:12px;">Customise LessonLab for your school. Changes apply to all new lessons and are saved automatically.</p>
 
+    <div style="background:#f0f4ff;border:1px solid #c5d0e8;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#444;">
+      Editing: <strong id="stEditingLabel">—</strong>
+    </div>
     <div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap;">
       <button class="btn" id="stExportBtn" style="background:#1565C0;color:white;font-size:12px;">📤 Export Template</button>
       <button class="btn btn-sec" id="stImportBtn" style="font-size:12px;">📥 Import Template</button>
       <button class="btn btn-sec" id="stResetBtn" style="font-size:12px;color:#e53935;">🔄 Reset to WPS Defaults</button>
+      <button class="btn" id="stAddSchoolBtn" style="background:#388E3C;color:white;font-size:12px;">➕ Save as New School</button>
+      <button class="btn btn-sec" id="stDeleteSchoolBtn" style="font-size:12px;color:#e53935;">🗑 Delete School</button>
       <input type="file" id="stImportFile" accept=".json" style="display:none;">
     </div>
 
@@ -3192,6 +3198,7 @@ async function handleLessonUpload(event) {
       // Create a lesson card with file info
       const fullData = {
         school: state.school,
+        schoolProfileId: getActiveId(),
         state: state.state,
         subject: subjName,
         year: yearLevel,
@@ -6234,16 +6241,148 @@ function restoreBackup() {
 }
 
 // ============================================================================
-// SCHOOL TEMPLATE SYSTEM
+// SCHOOL PROFILE SYSTEM (multi-school)
 // ============================================================================
 
+function generateId() {
+  return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+}
+
+function getProfiles() {
+  return JSON.parse(localStorage.getItem('lessonlab_school_profiles') || 'null');
+}
+
+function saveProfiles(profiles) {
+  localStorage.setItem('lessonlab_school_profiles', JSON.stringify(profiles));
+}
+
+function getActiveId() {
+  return localStorage.getItem('lessonlab_active_school');
+}
+
+function setActiveId(id) {
+  localStorage.setItem('lessonlab_active_school', id);
+}
+
+function getActiveProfile() {
+  const profiles = getProfiles();
+  if (!profiles) return null;
+  const id = getActiveId();
+  return profiles.find(p => p.id === id) || profiles[0] || null;
+}
+
+function saveActiveProfile(template) {
+  const profiles = getProfiles() || [];
+  const id = getActiveId();
+  const idx = profiles.findIndex(p => p.id === id);
+  if (idx >= 0) {
+    profiles[idx] = { ...profiles[idx], ...template };
+  } else if (profiles.length > 0) {
+    profiles[0] = { ...profiles[0], ...template };
+  }
+  saveProfiles(profiles);
+  applySchoolTemplate(template);
+}
+
+function migrateToProfiles() {
+  // Already migrated?
+  if (getProfiles()) return;
+  const old = JSON.parse(localStorage.getItem('lessonlab_school_template') || 'null');
+  const defaultProfile = {
+    id: generateId(),
+    schoolName: (old && old.schoolName) || 'Williamstown Primary School',
+    state: 'VIC',
+    logo: (old && old.logo) || '',
+    motto: (old && old.motto) || '',
+    primaryColour: (old && old.primaryColour) || '#1565C0',
+    emergencyInfo: (old && old.emergencyInfo) || 'First aid: front office · Yard duty: check timetable',
+    subjects: (old && old.subjects) || {},
+    uploadedLessons: []
+  };
+  saveProfiles([defaultProfile]);
+  setActiveId(defaultProfile.id);
+}
+
+function populateProfileSwitcher() {
+  const sel = document.getElementById('schoolProfileSelect');
+  if (!sel) return;
+  const profiles = getProfiles() || [];
+  const activeId = getActiveId();
+  sel.innerHTML = '';
+  profiles.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.schoolName || 'Unnamed School';
+    if (p.id === activeId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  const addOpt = document.createElement('option');
+  addOpt.value = '__add__';
+  addOpt.textContent = '+ Add School';
+  sel.appendChild(addOpt);
+}
+
+function switchSchoolProfile(id) {
+  if (id === '__add__') {
+    // Re-select current before opening modal
+    populateProfileSwitcher();
+    addNewSchoolProfile();
+    return;
+  }
+  setActiveId(id);
+  const profile = getActiveProfile();
+  if (profile) applySchoolTemplate(profile);
+  populateProfileSwitcher();
+  if (typeof showToast === 'function') showToast('Switched to ' + (profile && profile.schoolName || 'school'), 'success');
+}
+
+function addNewSchoolProfile() {
+  // Create blank profile and open modal to fill it in
+  const profiles = getProfiles() || [];
+  const newProfile = {
+    id: generateId(),
+    schoolName: '',
+    state: 'VIC',
+    logo: '',
+    motto: '',
+    primaryColour: '#1565C0',
+    emergencyInfo: '',
+    subjects: {},
+    uploadedLessons: []
+  };
+  profiles.push(newProfile);
+  saveProfiles(profiles);
+  setActiveId(newProfile.id);
+  populateProfileSwitcher();
+  openSchoolTemplate();
+}
+
+function deleteCurrentSchoolProfile() {
+  const profiles = getProfiles() || [];
+  if (profiles.length <= 1) {
+    alert('Cannot delete the only school profile.');
+    return;
+  }
+  const activeId = getActiveId();
+  const profile = profiles.find(p => p.id === activeId);
+  const name = profile ? profile.schoolName || 'this school' : 'this school';
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+  const newProfiles = profiles.filter(p => p.id !== activeId);
+  saveProfiles(newProfiles);
+  setActiveId(newProfiles[0].id);
+  populateProfileSwitcher();
+  applySchoolTemplate(newProfiles[0]);
+  document.getElementById('schoolTemplateModal').classList.remove('show');
+  if (typeof showToast === 'function') showToast('School deleted', 'info');
+}
+
+// Legacy shims so existing code keeps working
 function getSchoolTemplate() {
-  return JSON.parse(localStorage.getItem('lessonlab_school_template') || 'null');
+  return getActiveProfile();
 }
 
 function saveSchoolTemplate(template) {
-  localStorage.setItem('lessonlab_school_template', JSON.stringify(template));
-  applySchoolTemplate(template);
+  saveActiveProfile(template);
 }
 
 function applySchoolTemplate(template) {
@@ -6285,7 +6424,9 @@ function applySchoolTemplate(template) {
 
 function openSchoolTemplate() {
   document.getElementById('schoolTemplateModal').classList.add('show');
-  const template = getSchoolTemplate() || {};
+  const template = getActiveProfile() || {};
+  const label = document.getElementById('stEditingLabel');
+  if (label) label.textContent = template.schoolName || 'New School';
 
   // Populate school details
   document.getElementById('stSchoolName').value = template.schoolName || state.school || 'Williamstown Primary School';
@@ -6741,55 +6882,30 @@ document.getElementById('templatesClose').onclick = () => {
   document.getElementById('templatesModal').classList.remove('show');
 };
 document.getElementById('templatesModal').onclick = (e) => {
-  if (e.target === document.getElementById('templatesModal')) {
+  if (e.target === document.  if (e.target === document.getElementById('templatesModal')) {
     document.getElementById('templatesModal').classList.remove('show');
   }
 };
 
-document.getElementById('historyClose').onclick = () => {
-  document.getElementById('historyModal').classList.remove('show');
-};
-document.getElementById('historyModal').onclick = (e) => {
-  if (e.target === document.getElementById('historyModal')) {
-    document.getElementById('historyModal').classList.remove('show');
+// Preview modal close
+document.getElementById('previewModal').onclick = (e) => {
+  if (e.target === document.getElementById('previewModal')) {
+    document.getElementById('previewModal').classList.remove('show');
   }
 };
 
-// School Template listeners
+// Picker close
+document.getElementById('pickerClose').onclick = () => {
+  document.getElementById('pickerModal').classList.remove('show');
+};
+
+// School Template modal listeners
 document.getElementById('schoolTemplateClose').onclick = () => {
   document.getElementById('schoolTemplateModal').classList.remove('show');
 };
 document.getElementById('schoolTemplateModal').onclick = (e) => {
   if (e.target === document.getElementById('schoolTemplateModal')) {
     document.getElementById('schoolTemplateModal').classList.remove('show');
-  }
-};
-document.getElementById('stSaveSubjectBtn').onclick = saveSubjectRoutines;
-document.getElementById('stApplyAllBtn').onclick = applyToAllSubjects;
-document.getElementById('stExportBtn').onclick = exportSchoolTemplate;
-document.getElementById('stImportBtn').onclick = () => document.getElementById('stImportFile').click();
-document.getElementById('stImportFile').onchange = importSchoolTemplate;
-document.getElementById('stResetBtn').onclick = resetSchoolTemplate;
-document.getElementById('stLogoUpload').onchange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const template = getSchoolTemplate() || {};
-      template.logo = event.target.result;
-      saveSchoolTemplate(template);
-      if (typeof showToast === 'function') showToast('Logo updated', 'success');
-    };
-    reader.readAsDataURL(file);
-  }
-};
-
-document.getElementById('clearHistoryBtn').onclick = () => {
-  if (confirm('Clear all history?')) {
-    state.history = [];
-    localStorage.setItem('lessonlab_history', '[]');
-    openHistoryPanel();
-    if (typeof showToast === 'function') showToast('History cleared', 'info');
   }
 };
 
@@ -6803,12 +6919,12 @@ if (localStorage.getItem('lessonlab_darkmode') === '1') {
   document.getElementById('darkModeToggle').textContent = '☀️';
 }
 
-// Restore settings
+// Restore settings from localStorage
 const savedSchool = localStorage.getItem('lessonlab_school');
 if (savedSchool) {
   document.getElementById('schoolName').value = savedSchool;
-  state.school = savedSchool;
   document.getElementById('headerSchool').textContent = savedSchool;
+  state.school = savedSchool;
 }
 const savedState = localStorage.getItem('lessonlab_state');
 if (savedState) {
@@ -6825,8 +6941,7 @@ if (savedTerm) {
   document.getElementById('schoolTerm').value = savedTerm;
   state.term = savedTerm;
 }
-</script>
 
-<div class="toast-container" id="toastContainer"></div>
+</script>
 </body>
 </html>
