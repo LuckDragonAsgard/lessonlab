@@ -1169,6 +1169,93 @@
     .toast.info { background: #1565C0; }
     .toast.warning { background: #E65100; }
     body.dark-mode .toast { box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
@@ -2737,7 +2824,94 @@ table.adj{width:100%;border-collapse:collapse;font-size:8.5pt;margin-top:3px}
 table.adj th{background:#3D5A80;color:white;padding:4px 7px;text-align:left}
 table.adj td{border:1px solid #DDD;padding:12px 7px 4px}
 .footer{border-top:1px solid #CCC;margin-top:10px;padding-top:4px;font-size:7pt;color:#AAA;text-align:center;font-style:italic}
-</style>
+
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style>
 
 <!-- HEADER -->
 <table class="hdr">
@@ -4037,7 +4211,94 @@ function printCRTSummaries() {
   html += '.step:last-child{border-bottom:none;}';
   html += '.footer{text-align:center;font-size:9px;color:#999;margin-top:12px;}';
   html += '@media print{body{margin:0;}@page{margin:10mm;size:A4;}}';
-  html += '</style></head><body>';
+  html += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
 
   state.lessons.forEach(lesson => {
     const d = lesson.data;
@@ -4120,7 +4381,94 @@ function generateEquipmentChecklist() {
   html += '.check{width:30px;text-align:center;}';
   html += '.footer{margin-top:12px;font-size:10px;color:#999;text-align:center;}';
   html += '@media print{body{margin:10mm;}@page{margin:10mm;}}';
-  html += '</style></head><body>';
+  html += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
   html += '<h1>Equipment Checklist — ' + (state.school || 'School') + '</h1>';
   html += '<h2>' + (state.term || 'Term') + ' — Generated by LessonLab</h2>';
   html += '<table><thead><tr><th>Week</th><th>Subject</th><th>Equipment Needed</th><th class="check">✓</th></tr></thead><tbody>';
@@ -4640,7 +4988,94 @@ function printTermOverview() {
   html += '.legend-apply{background:#FFF3E0;border-left:3px solid #FFA726;}';
   html += '.footer{margin-top:12px;font-size:9px;color:#999;text-align:center;}';
   html += '@media print{body{margin:10mm;}@page{size:landscape;margin:10mm;}}';
-  html += '</style></head><body>';
+  html += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
   html += '<h1>' + school + ' — Term Planner</h1>';
   html += '<h2>' + term + (yearLevels.length > 0 ? ' (' + yearLevels.join(', ') + ')' : '') + '</h2>';
   html += '<h3>Learning Progression: Intro (30%) · Develop (40%) · Apply (30%)</h3>';
@@ -4739,7 +5174,94 @@ function printWeeklyOverview(weekNum) {
   html += '.lesson-equip{font-size:11px;background:#FFF8DC;border:1px solid #E6B800;border-radius:4px;padding:6px 10px;display:inline-block}';
   html += '.footer{margin-top:16px;font-size:9px;color:#999;text-align:center;border-top:1px solid #ddd;padding-top:8px}';
   html += '@media print{body{margin:10mm}@page{margin:10mm}}';
-  html += '</style></head><body>';
+  html += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
   html += '<h1>' + school + ' — Weekly Overview</h1>';
   html += '<h2>' + term + ', Week ' + weekNum + '</h2>';
 
@@ -5441,6 +5963,93 @@ function printYearPlanner() {
     td{border:1px solid #ddd;padding:6px 8px;font-size:9pt;vertical-align:top;}
     .subj{font-weight:bold;background:#f5f5f5;}
     @media print{@page{size:landscape;margin:10mm;}}
+  
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
   </style></head><body>
   <h1>${state.school} - Year Planner ${new Date().getFullYear()}</h1>
   <p>${yearLevel}</p>
@@ -5501,7 +6110,94 @@ function generateRubric(idx) {
   html += 'td.excelling{background:#E3F2FD;}';
   html += '.footer{margin-top:12px;font-size:10px;color:#999;text-align:center;}';
   html += '@media print{body{margin:10mm;}@page{margin:10mm;}}';
-  html += '</style></head><body>';
+  html += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
   html += '<h1>' + (d.subject || '') + ' Assessment Rubric</h1>';
   html += '<h2>Week ' + d.week + ': ' + d.title + ' — ' + (d.year || '') + ' ' + (d.term || '') + '</h2>';
   html += '<p style="margin-bottom:12px;font-size:12px;"><strong>Learning Intention:</strong> ' + (d.li || '') + '</p>';
@@ -5891,7 +6587,94 @@ function printStudentTracker(idx) {
   html += '.check{width:40px;}';
   html += '.footer{margin-top:10px;font-size:9px;color:#999;text-align:center;}';
   html += '@media print{body{margin:10mm;}@page{margin:10mm;}}';
-  html += '</style></head><body>';
+  html += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
   html += '<h1>' + (d.subject || '') + ' — Week ' + d.week + ': ' + d.title + '</h1>';
   html += '<h2>' + (d.school || '') + ' · ' + (d.year || '') + ' · ' + (d.term || '') + '</h2>';
   html += '<table><thead><tr><th class="name">Student</th><th class="check">Present</th>';
@@ -5987,7 +6770,94 @@ function exportAllPDF() {
   let combinedHTML = '<!DOCTYPE html><html><head><style>';
   combinedHTML += '@media print { .page-break { page-break-before: always; } }';
   combinedHTML += 'body { margin: 0; padding: 0; }';
-  combinedHTML += '</style></head><body>';
+  combinedHTML += '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style></head><body>';
 
   state.lessons.forEach((lesson, i) => {
     if (i > 0) combinedHTML += '<div class="page-break"></div>';
@@ -5997,7 +6867,181 @@ function exportAllPDF() {
       // Also extract styles
       const styleMatch = lesson.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
       if (styleMatch && i === 0) {
-        combinedHTML = combinedHTML.replace('</style>', styleMatch[1] + '</style>');
+        combinedHTML = combinedHTML.replace('
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style>', styleMatch[1] + '
+    /* ENHANCED MOBILE FIXES */
+    @media (max-width: 768px) {
+      /* Fix header layout on mobile */
+      header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding: 8px 12px !important;
+      }
+      header > div:last-child {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+      }
+      .settings-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      /* Fix dynamically generated subject grids */
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      /* Fix landing page heading */
+      .landing-heading {
+        font-size: 22px !important;
+      }
+      .landing-subheading {
+        font-size: 13px !important;
+      }
+      /* Fix the 3-column layout (subjects/tools/manage) */
+      .main-content {
+        padding: 10px !important;
+      }
+      /* Fix year pills on mobile */
+      .year-pills, #yearPills {
+        gap: 6px !important;
+      }
+      .pill {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+      }
+      /* Fix cards grid */
+      .cards-grid, #unitsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .card {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      /* Fix generate button */
+      .btn-pri {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+      }
+      /* Fix school profile select */
+      #schoolProfileSelect {
+        max-width: 120px !important;
+        font-size: 11px !important;
+      }
+      /* Modal fixes */
+      .modal-content {
+        width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 12px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #subjectsGrid > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .header-title h1 {
+        font-size: 16px !important;
+      }
+      .header-title .school {
+        font-size: 10px !important;
+      }
+      .logo-img {
+        height: 30px !important;
+      }
+    }
+
+  </style>');
       }
       combinedHTML += '<div>' + bodyMatch[1] + '</div>';
     } else {
