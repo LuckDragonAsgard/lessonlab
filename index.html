@@ -191,19 +191,19 @@
 
     /* LANDING PAGE: SUBJECTS */
     .subjects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
       margin-bottom: 40px;
     }
     .subject-card {
       background: white;
       border: 2px solid transparent;
-      border-radius: 8px;
-      padding: 20px;
+      border-radius: 12px;
+      padding: 20px 16px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.25s ease;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
     .subject-card:hover {
@@ -2365,7 +2365,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
   const f = focus.toLowerCase();
   const F = focus;
   const w = weekNum;
-  const unitData = UNITS[subj]?.[unit];
+  const unitData = (UNITS[subj] || []).find(u => u.id === unit);
   const skills = unitData?.skills || [];
   // Rotate through skills so each week highlights different ones
   const sk = (i) => skills[(w - 1 + i) % skills.length] || 'skills';
@@ -2679,6 +2679,147 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
         support: 'Use structured activities with clear instructions. Provide sentence starters for character development. Allow buddy work with confident students. Provide character cards with descriptions.',
         extension: 'Challenge with multi-character scenes, layered emotions, abstract concepts. Encourage improvisation without scripts. Create peer directing opportunities.'
       }
+    };
+  }
+
+
+  // ── LITERACY ──────────────────────────────────────────────
+  if (subj === 'literacy') {
+    const litWeeks = {
+      'reading-comp': [
+        {t:`Activating Prior Knowledge for ${F}`, li:'activate prior knowledge before reading a text', sc:['I can think about what I already know about a topic','I can make connections to my own experience','I can share predictions about a text'], eq:'Class text, KWL chart, whiteboards, anchor chart'},
+        {t:'Making Predictions', li:'make predictions before and during reading using text clues', sc:['I can use the title and images to predict','I can check my predictions as I read','I can explain why I changed a prediction'], eq:'Shared text, prediction chart, sticky notes'},
+        {t:'Questioning the Text', li:'ask questions before, during and after reading', sc:['I can write a wondering question','I can find answers in the text','I can identify questions the text does not answer'], eq:'Shared text, question stems chart, sticky notes, whiteboards'},
+        {t:'Visualising', li:'create mental images while reading to deepen understanding', sc:['I can describe what I see in my mind','I can draw what the text describes','I can use sensory details from the text'], eq:'Descriptive text passage, drawing paper, coloured pencils'},
+        {t:'Making Inferences', li:'use clues from the text and my own knowledge to make inferences', sc:['I can find a clue in the text','I can combine the clue with what I know','I can explain my inference'], eq:'Inference texts, graphic organiser, whiteboards'},
+        {t:'Summarising Key Ideas', li:'identify and summarise the main idea and key details', sc:['I can find the main idea of a paragraph','I can list 3 key details','I can write a summary in my own words'], eq:'Information text, highlighters, summary frame'},
+        {t:'Making Connections: Text to Self', li:'connect what I read to my own experiences', sc:['I can identify a connection to my life','I can explain how the connection helps me understand','I can share my connection with a partner'], eq:'Narrative text, connection chart, sticky notes'},
+        {t:'Making Connections: Text to Text and World', li:'connect texts to other texts and to the world', sc:['I can compare two texts on a similar topic','I can make a text-to-world connection','I can explain why connections help comprehension'], eq:'Two related texts, Venn diagram, connection cards'},
+        {t:'Evaluating and Responding', li:'form and express an opinion about a text with evidence', sc:['I can state my opinion about a text','I can support my opinion with evidence','I can listen to and consider other viewpoints'], eq:'Discussion text, opinion frame, evidence cards'},
+        {t:'Reading Comprehension Reflection', li:'reflect on the reading strategies I have developed this unit', sc:['I can name 3 comprehension strategies','I can explain when to use each strategy','I can set a reading goal for next term'], eq:'Strategy anchor charts, reflection sheet, reading journal'},
+      ],
+      'writing-narrative': [
+        {t:'What Makes a Great Story?', li:'identify the key elements of a narrative text', sc:['I can name the parts of a story','I can identify characters and setting','I can find the problem in a story'], eq:'Mentor text, story structure chart, whiteboards'},
+        {t:'Developing Characters', li:'create interesting characters with descriptions and personality', sc:['I can describe a character appearance','I can describe a character personality','I can show character through action and dialogue'], eq:'Character profile template, mentor text, writing books'},
+        {t:'Setting the Scene', li:'write vivid setting descriptions using sensory details', sc:['I can describe a setting using 3 senses','I can use adjectives and adverbs effectively','I can make the reader feel like they are there'], eq:'Setting images, sensory detail chart, writing books'},
+        {t:'Building the Problem', li:'write a complication that creates tension in the story', sc:['I can write a problem that is interesting','I can build tension through the story','I can make the reader want to keep reading'], eq:'Problem brainstorm chart, mentor text excerpts, writing books'},
+        {t:'Writing Dialogue', li:'use dialogue to reveal character and move the story forward', sc:['I can use speech marks correctly','I can use said alternatives','I can make dialogue sound natural'], eq:'Dialogue rules poster, speech mark practice sheet, writing books'},
+        {t:'Show Not Tell', li:'show character feelings through actions rather than telling', sc:['I can write actions that show emotions','I can replace telling sentences with showing','I can use body language in my writing'], eq:'Show vs Tell chart, practice sentences, writing books'},
+        {t:'Drafting Our Narrative', li:'write a complete narrative draft with all story elements', sc:['I can write an engaging opening','I can include all story elements in order','I can write a satisfying ending'], eq:'Story planner, writing books, success criteria checklist'},
+        {t:'Revising and Editing', li:'revise and edit my narrative to improve it', sc:['I can re-read and improve word choices','I can check for spelling and punctuation errors','I can add detail where the story needs it'], eq:'Editing checklist, coloured pens, partner editing sheet'},
+        {t:'Publishing Our Stories', li:'publish a polished version of my narrative', sc:['I can write a neat final copy','I can add illustrations or a cover','I can present my story with pride'], eq:'Publishing paper, art supplies, binding materials'},
+        {t:'Author Chair and Reflection', li:'share my published narrative and reflect on my writing growth', sc:['I can read my story aloud clearly','I can give positive feedback to a peer','I can identify 3 things I improved as a writer'], eq:'Author chair, feedback cards, reflection sheet'},
+      ],
+    };
+    const weekArr = litWeeks[unit];
+    if (weekArr && weekArr[w-1]) {
+      const wd = weekArr[w-1];
+      return { title: wd.t, li: wd.li, sc: wd.sc.join('\n'), equipment: wd.eq,
+        context: 'Week ' + w + ' of ' + totalWeeks + ' — ' + F + ' unit (' + phase + ' phase).',
+        differentiation: { support: 'Provide sentence starters, word banks, visual aids. Allow verbal responses before writing. Use graphic organisers. Pair with reading buddy.', extension: 'Challenge with complex texts, open-ended responses, peer teaching. Encourage craft analysis and independent reading goals.' },
+        grouping: { whole: 'Shared reading and mini-lesson', pairs: 'Reading partners', small: 'Guided reading groups of 4-6', individual: 'Independent reading and writing' }
+      };
+    }
+    return { title: phase === 'intro' ? 'Exploring ' + F + ': Building Foundations (Week ' + w + ')' : phase === 'develop' ? F + ': Practising and Applying (Week ' + w + ')' : F + ': Independent Application (Week ' + w + ')',
+      li: phase === 'intro' ? 'explore key concepts and skills for ' + f : phase === 'develop' ? 'practise and apply ' + f + ' skills with increasing independence' : 'demonstrate ' + f + ' skills independently',
+      sc: ['I can ' + (phase === 'intro' ? 'identify and describe' : phase === 'develop' ? 'apply with support' : 'use independently') + ' ' + f + ' skills', 'I can ' + (phase === 'intro' ? 'participate in shared activities' : phase === 'develop' ? 'work with a partner effectively' : 'complete tasks independently'), 'I can ' + (phase === 'intro' ? 'share my thinking with others' : phase === 'develop' ? 'give and receive feedback' : 'reflect on my literacy growth')].join('\n'),
+      equipment: 'Class texts, writing books, whiteboards, anchor charts',
+      context: 'Week ' + w + ' of ' + totalWeeks + ' — ' + F + ' unit (' + phase + ' phase). Focus skill: ' + sk0 + '.',
+      differentiation: { support: 'Provide sentence starters, word banks, visual aids. Allow verbal responses. Use graphic organisers.', extension: 'Challenge with complex texts, open-ended responses, peer teaching.' }
+    };
+  }
+
+
+  // ── NUMERACY ──────────────────────────────────────────────
+  if (subj === 'numeracy') {
+    const numWeeks = {
+      'number-place-value': [
+        {t:'Counting Patterns: Forwards and Backwards', li:'count forwards and backwards from any starting number', sc:['I can count forwards by 1s, 2s, 5s, 10s','I can count backwards from a given number','I can identify the pattern in a counting sequence'], eq:'Number lines, hundred charts, counters, whiteboards'},
+        {t:'Representing Numbers', li:'represent numbers in different ways', sc:['I can show a number with MAB blocks','I can draw a number on a place value chart','I can write a number in words and digits'], eq:'MAB blocks, place value charts, whiteboards, number cards'},
+        {t:'Place Value: Tens and Ones', li:'partition numbers into tens and ones', sc:['I can break a number into tens and ones','I can use MAB to show place value','I can write expanded notation'], eq:'MAB blocks, place value mats, whiteboards, dice'},
+        {t:'Comparing and Ordering Numbers', li:'compare and order numbers using place value', sc:['I can use greater than less than equals symbols correctly','I can order numbers from smallest to largest','I can explain how I compared two numbers'], eq:'Number cards, comparison symbols, whiteboards, number lines'},
+        {t:'Skip Counting Patterns', li:'identify and continue skip counting patterns', sc:['I can skip count by 2s, 5s and 10s','I can find missing numbers in a pattern','I can explain the rule of a pattern'], eq:'Hundred chart, pattern strips, counters, whiteboards'},
+        {t:'Odd and Even Numbers', li:'identify odd and even numbers and explain the pattern', sc:['I can sort numbers into odd and even','I can explain why a number is odd or even','I can use counters to prove odd or even'], eq:'Counters, sorting mats, number cards, whiteboards'},
+        {t:'Rounding Numbers', li:'round numbers to the nearest ten', sc:['I can identify the nearest tens','I can use a number line to help me round','I can explain my rounding strategy'], eq:'Number lines, rounding rhyme poster, whiteboards'},
+        {t:'Number Problems and Puzzles', li:'apply place value knowledge to solve problems and puzzles', sc:['I can use place value to solve a problem','I can explain my strategy to a partner','I can check my answer makes sense'], eq:'Problem cards, manipulatives, whiteboards, puzzle sheets'},
+        {t:'Place Value Games Day', li:'consolidate place value understanding through games', sc:['I can play place value games independently','I can explain the maths in the game','I can help a partner who is stuck'], eq:'Dice, cards, game boards, MAB blocks, whiteboards'},
+        {t:'Place Value Assessment and Reflection', li:'demonstrate and reflect on my place value understanding', sc:['I can complete place value tasks independently','I can explain my thinking clearly','I can set a maths goal for next term'], eq:'Assessment task, reflection sheet, self-assessment rubric'},
+      ],
+      'addition-subtraction': [
+        {t:'Addition Strategies: Counting On', li:'use counting on as a strategy for addition', sc:['I can start from the larger number','I can count on using fingers or a number line','I can record my working out'], eq:'Number lines, counters, whiteboards, ten frames'},
+        {t:'Addition: Making 10', li:'use the make-10 strategy to add efficiently', sc:['I can identify number bonds to 10','I can split a number to make 10 first','I can explain the make-10 strategy'], eq:'Ten frames, counters, number bond cards, whiteboards'},
+        {t:'Subtraction: Counting Back', li:'use counting back as a strategy for subtraction', sc:['I can count back on a number line','I can start from the larger number','I can check my answer by adding'], eq:'Number lines, counters, whiteboards, subtraction cards'},
+        {t:'Addition and Subtraction Fact Families', li:'understand the relationship between addition and subtraction', sc:['I can write a fact family for a set of numbers','I can use addition to check subtraction','I can explain how addition and subtraction are related'], eq:'Fact family triangles, number cards, whiteboards'},
+        {t:'Word Problems: Addition', li:'solve addition word problems using a strategy', sc:['I can identify the operation needed','I can draw a picture to help me solve','I can write a number sentence for the problem'], eq:'Word problem cards, drawing paper, whiteboards'},
+        {t:'Word Problems: Subtraction', li:'solve subtraction word problems using a strategy', sc:['I can identify key words in a problem','I can choose an efficient strategy','I can check my answer makes sense'], eq:'Word problem cards, number lines, whiteboards'},
+        {t:'Mental Strategies: Doubles and Near Doubles', li:'use doubles and near doubles for mental computation', sc:['I can recall doubles facts quickly','I can use a double to work out a near double','I can explain my mental strategy'], eq:'Doubles chart, flash cards, whiteboards'},
+        {t:'Written Methods: Column Addition', li:'use a written method for larger addition problems', sc:['I can set out an addition in columns','I can add with trading or regrouping','I can check my answer using estimation'], eq:'Place value mats, MAB blocks, whiteboards, worksheets'},
+        {t:'Problem Solving: Multi-step Problems', li:'solve problems that require more than one step', sc:['I can identify the steps in a problem','I can choose the right operations','I can show my working clearly'], eq:'Multi-step problem cards, whiteboards, workbooks'},
+        {t:'Addition and Subtraction Reflection', li:'reflect on my addition and subtraction learning', sc:['I can name 3 strategies I can use','I can choose the best strategy for a problem','I can set a goal for improving my fluency'], eq:'Strategy chart, reflection sheet, self-assessment'},
+      ],
+    };
+    const weekArr = numWeeks[unit];
+    if (weekArr && weekArr[w-1]) {
+      const wd = weekArr[w-1];
+      return { title: wd.t, li: wd.li, sc: wd.sc.join('\n'), equipment: wd.eq,
+        context: 'Week ' + w + ' of ' + totalWeeks + ' — ' + F + ' unit (' + phase + ' phase).',
+        differentiation: { support: 'Use concrete materials (MAB, counters). Provide number lines and visual aids. Reduce number size. Allow extra processing time.', extension: 'Increase number size. Pose open-ended problems. Challenge with multi-step reasoning. Encourage peer explanation.' },
+        grouping: { whole: 'Number talk and mini-lesson', pairs: 'Partner practice', small: 'Guided maths groups of 4-6', individual: 'Independent practice and journaling' }
+      };
+    }
+    return { title: phase === 'intro' ? 'Exploring ' + F + ': Building Understanding (Week ' + w + ')' : phase === 'develop' ? F + ': Developing Fluency (Week ' + w + ')' : F + ': Applying and Problem Solving (Week ' + w + ')',
+      li: phase === 'intro' ? 'explore and understand key concepts in ' + f : phase === 'develop' ? 'develop fluency and apply strategies for ' + f : 'solve problems and reason mathematically about ' + f,
+      sc: ['I can ' + (phase === 'intro' ? 'use materials to explore' : phase === 'develop' ? 'use a strategy to solve' : 'solve problems independently about') + ' ' + f, 'I can ' + (phase === 'intro' ? 'explain my thinking with materials' : phase === 'develop' ? 'record my working out' : 'justify my reasoning'), 'I can ' + (phase === 'intro' ? 'work with a partner on maths tasks' : phase === 'develop' ? 'choose an efficient strategy' : 'reflect on and improve my strategies')].join('\n'),
+      equipment: 'Manipulatives, whiteboards, number lines, workbooks',
+      context: 'Week ' + w + ' of ' + totalWeeks + ' — ' + F + ' unit (' + phase + ' phase). Focus: ' + sk0 + '.',
+      differentiation: { support: 'Use concrete materials. Provide visual aids and number lines. Reduce number size. Allow extra time.', extension: 'Increase complexity. Pose open-ended investigations. Encourage multiple strategies.' }
+    };
+  }
+
+
+  // ── STEM / SCIENCE ──────────────────────────────────────────
+  if (subj === 'stem') {
+    const stemWeeks = {
+      'biological': [
+        {t:'What Is Living? Sorting Living and Non-Living', li:'identify characteristics of living things', sc:['I can name 3 characteristics of living things','I can sort objects into living and non-living','I can explain why something is living or non-living'], eq:'Sorting mats, picture cards, magnifying glasses, specimens'},
+        {t:'Observing Plants Up Close', li:'observe and describe the parts of a plant', sc:['I can name the main parts of a plant','I can draw and label a plant diagram','I can describe the job of each plant part'], eq:'Real plants, magnifying glasses, drawing materials, plant diagram'},
+        {t:'What Do Plants Need to Grow?', li:'investigate what plants need to grow and survive', sc:['I can list what plants need to grow','I can set up a fair test','I can predict what will happen in our experiment'], eq:'Seeds, pots, soil, water, labels, observation journals'},
+        {t:'Animal Habitats', li:'identify different habitats and the animals that live there', sc:['I can name 4 different habitats','I can match animals to their habitat','I can explain why an animal suits its habitat'], eq:'Habitat posters, animal cards, books for research'},
+        {t:'Animal Adaptations', li:'describe how animals are adapted to survive in their habitat', sc:['I can describe an animal adaptation','I can explain how the adaptation helps survival','I can compare adaptations of two animals'], eq:'Animal images, adaptation cards, research materials'},
+        {t:'Life Cycles', li:'describe the stages of a life cycle', sc:['I can name the stages of a life cycle','I can sequence life cycle stages correctly','I can compare two different life cycles'], eq:'Life cycle diagrams, sequencing cards, drawing materials'},
+        {t:'Food Chains: Who Eats What?', li:'construct a simple food chain', sc:['I can identify a producer and consumer','I can arrange a food chain in the correct order','I can explain what happens if one part is removed'], eq:'Food chain cards, string, habitat posters'},
+        {t:'Our Investigation: Planning', li:'plan a biological science investigation', sc:['I can write a question to investigate','I can plan a fair test','I can predict what I think will happen'], eq:'Investigation planner, materials for experiment, journals'},
+        {t:'Our Investigation: Conducting and Recording', li:'conduct our investigation and record results', sc:['I can follow our investigation plan','I can record my observations accurately','I can use a table or diagram to show results'], eq:'Investigation materials, recording sheets, cameras'},
+        {t:'Sharing Our Findings', li:'present our investigation findings and reflect on learning', sc:['I can explain my results to the class','I can say whether my prediction was correct','I can suggest what I would do differently next time'], eq:'Presentation materials, investigation journals, reflection sheet'},
+      ],
+      'physical': [
+        {t:'Push and Pull Forces', li:'identify push and pull forces in everyday life', sc:['I can identify a push force','I can identify a pull force','I can give 3 examples of each'], eq:'Force picture cards, toy cars, ramps, magnets'},
+        {t:'What Makes Things Move?', li:'investigate how forces make objects start, stop and change direction', sc:['I can make an object move with a push or pull','I can stop a moving object','I can change the direction of a moving object'], eq:'Toy cars, ramps, balls, obstacles, recording sheets'},
+        {t:'Friction: Rough and Smooth', li:'investigate how surface texture affects movement', sc:['I can predict which surface will be fastest','I can conduct a fair test on different surfaces','I can explain what friction does'], eq:'Ramps, toy cars, different surface materials, rulers, timers'},
+        {t:'Magnets: Attract and Repel', li:'explore how magnets attract and repel', sc:['I can identify magnetic and non-magnetic materials','I can demonstrate attract and repel','I can explain poles of a magnet'], eq:'Bar magnets, ring magnets, sorting materials, recording sheets'},
+        {t:'Gravity: What Goes Up Must Come Down', li:'understand that gravity pulls objects towards Earth', sc:['I can explain what gravity does','I can predict which object falls faster','I can conduct a drop test investigation'], eq:'Various objects, drop zone, timer, recording sheets'},
+        {t:'Simple Machines: Levers and Ramps', li:'investigate how simple machines make work easier', sc:['I can identify a lever and a ramp','I can explain how they help us','I can build a simple machine to solve a problem'], eq:'Rulers, fulcrums, ramps, small objects, building materials'},
+        {t:'Design Challenge: Moving Objects', li:'design and build a device that uses forces to move an object', sc:['I can plan my design with a labelled diagram','I can build my device using available materials','I can test and improve my design'], eq:'Construction materials, wheels, rubber bands, tape, scissors'},
+        {t:'Testing Our Designs', li:'test our designs fairly and record results', sc:['I can test my device and measure the result','I can record my results in a table','I can compare my results with others'], eq:'Measuring tools, recording sheets, designs from previous lesson'},
+        {t:'Improving Our Designs', li:'evaluate and improve our devices based on test results', sc:['I can identify what worked and what did not','I can make improvements to my design','I can explain why my changes should help'], eq:'Designs, additional materials, improvement planning sheet'},
+        {t:'Forces Fair and Reflection', li:'share our learning about forces and reflect on the unit', sc:['I can present my work to the class','I can explain 3 things I learned about forces','I can set a science goal for next term'], eq:'Display materials, presentation space, reflection sheets'},
+      ],
+    };
+    const weekArr = stemWeeks[unit];
+    if (weekArr && weekArr[w-1]) {
+      const wd = weekArr[w-1];
+      return { title: wd.t, li: wd.li, sc: wd.sc.join('\n'), equipment: wd.eq,
+        context: 'Week ' + w + ' of ' + totalWeeks + ' — ' + F + ' unit (' + phase + ' phase).',
+        differentiation: { support: 'Provide visual instructions, pre-made templates, simplified vocabulary. Use hands-on materials. Pair with a science buddy.', extension: 'Challenge with open-ended investigations, hypothesis writing, data analysis. Encourage scientific vocabulary and peer teaching.' },
+        grouping: { whole: 'Introduction and demonstration', pairs: 'Investigation partners', small: 'Lab groups of 3-4', individual: 'Science journal reflection' }
+      };
+    }
+    return { title: phase === 'intro' ? 'Exploring ' + F + ': Questions and Observations (Week ' + w + ')' : phase === 'develop' ? F + ': Investigating and Recording (Week ' + w + ')' : F + ': Analysing and Communicating (Week ' + w + ')',
+      li: phase === 'intro' ? 'explore and ask questions about ' + f : phase === 'develop' ? 'investigate and record observations about ' + f : 'analyse results and communicate findings about ' + f,
+      sc: ['I can ' + (phase === 'intro' ? 'ask a question about' : phase === 'develop' ? 'investigate and record data about' : 'explain my findings about') + ' ' + f, 'I can ' + (phase === 'intro' ? 'make observations using my senses' : phase === 'develop' ? 'conduct a fair test' : 'present my results clearly'), 'I can ' + (phase === 'intro' ? 'share my ideas with the class' : phase === 'develop' ? 'use scientific vocabulary' : 'reflect on what I learned and set goals')].join('\n'),
+      equipment: 'Science journals, investigation materials, recording sheets',
+      context: 'Week ' + w + ' of ' + totalWeeks + ' — ' + F + ' unit (' + phase + ' phase). Focus: ' + sk0 + '.',
+      differentiation: { support: 'Provide visual instructions, simplified vocabulary, hands-on materials. Pair with a science buddy.', extension: 'Challenge with open-ended investigations, hypothesis writing. Encourage scientific vocabulary and peer teaching.' }
     };
   }
 
@@ -3364,7 +3505,7 @@ function initSubjects() {
 
   // --- SUBJECT CARDS ---
   const subjectGrid = document.createElement('div');
-  subjectGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:12px;margin-bottom:24px;';
+  subjectGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:14px;margin-bottom:28px;';
   Object.entries(SUBJ_CFG).forEach(([key, cfg]) => {
     const card = document.createElement('div');
     card.className = 'subject-card';
@@ -3387,7 +3528,7 @@ function initSubjects() {
 
   // --- PLANNING TOOL CARDS (compact strip) ---
   const toolsGrid = document.createElement('div');
-  toolsGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));gap:8px;margin-bottom:24px;';
+  toolsGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px;margin-bottom:28px;';
 
   const tools = [
     { icon: '📋', name: 'Term Planner', desc: 'Plan a full term', colour: '#1565C0', action: () => initTermPlanner() },
@@ -3414,7 +3555,7 @@ function initSubjects() {
 
   // --- MANAGE CARDS (even more compact) ---
   const manageGrid = document.createElement('div');
-  manageGrid.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;';
+  manageGrid.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;';
 
   const manages = [
     { icon: '🏫', name: 'School Template', action: () => openSchoolTemplate() },
