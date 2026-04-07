@@ -1010,6 +1010,10 @@
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+
+<script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 <body>
 
@@ -1030,7 +1034,390 @@
     <button class="settings-btn" id="settingsToggle">⚙ School Settings</button>
     <button class="settings-btn" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{key:'?',shiftKey:true}))" title="Keyboard shortcuts" style="padding:8px 10px;">?</button>
   </div>
+
+
+<!-- User Account Area -->
+<div id="authHeader" style="display: flex; align-items: center; gap: 1rem; margin-left: auto;">
+  <!-- Sign In Button (shown when not logged in) -->
+  <button id="signInBtn" style="
+    padding: 0.5rem 1rem;
+    background-color: var(--pri, #3b82f6);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.95rem;
+  ">Sign In</button>
+
+  <!-- User Info Area (shown when logged in) -->
+  <div id="userArea" style="display: none; display: flex; align-items: center; gap: 0.75rem;">
+    <!-- User Avatar -->
+    <div id="userAvatar" style="
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: var(--pri, #3b82f6);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+    "></div>
+
+    <!-- Dropdown Menu -->
+    <div style="position: relative;">
+      <button id="userMenuBtn" style="
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        color: var(--text, #1f2937);
+        font-weight: 500;
+        font-size: 0.95rem;
+      ">
+        <span id="userDisplayName"></span>
+        <span style="margin-left: 0.25rem;">▼</span>
+      </button>
+
+      <!-- Dropdown Content -->
+      <div id="userDropdown" style="
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: white;
+        border: 1px solid var(--border, #e5e7eb);
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-width: 180px;
+        margin-top: 0.5rem;
+        z-index: 1000;
+      ">
+        <button id="myLessonsBtn" style="
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: 0.75rem 1rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--text, #1f2937);
+          font-size: 0.9rem;
+          border-bottom: 1px solid var(--border, #e5e7eb);
+        ">My Lessons</button>
+
+        <button id="accountSettingsBtn" style="
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: 0.75rem 1rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--text, #1f2937);
+          font-size: 0.9rem;
+          border-bottom: 1px solid var(--border, #e5e7eb);
+        ">Account Settings</button>
+
+        <button id="signOutBtn" style="
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: 0.75rem 1rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #ef4444;
+          font-size: 0.9rem;
+        ">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Toggle user dropdown menu
+document.getElementById('userMenuBtn')?.addEventListener('click', function(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('userDropdown');
+  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function() {
+  const dropdown = document.getElementById('userDropdown');
+  if (dropdown) dropdown.style.display = 'none';
+});
+<\/script>
+
 </header>
+<!-- Auth Modal -->
+<div id="authModal" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+">
+  <style>
+    #authModal.show { display: flex !important; }
+
+    .auth-modal-content {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 420px;
+      overflow: hidden;
+    }
+
+    .auth-modal-header {
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7280;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .auth-tab.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+
+    .auth-tab:hover {
+      color: #1f2937;
+    }
+
+    .auth-content {
+      padding: 2rem;
+      display: none;
+    }
+
+    .auth-content.show {
+      display: block;
+    }
+
+    .auth-form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #1f2937;
+      margin-bottom: 0.375rem;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .auth-button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .auth-button:hover {
+      background-color: #2563eb;
+    }
+
+    .auth-button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .auth-link {
+      color: #3b82f6;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .auth-link:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    .auth-divider {
+      text-align: center;
+      margin: 1.5rem 0;
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    .auth-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .auth-success {
+      background-color: #dcfce7;
+      color: #166534;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+
+  <div class="auth-modal-content">
+    <!-- Tab Navigation -->
+    <div class="auth-modal-header">
+      <button class="auth-tab active" data-tab="signin">Sign In</button>
+      <button class="auth-tab" data-tab="signup">Sign Up</button>
+    </div>
+
+    <!-- Sign In Tab -->
+    <div id="signinContent" class="auth-content show">
+      <div id="signinError"></div>
+
+      <form id="signinForm" style="display: flex; flex-direction: column; gap: 0;">
+        <div class="auth-form-group">
+          <label class="auth-label">Email Address</label>
+          <input type="email" id="signinEmail" class="auth-input" placeholder="your@email.com" required>
+        </div>
+
+        <div class="auth-form-group">
+          <label class="auth-label">Password</label>
+          <input type="password" id="signinPassword" class="auth-input" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" required>
+        </div>
+
+        <button type="submit" class="auth-button" id="signinSubmitBtn">Sign In</button>
+
+        <div style="text-align: right; margin-top: 0.75rem;">
+          <a class="auth-link" id="forgotPasswordLink">Forgot Password?</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Sign Up Tab -->
+    <div id="signupContent" class="auth-content">
+      <div id="signupError"></div>
+
+      <form id="signupForm" style="display: flex; flex-direction: column; gap: 0;">
+        <div class="auth-form-group">
+          <label class="auth-label">Email Address</label>
+          <input type="email" id="signupEmail" class="auth-input" placeholder="your@email.com" required>
+        </div>
+
+        <div class="auth-form-group">
+          <label class="auth-label">Display Name</label>
+          <input type="text" id="signupDisplayName" class="auth-input" placeholder="Jane Smith" required>
+        </div>
+
+        <div class="auth-form-group">
+          <label class="auth-label">Password</label>
+          <input type="password" id="signupPassword" class="auth-input" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" required>
+        </div>
+
+        <button type="submit" class="auth-button" id="signupSubmitBtn">Create Account</button>
+      </form>
+    </div>
+
+    <!-- Forgot Password Tab -->
+    <div id="forgotContent" class="auth-content">
+      <div id="forgotError"></div>
+      <div id="forgotSuccess"></div>
+
+      <form id="forgotForm" style="display: flex; flex-direction: column; gap: 0;">
+        <div class="auth-form-group">
+          <label class="auth-label">Email Address</label>
+          <input type="email" id="forgotEmail" class="auth-input" placeholder="your@email.com" required>
+        </div>
+
+        <button type="submit" class="auth-button" id="forgotSubmitBtn">Send Reset Link</button>
+
+        <div style="text-align: center; margin-top: 0.75rem;">
+          <a class="auth-link" id="backToSignInLink">Back to Sign In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching logic
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    const tabName = this.getAttribute('data-tab');
+
+    // Update active tab
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+
+    // Show/hide content
+    document.querySelectorAll('.auth-content').forEach(c => c.classList.remove('show'));
+    if (tabName === 'signin') {
+      document.getElementById('signinContent').classList.add('show');
+    } else if (tabName === 'signup') {
+      document.getElementById('signupContent').classList.add('show');
+    }
+  });
+});
+
+// Forgot password link
+document.getElementById('forgotPasswordLink')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-content').forEach(c => c.classList.remove('show'));
+  document.getElementById('forgotContent').classList.add('show');
+});
+
+// Back to sign in link
+document.getElementById('backToSignInLink')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-content').forEach(c => c.classList.remove('show'));
+  document.querySelector('[data-tab="signin"]').classList.add('active');
+  document.getElementById('signinContent').classList.add('show');
+});
+<\/script>
+
 
 <div class="settings-panel" id="settingsPanel">
   <div class="form-group">
@@ -5761,6 +6148,882 @@ if (localStorage.getItem('lessonlab_darkmode') === '1') {
   document.body.classList.add('dark-mode');
   document.getElementById('darkModeToggle').textContent = '☀️';
 }
+
+// ============================================================================
+// LESSONLAB AUTH & CLOUD INTEGRATION
+// ============================================================================
+
+// Supabase Configuration
+const SUPABASE_URL = 'https://bmwnxajhrvvpziubljav.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtd254YWpocnZ2cHppdWJsamF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NzkwMTksImV4cCI6MjA5MTA1NTAxOX0.DZhoaMOv5ZvhXWGfzYv72ao1TxogDgUX4fXOeXtaDlI';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ============================================================================
+// AUTH STATE MANAGEMENT
+// ============================================================================
+
+let currentUser = null;
+let currentProfile = null;
+let authStateInitialized = false;
+
+// Initialize auth when script loads
+initAuth();
+
+/**
+ * Initialize auth: check session, set up listener, update UI
+ */
+async function initAuth() {
+  try {
+    // Check if there's an existing session
+    const { data: { session }, error: sessionError } = await sb.auth.getSession();
+
+    if (sessionError) {
+      console.error('Error checking session:', sessionError);
+      return;
+    }
+
+    if (session?.user) {
+      currentUser = session.user;
+      await loadUserProfile(session.user.id);
+      updateAuthUI(session.user);
+    } else {
+      updateAuthUI(null);
+    }
+
+    // Set up listener for auth changes
+    const { data: { subscription } } = sb.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        currentUser = session.user;
+        await loadUserProfile(session.user.id);
+        updateAuthUI(session.user);
+        hideAuthModal();
+        showToast('Signed in successfully', 'success');
+      } else {
+        currentUser = null;
+        currentProfile = null;
+        updateAuthUI(null);
+      }
+    });
+
+    authStateInitialized = true;
+  } catch (error) {
+    console.error('Auth initialization error:', error);
+  }
+}
+
+/**
+ * Load user profile from database
+ */
+async function loadUserProfile(userId) {
+  try {
+    const { data, error } = await sb
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error loading profile:', error);
+      return;
+    }
+
+    currentProfile = data;
+  } catch (error) {
+    console.error('Error loading profile:', error);
+  }
+}
+
+/**
+ * Update UI based on auth state
+ */
+function updateAuthUI(user) {
+  const signInBtn = document.getElementById('signInBtn');
+  const userArea = document.getElementById('userArea');
+  const userDisplayName = document.getElementById('userDisplayName');
+  const userAvatar = document.getElementById('userAvatar');
+
+  if (user && currentProfile) {
+    // User is signed in
+    if (signInBtn) signInBtn.style.display = 'none';
+    if (userArea) userArea.style.display = 'flex';
+
+    const displayName = currentProfile.display_name || user.email;
+    const initials = displayName.charAt(0).toUpperCase();
+
+    if (userDisplayName) userDisplayName.textContent = displayName;
+    if (userAvatar) userAvatar.textContent = initials;
+
+    // Update tier-locked subjects
+    updateSubjectLocking();
+  } else {
+    // User is not signed in
+    if (signInBtn) signInBtn.style.display = 'block';
+    if (userArea) userArea.style.display = 'none';
+
+    // Lock all non-free subjects
+    updateSubjectLocking();
+  }
+}
+
+/**
+ * Show auth modal with specified tab
+ */
+function showAuthModal(tab = 'signin') {
+  const modal = document.getElementById('authModal');
+  if (modal) {
+    modal.classList.add('show');
+
+    // Switch to requested tab
+    if (tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-content').forEach(c => c.classList.remove('show'));
+
+      const tabEl = document.querySelector(`[data-tab="${tab}"]`);
+      if (tabEl) {
+        tabEl.classList.add('active');
+      }
+
+      const contentId = tab === 'signin' ? 'signinContent' :
+                        tab === 'signup' ? 'signupContent' : 'forgotContent';
+      const contentEl = document.getElementById(contentId);
+      if (contentEl) {
+        contentEl.classList.add('show');
+      }
+    }
+  }
+}
+
+/**
+ * Hide auth modal
+ */
+function hideAuthModal() {
+  const modal = document.getElementById('authModal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+}
+
+/**
+ * Handle sign in form submission
+ */
+async function handleSignIn(email, password) {
+  try {
+    const signinError = document.getElementById('signinError');
+    if (signinError) signinError.innerHTML = '';
+
+    const { data, error } = await sb.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      const errorMsg = `<div class="auth-error">${error.message}</div>`;
+      if (signinError) signinError.innerHTML = errorMsg;
+      console.error('Sign in error:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    const signinError = document.getElementById('signinError');
+    const errorMsg = `<div class="auth-error">${error.message || 'An error occurred'}</div>`;
+    if (signinError) signinError.innerHTML = errorMsg;
+    console.error('Sign in error:', error);
+    return false;
+  }
+}
+
+/**
+ * Handle sign up form submission
+ */
+async function handleSignUp(email, password, displayName) {
+  try {
+    const signupError = document.getElementById('signupError');
+    if (signupError) signupError.innerHTML = '';
+
+    // Create auth user
+    const { data: authData, error: authError } = await sb.auth.signUp({
+      email,
+      password
+    });
+
+    if (authError) {
+      const errorMsg = `<div class="auth-error">${authError.message}</div>`;
+      if (signupError) signupError.innerHTML = errorMsg;
+      console.error('Sign up error:', authError);
+      return false;
+    }
+
+    // Create profile
+    if (authData.user) {
+      const { error: profileError } = await sb.from('profiles').insert([
+        {
+          id: authData.user.id,
+          email: authData.user.email,
+          display_name: displayName,
+          role: 'teacher',
+          curriculum: 'vic',
+          tier: 'free',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ]);
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        const errorMsg = `<div class="auth-error">Account created, but profile setup failed. Please contact support.</div>`;
+        if (signupError) signupError.innerHTML = errorMsg;
+        return false;
+      }
+    }
+
+    showToast('Account created! Please check your email to confirm.', 'success');
+    return true;
+  } catch (error) {
+    const signupError = document.getElementById('signupError');
+    const errorMsg = `<div class="auth-error">${error.message || 'An error occurred'}</div>`;
+    if (signupError) signupError.innerHTML = errorMsg;
+    console.error('Sign up error:', error);
+    return false;
+  }
+}
+
+/**
+ * Handle sign out
+ */
+async function handleSignOut() {
+  try {
+    const { error } = await sb.auth.signOut();
+    if (error) throw error;
+
+    currentUser = null;
+    currentProfile = null;
+    updateAuthUI(null);
+    showAuthModal('signin');
+    showToast('Signed out successfully', 'success');
+  } catch (error) {
+    console.error('Sign out error:', error);
+    showToast('Error signing out: ' + error.message, 'error');
+  }
+}
+
+/**
+ * Handle forgot password
+ */
+async function handleForgotPassword(email) {
+  try {
+    const forgotError = document.getElementById('forgotError');
+    const forgotSuccess = document.getElementById('forgotSuccess');
+
+    if (forgotError) forgotError.innerHTML = '';
+    if (forgotSuccess) forgotSuccess.innerHTML = '';
+
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}?reset=true`
+    });
+
+    if (error) {
+      const errorMsg = `<div class="auth-error">${error.message}</div>`;
+      if (forgotError) forgotError.innerHTML = errorMsg;
+      return false;
+    }
+
+    const successMsg = `<div class="auth-success">Password reset link sent to ${email}. Check your email!</div>`;
+    if (forgotSuccess) forgotSuccess.innerHTML = successMsg;
+    return true;
+  } catch (error) {
+    const forgotError = document.getElementById('forgotError');
+    const errorMsg = `<div class="auth-error">${error.message || 'An error occurred'}</div>`;
+    if (forgotError) forgotError.innerHTML = errorMsg;
+    console.error('Forgot password error:', error);
+    return false;
+  }
+}
+
+// ============================================================================
+// TIER GATING & SUBJECT ACCESS
+// ============================================================================
+
+/**
+ * Check if user has access to a subject
+ * All subjects require a paid subscription (pro or school tier)
+ */
+function checkTierAccess(subject) {
+  // Not logged in - no access
+  if (!currentUser) return false;
+
+  // Must have pro or school tier
+  if (currentProfile && (currentProfile.tier === 'pro' || currentProfile.tier === 'school')) {
+    return true;
+  }
+
+  // Free tier or no profile - no access to any subjects
+  return false;
+}
+
+/**
+ * Update subject card locking based on tier
+ */
+function updateSubjectLocking() {
+  document.querySelectorAll('[data-subject]').forEach(card => {
+    const subject = card.getAttribute('data-subject');
+    const hasAccess = checkTierAccess(subject);
+
+    if (!hasAccess) {
+      // Add locked state
+      if (!card.classList.contains('subject-locked')) {
+        card.classList.add('subject-locked');
+      }
+
+      // Add lock icon overlay if not present
+      if (!card.querySelector('.subject-lock-icon')) {
+        const lockOverlay = document.createElement('div');
+        lockOverlay.className = 'subject-lock-icon';
+        lockOverlay.style.cssText = `
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: inherit;
+          pointer-events: none;
+        `;
+        lockOverlay.innerHTML = 'ð';
+        lockOverlay.style.fontSize = '2rem';
+        lockOverlay.style.color = 'white';
+
+        // Make card position relative if not already
+        if (getComputedStyle(card).position === 'static') {
+          card.style.position = 'relative';
+        }
+
+        card.appendChild(lockOverlay);
+      }
+
+      // Prevent clicking if locked
+      card.style.cursor = 'not-allowed';
+      card.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showUpgradePrompt(subject);
+        return false;
+      };
+    } else {
+      // Remove locked state
+      card.classList.remove('subject-locked');
+      const lockIcon = card.querySelector('.subject-lock-icon');
+      if (lockIcon) lockIcon.remove();
+      card.style.cursor = 'pointer';
+    }
+  });
+}
+
+/**
+ * Show upgrade prompt modal
+ */
+function showUpgradePrompt(subject = null) {
+  // If not logged in, show auth modal first
+  if (!currentUser) {
+    showAuthModal('signup');
+    return;
+  }
+
+  const subjectNames = {literacy:'Literacy',numeracy:'Numeracy',science:'Science',digital_tech:'Digital Tech',health_pe:'Health & PE',visual_arts:'Visual Arts',music:'Music',drama:'Drama',french:'French'};
+  const friendlyName = subjectNames[subject] || subject;
+  const message = subject
+    ? `Subscribe to start generating <strong>${friendlyName}</strong> lesson plans.`
+    : 'Subscribe to unlock all subjects and start generating lesson plans.';
+
+  // Check if upgrade modal already exists
+  let modal = document.getElementById('upgradeModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'upgradeModal';
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2001;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    `;
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div style="
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    ">
+      <h2 style="margin: 0 0 1rem 0; color: #1f2937;">Subscribe to LessonLab</h2>
+      <p style="margin: 0 0 1.5rem 0; color: #6b7280; font-size: 0.95rem;">
+        ${message}
+      </p>
+
+      <div style="
+        background-color: #f3f4f6;
+        padding: 1.5rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+      ">
+        <h3 style="margin: 0 0 1rem 0; color: #1f2937; font-size: 0.95rem;">What you get:</h3>
+        <ul style="margin: 0; padding-left: 1.5rem; color: #4b5563; font-size: 0.9rem; line-height: 1.6;">
+          <li>All 9 subjects &mdash; Literacy, Numeracy, Science, Digital Tech, Health &amp; PE, Visual Arts, Music, Drama, French</li>
+          <li>Term planner across all subjects</li>
+          <li>Export to PDF, Word &amp; Compass</li>
+          <li>Cloud storage for all lessons</li>
+          <li>CRT summaries &amp; equipment checklists</li>
+          <li>Victorian Curriculum 2.0 aligned</li>
+        </ul>
+      </div>
+
+      <p style="margin: 0 0 1.5rem 0; color: #1f2937; font-weight: 600;">
+        <strong>$9.99/month</strong> &mdash; cancel anytime
+      </p>
+
+      <div style="display: flex; gap: 1rem;">
+        <button id="closeUpgradeBtn" style="
+          flex: 1;
+          padding: 0.75rem;
+          background-color: #e5e7eb;
+          color: #1f2937;
+          border: none;
+          border-radius: 0.375rem;
+          font-weight: 600;
+          cursor: pointer;
+        ">Cancel</button>
+        <button id="upgradeNowBtn" style="
+          flex: 1;
+          padding: 0.75rem;
+          background-color: #3b82f6;
+          color: white;
+          border: none;
+          border-radius: 0.375rem;
+          font-weight: 600;
+          cursor: pointer;
+        ">Upgrade Now</button>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = 'flex';
+
+  document.getElementById('closeUpgradeBtn').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  document.getElementById('upgradeNowBtn').addEventListener('click', () => {
+    handleUpgrade();
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+}
+
+// ============================================================================
+// CLOUD SAVE/LOAD
+// ============================================================================
+
+let autoSaveTimeout = null;
+
+/**
+ * Save a lesson to Supabase
+ */
+async function saveLesson(lessonData) {
+  if (!currentUser) {
+    showToast('Please sign in to save lessons', 'error');
+    return false;
+  }
+
+  try {
+    // Check if lesson already exists (by looking for lessonId in lessonData)
+    if (lessonData.lessonId) {
+      // Update existing lesson
+      const { error } = await sb
+        .from('lessons')
+        .update({
+          lesson_data: lessonData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', lessonData.lessonId)
+        .eq('user_id', currentUser.id);
+
+      if (error) {
+        console.error('Update lesson error:', error);
+        showToast('Error saving lesson', 'error');
+        return false;
+      }
+    } else {
+      // Create new lesson
+      const { data, error } = await sb
+        .from('lessons')
+        .insert([
+          {
+            user_id: currentUser.id,
+            subject: lessonData.subject || 'literacy',
+            unit: lessonData.unit || '',
+            focus: lessonData.focus || '',
+            year_level: lessonData.yearLevel || '',
+            term: lessonData.term || '',
+            week: lessonData.week || '',
+            title: lessonData.title || 'Untitled Lesson',
+            learning_intention: lessonData.learningIntention || '',
+            success_criteria: lessonData.successCriteria || [],
+            equipment: lessonData.equipment || '',
+            lesson_data: lessonData,
+            is_template: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+        ])
+        .select();
+
+      if (error) {
+        console.error('Insert lesson error:', error);
+        showToast('Error saving lesson', 'error');
+        return false;
+      }
+
+      if (data && data[0]) {
+        lessonData.lessonId = data[0].id;
+      }
+    }
+
+    showToast('Lesson saved successfully', 'success');
+    return true;
+  } catch (error) {
+    console.error('Save lesson error:', error);
+    showToast('Error saving lesson', 'error');
+    return false;
+  }
+}
+
+/**
+ * Load all lessons for current user
+ */
+async function loadMyLessons() {
+  if (!currentUser) {
+    return [];
+  }
+
+  try {
+    const { data, error } = await sb
+      .from('lessons')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Load lessons error:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Load lessons error:', error);
+    return [];
+  }
+}
+
+/**
+ * Delete a lesson
+ */
+async function deleteLesson(lessonId) {
+  if (!currentUser) {
+    showToast('Please sign in to delete lessons', 'error');
+    return false;
+  }
+
+  try {
+    const { error } = await sb
+      .from('lessons')
+      .delete()
+      .eq('id', lessonId)
+      .eq('user_id', currentUser.id);
+
+    if (error) {
+      console.error('Delete lesson error:', error);
+      showToast('Error deleting lesson', 'error');
+      return false;
+    }
+
+    showToast('Lesson deleted', 'success');
+    return true;
+  } catch (error) {
+    console.error('Delete lesson error:', error);
+    showToast('Error deleting lesson', 'error');
+    return false;
+  }
+}
+
+/**
+ * Auto-save current lesson (debounced)
+ */
+function autoSave(lessonData) {
+  // Clear existing timeout
+  if (autoSaveTimeout) {
+    clearTimeout(autoSaveTimeout);
+  }
+
+  // Set new timeout for debouncing
+  autoSaveTimeout = setTimeout(async () => {
+    if (currentUser) {
+      await saveLesson(lessonData);
+    }
+  }, 2000); // Auto-save after 2 seconds of inactivity
+}
+
+// ============================================================================
+// UPGRADE & STRIPE (PLACEHOLDER)
+// ============================================================================
+
+const STRIPE_KEY = ''; // To be filled in later
+
+/**
+ * Handle upgrade to pro
+ */
+async function handleUpgrade() {
+  if (!currentUser) {
+    showToast('Please sign in to upgrade', 'error');
+    showAuthModal('signin');
+    return;
+  }
+
+  // TODO: Implement Stripe checkout
+  // For now, show coming soon message
+  showToast('Stripe integration coming soon! Please check back later.', 'info');
+
+  // In production, redirect to Stripe checkout:
+  // window.location.href = `https://checkout.stripe.com/pay/${STRIPE_SESSION_ID}`;
+}
+
+// ============================================================================
+// UI HELPERS
+// ============================================================================
+
+/**
+ * Show toast notification
+ */
+function showToast(message, type = 'info') {
+  // Check if app has existing toast system
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.style.cssText = `
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    `;
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement('div');
+  const bgColor = type === 'error' ? '#fee2e2' :
+                  type === 'success' ? '#dcfce7' :
+                  type === 'info' ? '#dbeafe' : '#f3f4f6';
+  const textColor = type === 'error' ? '#991b1b' :
+                    type === 'success' ? '#166534' :
+                    type === 'info' ? '#0c4a6e' : '#374151';
+
+  toast.style.cssText = `
+    background-color: ${bgColor};
+    color: ${textColor};
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    pointer-events: auto;
+    animation: slideIn 0.3s ease-out;
+  `;
+  toast.textContent = message;
+
+  toastContainer.appendChild(toast);
+
+  // Auto-remove after 4 seconds
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Add animation keyframes if not present
+if (!document.getElementById('toastAnimations')) {
+  const style = document.createElement('style');
+  style.id = 'toastAnimations';
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// ============================================================================
+// EVENT LISTENERS SETUP
+// ============================================================================
+
+// Sign In button - show modal
+document.getElementById('signInBtn')?.addEventListener('click', () => {
+  showAuthModal('signin');
+});
+
+// Auth modal form - Sign In
+document.getElementById('signinForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('signinEmail').value;
+  const password = document.getElementById('signinPassword').value;
+  const submitBtn = document.getElementById('signinSubmitBtn');
+
+  if (submitBtn) submitBtn.disabled = true;
+  const success = await handleSignIn(email, password);
+  if (submitBtn) submitBtn.disabled = false;
+
+  if (success) {
+    document.getElementById('signinEmail').value = '';
+    document.getElementById('signinPassword').value = '';
+  }
+});
+
+// Auth modal form - Sign Up
+document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  const displayName = document.getElementById('signupDisplayName').value;
+  const submitBtn = document.getElementById('signupSubmitBtn');
+
+  if (submitBtn) submitBtn.disabled = true;
+  const success = await handleSignUp(email, password, displayName);
+  if (submitBtn) submitBtn.disabled = false;
+
+  if (success) {
+    document.getElementById('signupEmail').value = '';
+    document.getElementById('signupPassword').value = '';
+    document.getElementById('signupDisplayName').value = '';
+  }
+});
+
+// Auth modal form - Forgot Password
+document.getElementById('forgotForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value;
+  const submitBtn = document.getElementById('forgotSubmitBtn');
+
+  if (submitBtn) submitBtn.disabled = true;
+  const success = await handleForgotPassword(email);
+  if (submitBtn) submitBtn.disabled = false;
+
+  if (success) {
+    document.getElementById('forgotEmail').value = '';
+  }
+});
+
+// Sign Out button
+document.getElementById('signOutBtn')?.addEventListener('click', async () => {
+  await handleSignOut();
+});
+
+// My Lessons button
+document.getElementById('myLessonsBtn')?.addEventListener('click', async () => {
+  const lessons = await loadMyLessons();
+  showToast(`Loaded ${lessons.length} lessons`, 'info');
+  // TODO: Display lessons in a modal or page
+});
+
+// Account Settings button
+document.getElementById('accountSettingsBtn')?.addEventListener('click', () => {
+  showToast('Account Settings coming soon', 'info');
+  // TODO: Implement account settings modal
+});
+
+// Subject card click - check tier access
+document.querySelectorAll('[data-subject]').forEach(card => {
+  const originalClick = card.onclick;
+  card.addEventListener('click', function(e) {
+    const subject = this.getAttribute('data-subject');
+
+    if (!checkTierAccess(subject)) {
+      e.preventDefault();
+      e.stopPropagation();
+      showUpgradePrompt(subject);
+      return false;
+    }
+
+    // If access granted and there was an original handler, call it
+    if (originalClick && typeof originalClick === 'function') {
+      return originalClick.call(this, e);
+    }
+  });
+});
+
+// ============================================================================
+// LESSON GENERATION HOOK
+// ============================================================================
+
+// Hook into lesson generation to trigger auto-save
+// Assuming the app has a function like generateLesson() or similar
+// We'll intercept the lesson data before rendering
+
+const originalConsoleLog = console.log;
+let lessonDataCache = null;
+
+// Monitor for lesson generation (you may need to adjust this based on actual app code)
+document.addEventListener('lessongenerationcomplete', (e) => {
+  if (e.detail && e.detail.lessonData) {
+    lessonDataCache = e.detail.lessonData;
+    autoSave(lessonDataCache);
+  }
+});
+
+// Fallback: Periodically check for lesson changes and auto-save
+setInterval(() => {
+  // This is a fallback - you should update this based on your app's actual lesson state
+  const lessonTitle = document.querySelector('[data-lesson-title]');
+  if (lessonTitle && lessonDataCache) {
+    autoSave(lessonDataCache);
+  }
+}, 10000); // Check every 10 seconds
+
+console.log('LessonLab Auth & Cloud Integration loaded successfully');
 </script>
 
 </body>
