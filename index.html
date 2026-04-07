@@ -6069,6 +6069,21 @@ function parseLessonText(rawText) {
   }
   flush();
 
+  // Post-process: if equipment absorbed lesson body paragraphs, peel them out
+  if (result.equipment && !result.intro && !result.body && !result.learningIntention && !result.conclusion) {
+    var eqParts = result.equipment.split(/\n\n+/);
+    if (eqParts.length > 1) {
+      result.equipment = eqParts[0].trim();
+      var bodyRest = eqParts.slice(1).join('\n\n').trim();
+      if (bodyRest) {
+        var bMid = bodyRest.lastIndexOf('\n', Math.floor(bodyRest.length * 0.45));
+        var bSplit = bMid > 0 ? bMid : Math.floor(bodyRest.length / 2);
+        result.intro = bodyRest.slice(0, bSplit).trim();
+        result.body  = bodyRest.slice(bSplit).trim();
+      }
+    }
+  }
+
   // Fallback: flat/unstructured content → split into intro + body
   const hasAny = ['learningIntention','intro','body','conclusion'].some(k => result[k]);
   if (!hasAny) {
