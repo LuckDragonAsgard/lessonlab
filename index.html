@@ -6466,7 +6466,7 @@ function checkTierAccess(subject) {
  */
 function updateSubjectLocking() {
   document.querySelectorAll('.subject-card').forEach(card => {
-    const subject = (card.textContent.trim().split('\n').pop() || 'unknown').trim();
+    const subject = (card.querySelector('.subject-name') ? card.querySelector('.subject-name').textContent.trim() : card.textContent.trim());
     const hasAccess = checkTierAccess(subject);
 
     if (!hasAccess) {
@@ -6491,6 +6491,8 @@ function updateSubjectLocking() {
           justify-content: center;
           border-radius: inherit;
           pointer-events: auto;
+          z-index: 100;
+          cursor: pointer;
         `;
         lockOverlay.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
@@ -6503,8 +6505,9 @@ function updateSubjectLocking() {
         lockOverlay.style.cursor = 'pointer';
         lockOverlay.addEventListener('click', function(ev) {
           ev.stopImmediatePropagation();
+          ev.stopPropagation();
           ev.preventDefault();
-          showUpgradePrompt(this.parentElement.childNodes[this.parentElement.childNodes.length - 2] ? this.parentElement.childNodes[this.parentElement.childNodes.length - 2].textContent.trim() : 'this subject')
+          showUpgradePrompt(this.parentElement.querySelector('.subject-name') ? this.parentElement.querySelector('.subject-name').textContent.trim() : 'this subject')
         });
       }
 
@@ -6512,7 +6515,7 @@ function updateSubjectLocking() {
       card.style.cursor = 'not-allowed';
       card.onclick = (e) => {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         showUpgradePrompt(subject);
         return false;
       };
@@ -6983,7 +6986,7 @@ document.getElementById('accountSettingsBtn')?.addEventListener('click', () => {
 document.querySelectorAll('.subject-card').forEach(card => {
   const originalClick = card.onclick;
   card.addEventListener('click', function(e) {
-    const subject = (this.textContent.trim().split('\n').pop() || 'unknown').trim();
+    const subject = (this.querySelector('.subject-name') ? this.querySelector('.subject-name').textContent.trim() : 'unknown');
 
     if (!checkTierAccess(subject)) {
       e.preventDefault();
