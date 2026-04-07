@@ -6492,9 +6492,8 @@ function updateSubjectLocking() {
           border-radius: inherit;
           pointer-events: auto;
         `;
-        lockOverlay.innerHTML = 'ð';
-        lockOverlay.style.fontSize = '2rem';
-        lockOverlay.style.color = 'white';
+        lockOverlay.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+        hite';
 
         // Make card position relative if not already
         if (getComputedStyle(card).position === 'static') {
@@ -6506,7 +6505,7 @@ function updateSubjectLocking() {
         lockOverlay.addEventListener('click', function(ev) {
           ev.stopImmediatePropagation();
           ev.preventDefault();
-          showUpgradePrompt('subject');
+          showUpgradePrompt(this.parentElement.childNodes[this.parentElement.childNodes.length - 2] ? this.parentElement.childNodes[this.parentElement.childNodes.length - 2].textContent.trim() : 'this subject')
         });
       }
 
