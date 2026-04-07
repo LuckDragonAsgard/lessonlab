@@ -6490,7 +6490,7 @@ function updateSubjectLocking() {
           align-items: center;
           justify-content: center;
           border-radius: inherit;
-          pointer-events: none;
+          pointer-events: auto;
         `;
         lockOverlay.innerHTML = 'ð';
         lockOverlay.style.fontSize = '2rem';
@@ -6502,6 +6502,12 @@ function updateSubjectLocking() {
         }
 
         card.appendChild(lockOverlay);
+        lockOverlay.style.cursor = 'pointer';
+        lockOverlay.addEventListener('click', function(ev) {
+          ev.stopImmediatePropagation();
+          ev.preventDefault();
+          showUpgradePrompt('subject');
+        });
       }
 
       // Prevent clicking if locked
@@ -6983,7 +6989,7 @@ document.querySelectorAll('.subject-card').forEach(card => {
 
     if (!checkTierAccess(subject)) {
       e.preventDefault();
-      e.stopPropagation();
+      e.stopImmediatePropagation();
       showUpgradePrompt(subject);
       return false;
     }
