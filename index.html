@@ -1157,21 +1157,28 @@ document.addEventListener('click', function() {
 
 </header>
 <!-- Upload & Convert Old Lesson Modal -->
-<div id="uploadLessonModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;justify-content:center;align-items:center;">
-  <div style="background:white;border-radius:12px;padding:28px;width:min(560px,95vw);max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div style="font-size:18px;font-weight:700;color:#1565C0;">&#128228; Upload &amp; Convert Lesson</div>
-      <button id="uploadLessonClose" style="background:none;border:none;font-size:22px;cursor:pointer;color:#666;line-height:1;">&times;</button>
+<div id="uploadLessonModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:12px;padding:28px;max-width:620px;width:90%;max-height:85vh;overflow-y:auto;position:relative;">
+    <button id="uploadLessonClose" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#666;">×</button>
+    <h3 style="margin:0 0 16px;color:var(--pri);font-size:18px;">📨 Upload &amp; Convert Lessons</h3>
+    <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:10px;">
+      <button id="singleUploadTabBtn" onclick="switchUploadTab('single')" style="padding:7px 16px;border-radius:20px;border:none;background:var(--pri);color:white;font-weight:600;cursor:pointer;font-size:13px;">📄 Single File</button>
+      <button id="bulkUploadTabBtn" onclick="switchUploadTab('bulk')" style="padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--text);cursor:pointer;font-size:13px;">📦 Bulk Import</button>
     </div>
-    <div style="background:#E3F2FD;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#1565C0;">Upload an existing lesson plan (DOCX or TXT) — LessonLab extracts the content and pre-fills your fields ready to regenerate in your school's format.</div>
-    <div class="form-group">
-      <label style="font-weight:600;">Select Lesson File</label>
-      <input type="file" id="uploadLessonFile" accept=".docx,.doc,.txt" style="margin-top:6px;width:100%;">
+    <div id="singleUploadTab">
+      <p style="color:#555;font-size:14px;margin:0 0 14px;">Upload a .docx or .txt lesson file and we'll extract the fields automatically.</p>
+      <input type="file" id="uploadLessonFile" accept=".docx,.doc,.txt" style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
+      <div id="uploadLessonStatus" style="font-size:13px;color:#666;margin-bottom:10px;"></div>
+      <div id="uploadLessonPreview" style="background:#f9f9f9;border-radius:8px;padding:14px;font-size:13px;color:#333;max-height:220px;overflow-y:auto;display:none;margin-bottom:14px;"></div>
+      <button id="applyParsedLessonBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;">✓ Apply Fields &amp; Close</button>
     </div>
-    <div id="uploadLessonStatus" style="font-size:13px;margin:8px 0;min-height:18px;font-weight:500;"></div>
-    <div id="uploadLessonPreview" style="font-size:12px;background:#f9f9f9;border-radius:6px;padding:10px;max-height:240px;overflow-y:auto;margin-bottom:12px;"></div>
-    <button id="applyParsedLessonBtn" class="btn" style="display:none;width:100%;">&#10003; Apply Fields &amp; Close</button>
-    <p style="font-size:11px;color:#aaa;margin-top:12px;text-align:center;">Supports DOCX and plain text &mdash; PDF support coming soon.</p>
+    <div id="bulkUploadTab" style="display:none;">
+      <p style="color:#555;font-size:14px;margin:0 0 14px;">Select multiple lesson files to import them all at once.</p>
+      <input type="file" id="bulkUploadFiles" accept=".docx,.doc,.txt" multiple style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
+      <div id="bulkUploadStatus" style="font-size:13px;color:#666;margin-bottom:10px;"></div>
+      <div id="bulkUploadResults" style="display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto;margin-bottom:14px;"></div>
+      <button id="bulkSaveAllBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;">💾 Save All to Library</button>
+    </div>
   </div>
 </div>
 
@@ -6013,7 +6020,120 @@ document.getElementById('applyParsedLessonBtn').addEventListener('click', () => 
   [['liInput',p.learningIntention],['scInput',p.successCriteria],['eqInput',p.equipment]].forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val)el.value=val;});
   document.getElementById('uploadLessonModal').style.display='none';
   showToast('✅ Lesson fields pre-filled! Select a subject to generate.');
-});
+})
+
+  function switchUploadTab(tab) {
+    var single = document.getElementById('singleUploadTab');
+    var bulk   = document.getElementById('bulkUploadTab');
+    var sBtn   = document.getElementById('singleUploadTabBtn');
+    var bBtn   = document.getElementById('bulkUploadTabBtn');
+    if (tab === 'single') {
+      single.style.display = 'block'; bulk.style.display = 'none';
+      sBtn.style.background = 'var(--pri)'; sBtn.style.color = 'white'; sBtn.style.border = 'none';
+      bBtn.style.background = 'white'; bBtn.style.color = 'var(--text)'; bBtn.style.border = '1px solid var(--border)';
+    } else {
+      single.style.display = 'none'; bulk.style.display = 'block';
+      bBtn.style.background = 'var(--pri)'; bBtn.style.color = 'white'; bBtn.style.border = 'none';
+      sBtn.style.background = 'white'; sBtn.style.color = 'var(--text)'; sBtn.style.border = '1px solid var(--border)';
+    }
+  }
+
+  var bulkParsedLessons = [];
+
+  document.getElementById('bulkUploadFiles').addEventListener('change', async function() {
+    var files = Array.from(this.files);
+    if (!files.length) return;
+    var status     = document.getElementById('bulkUploadStatus');
+    var results    = document.getElementById('bulkUploadResults');
+    var saveAllBtn = document.getElementById('bulkSaveAllBtn');
+    status.textContent = 'Processing ' + files.length + ' file' + (files.length > 1 ? 's' : '') + '...';
+    results.innerHTML = '';
+    bulkParsedLessons = [];
+    saveAllBtn.style.display = 'none';
+
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      try {
+        var rawText = '';
+        if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
+          var ab  = await file.arrayBuffer();
+          var res = await mammoth.extractRawText({ arrayBuffer: ab });
+          rawText = res.value;
+        } else {
+          rawText = await file.text();
+        }
+        var parsed = parseLessonText(rawText);
+        bulkParsedLessons.push({ parsed: parsed, fileName: file.name });
+
+        var card  = document.createElement('div');
+        card.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:14px;background:#fafafa;';
+        var title   = parsed.title || file.name.replace(/\.(docx?|txt)$/i, '');
+        var preview = (parsed.learningIntention || parsed.intro || '').substring(0, 120);
+        var idx     = bulkParsedLessons.length - 1;
+        card.innerHTML =
+          '<div style="font-weight:700;font-size:14px;color:var(--pri);margin-bottom:4px;">' + title + '</div>' +
+          '<div style="font-size:12px;color:#666;margin-bottom:10px;">' + preview + (preview.length >= 120 ? '\u2026' : '') + '</div>' +
+          '<button onclick="applyBulkLesson(' + idx + ')" style="padding:6px 14px;border-radius:6px;border:none;' +
+          'background:var(--pri);color:white;font-size:12px;cursor:pointer;font-weight:600;">\u2713 Apply to Generator</button>';
+        results.appendChild(card);
+      } catch (err) {
+        var errCard = document.createElement('div');
+        errCard.style.cssText = 'border:1px solid #fcc;border-radius:8px;padding:12px;background:#fff5f5;font-size:13px;color:#c00;';
+        errCard.textContent = '\u26a0 ' + file.name + ': ' + err.message;
+        results.appendChild(errCard);
+      }
+    }
+
+    status.textContent = '\u2713 Processed ' + files.length + ' file' + (files.length > 1 ? 's' : '') + '.';
+    if (bulkParsedLessons.length > 0) saveAllBtn.style.display = 'block';
+  });
+
+  function applyBulkLesson(index) {
+    var parsed = bulkParsedLessons[index].parsed;
+    var fields = ['title','year','subject','duration','learningIntention','successCriteria','equipment','intro','body','conclusion'];
+    fields.forEach(function(f) {
+      var el = document.getElementById(f);
+      if (el && parsed[f]) el.value = parsed[f];
+    });
+    document.getElementById('uploadLessonModal').style.display = 'none';
+  }
+
+  document.getElementById('bulkSaveAllBtn').addEventListener('click', async function() {
+    if (!bulkParsedLessons.length) return;
+    if (!checkTierAccess()) return;
+    var ur   = await supabase.auth.getUser();
+    var user = ur.data.user;
+    if (!user) { alert('Please sign in to save lessons.'); return; }
+    this.textContent = 'Saving\u2026';
+    this.disabled = true;
+    var saved = 0;
+    for (var j = 0; j < bulkParsedLessons.length; j++) {
+      var item = bulkParsedLessons[j];
+      var p    = item.parsed;
+      var fn   = item.fileName;
+      var row  = {
+        user_id:           user.id,
+        title:             p.title             || fn.replace(/\.(docx?|txt)$/i, ''),
+        subject:           p.subject           || '',
+        year_level:        p.year              || '',
+        duration:          p.duration          || '',
+        learning_intention:p.learningIntention || '',
+        success_criteria:  p.successCriteria   || '',
+        equipment:         p.equipment         || '',
+        intro:             p.intro             || '',
+        body:              p.body              || '',
+        conclusion:        p.conclusion        || '',
+        created_at:        new Date().toISOString()
+      };
+      var sr = await supabase.from('saved_lessons').insert([row]);
+      if (!sr.error) saved++;
+    }
+    this.textContent = '\ud83d\udcbe Save All to Library';
+    this.disabled = false;
+    alert('\u2713 Saved ' + saved + ' of ' + bulkParsedLessons.length + ' lessons to your library.');
+    if (saved === bulkParsedLessons.length)
+      document.getElementById('uploadLessonModal').style.display = 'none';
+  });;
 
 // Save all settings to localStorage
 document.getElementById('saveAllSettingsBtn').onclick = () => {
