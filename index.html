@@ -1013,6 +1013,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"><\/script>
 
 </head>
 <body>
@@ -1031,6 +1032,7 @@
   <div style="display:flex;gap:8px;">
     <button class="settings-btn" id="pickerToggle" title="Random Student Picker">🎲</button>
     <button class="settings-btn" id="darkModeToggle">🌙</button>
+    <button class="settings-btn" id="uploadLessonBtn" title="Upload &amp; Convert Existing Lesson" onclick="showUploadLessonModal()">&#128228;</button>
     <button class="settings-btn" id="settingsToggle">⚙ School Settings</button>
     <button class="settings-btn" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{key:'?',shiftKey:true}))" title="Keyboard shortcuts" style="padding:8px 10px;">?</button>
   </div>
@@ -1154,6 +1156,25 @@ document.addEventListener('click', function() {
 </script>
 
 </header>
+<!-- Upload & Convert Old Lesson Modal -->
+<div id="uploadLessonModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;justify-content:center;align-items:center;">
+  <div style="background:white;border-radius:12px;padding:28px;width:min(560px,95vw);max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:18px;font-weight:700;color:#1565C0;">&#128228; Upload &amp; Convert Lesson</div>
+      <button id="uploadLessonClose" style="background:none;border:none;font-size:22px;cursor:pointer;color:#666;line-height:1;">&times;</button>
+    </div>
+    <div style="background:#E3F2FD;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#1565C0;">Upload an existing lesson plan (DOCX or TXT) — LessonLab extracts the content and pre-fills your fields ready to regenerate in your school's format.</div>
+    <div class="form-group">
+      <label style="font-weight:600;">Select Lesson File</label>
+      <input type="file" id="uploadLessonFile" accept=".docx,.doc,.txt" style="margin-top:6px;width:100%;">
+    </div>
+    <div id="uploadLessonStatus" style="font-size:13px;margin:8px 0;min-height:18px;font-weight:500;"></div>
+    <div id="uploadLessonPreview" style="font-size:12px;background:#f9f9f9;border-radius:6px;padding:10px;max-height:240px;overflow-y:auto;margin-bottom:12px;"></div>
+    <button id="applyParsedLessonBtn" class="btn" style="display:none;width:100%;">&#10003; Apply Fields &amp; Close</button>
+    <p style="font-size:11px;color:#aaa;margin-top:12px;text-align:center;">Supports DOCX and plain text &mdash; PDF support coming soon.</p>
+  </div>
+</div>
+
 <!-- Auth Modal -->
 <div id="authModal" style="
   display: none;
@@ -1474,23 +1495,25 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   </div>
 
   <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);">
-  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;">📄 Template Upload</div>
+  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;">📄 School Template Upload</div>
 
+  <div class="form-group" style="background:#FFF8E1;border-radius:6px;padding:10px 12px;border-left:3px solid #F9A825;margin-bottom:8px;">
+    <span style="font-size:12px;color:#555;">&#128274; <b>Requires Pro or School tier.</b> Upload your school's DOCX lesson plan template and LessonLab will match your layout and sections.</span>
+  </div>
   <div class="form-group">
-    <label>Lesson Plan Template (DOCX or PDF)</label>
+    <label>Lesson Plan Template (DOCX preferred, PDF accepted)</label>
     <input type="file" id="templateUpload" accept=".docx,.pdf,.doc">
     <div id="templateStatus" style="font-size:11px;color:#666;margin-top:4px;"></div>
   </div>
   <div class="form-group">
-    <label style="font-size:11px;color:#666;">When a template is uploaded, LessonLab will use your school's layout instead of the default 3-page format. The template should have placeholder fields like {LESSON_TITLE}, {LEARNING_INTENTION}, {SUCCESS_CRITERIA}, {EQUIPMENT}, etc.</label>
+    <label style="font-size:11px;color:#888;">In your DOCX use placeholders: <code style="background:#f5f5f5;padding:1px 4px;border-radius:3px;">{LESSON_TITLE}</code> <code style="background:#f5f5f5;padding:1px 4px;border-radius:3px;">{LEARNING_INTENTION}</code> <code style="background:#f5f5f5;padding:1px 4px;border-radius:3px;">{SUCCESS_CRITERIA}</code> <code style="background:#f5f5f5;padding:1px 4px;border-radius:3px;">{EQUIPMENT}</code> <code style="background:#f5f5f5;padding:1px 4px;border-radius:3px;">{STEPS}</code> <code style="background:#f5f5f5;padding:1px 4px;border-radius:3px;">{DIFFERENTIATION}</code></label>
   </div>
   <div class="form-group">
-    <label>Template Placeholders Detected</label>
+    <label>Detected Structure</label>
     <div id="templatePlaceholders" style="font-size:12px;color:#666;background:var(--light);padding:8px;border-radius:4px;min-height:30px;">No template uploaded</div>
   </div>
 
-  <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);">
-  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;">📋 Curriculum Scope Upload</div>
+📋 Curriculum Scope Upload</div>
 
   <div class="form-group">
     <label>Yearly Curriculum Overview (XLSX or CSV)</label>
@@ -5839,66 +5862,29 @@ document.getElementById('schoolFooter').onchange = (e) => {
   schoolBranding.footerText = e.target.value;
 };
 
-// Template upload handler
-document.getElementById('templateUpload').onchange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const status = document.getElementById('templateStatus');
-  const placeholders = document.getElementById('templatePlaceholders');
-
-  status.textContent = '⏳ Reading template...';
-  status.style.color = '#1565C0';
-
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const data = event.target.result;
-
-    // Try to extract text and find placeholders
-    if (file.name.endsWith('.docx')) {
-      // For DOCX, try to extract XML text content
-      try {
-        const zip = new JSZip ? null : null; // JSZip not available, use raw approach
-        // Simple DOCX text extraction - look for {PLACEHOLDER} patterns in raw data
-        const text = new TextDecoder('utf-8', {fatal: false}).decode(new Uint8Array(data));
-        const foundPlaceholders = [...new Set(text.match(/\{[A-Z_]+\}/g) || [])];
-
-        schoolTemplate = {
-          name: file.name,
-          size: file.size,
-          type: 'docx',
-          data: data,
-          placeholders: foundPlaceholders
-        };
-
-        status.textContent = '✅ Template loaded: ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-        status.style.color = '#2E7D32';
-
-        if (foundPlaceholders.length > 0) {
-          placeholders.innerHTML = '<b>' + foundPlaceholders.length + ' placeholders found:</b><br>' +
-            foundPlaceholders.map(p => '<code style="background:#E8F5E9;padding:2px 6px;border-radius:3px;font-size:11px;margin:2px;">' + p + '</code>').join(' ');
-        } else {
-          placeholders.innerHTML = '<span style="color:#E65100;">⚠ No {PLACEHOLDER} fields detected.</span><br><span style="font-size:11px;">Add placeholders like {LESSON_TITLE}, {LEARNING_INTENTION}, {SUCCESS_CRITERIA}, {EQUIPMENT}, {STEPS}, {DIFFERENTIATION} to your template.</span>';
-        }
-      } catch(err) {
-        status.textContent = '⚠ Could not parse DOCX. Will use as visual reference.';
-        status.style.color = '#E65100';
-        schoolTemplate = { name: file.name, size: file.size, type: 'docx', data: data, placeholders: [] };
-        placeholders.textContent = 'Template saved as reference (no placeholders detected)';
-      }
-    } else if (file.name.endsWith('.pdf')) {
-      schoolTemplate = {
-        name: file.name,
-        size: file.size,
-        type: 'pdf',
-        data: data,
-        placeholders: []
-      };
-      status.textContent = '✅ PDF template loaded: ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-      status.style.color = '#2E7D32';
-      placeholders.innerHTML = '<span style="color:#666;">PDF loaded as visual reference. For auto-fill, use a DOCX template with {PLACEHOLDER} fields.</span>';
-    }
-  };
-  reader.readAsArrayBuffer(file);
+// Template upload handler (mammoth.js-powered)
+document.getElementById('templateUpload').onchange = async (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  if (!checkTierAccess('template')) { showUpgradePrompt('School Template Upload'); e.target.value=''; return; }
+  const status=document.getElementById('templateStatus'), placeholders=document.getElementById('templatePlaceholders');
+  status.textContent='⏳ Reading template...'; status.style.color='#1565C0';
+  try {
+    let extractedText='';
+    if ((file.name.endsWith('.docx')||file.name.endsWith('.doc'))&&typeof mammoth!=='undefined') {
+      const buf=await file.arrayBuffer(), res=await mammoth.extractRawText({arrayBuffer:buf}); extractedText=res.value;
+    } else if (!file.name.endsWith('.pdf')) { extractedText=await file.text().catch(()=>''); }
+    const fp=[...new Set((extractedText.match(/\{[A-Z_]+\}/g)||[]))];
+    const lines=extractedText.split('\n').map(l=>l.trim()).filter(Boolean);
+    const headings=lines.filter(l=>l.length<60&&l.length>2&&(l===l.toUpperCase()||/^[A-Z][A-Za-z\s&\/]+:?$/.test(l)));
+    schoolTemplate={name:file.name,size:file.size,type:file.name.endsWith('.pdf')?'pdf':'docx',placeholders:fp,sections:headings.slice(0,20),rawText:extractedText.substring(0,3000)};
+    status.textContent='✅ Template loaded: '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)'; status.style.color='#2E7D32';
+    let info='';
+    if(fp.length>0) info+='<b>'+fp.length+' placeholder fields:</b><br>'+fp.map(p=>'<code style="background:#E8F5E9;padding:2px 5px;border-radius:3px;font-size:11px;">'+p+'</code>').join(' ')+'<br><br>';
+    if(headings.length>0) info+='<b>Sections detected ('+headings.length+'):</b><br>'+headings.slice(0,12).map(h=>'<span style="font-size:11px;color:#555;">&#9658; '+h+'</span>').join('<br>');
+    if(!info) info='<span style="color:#E65100;">&#9888; No structure detected. Add headings or {PLACEHOLDER} fields.</span>';
+    placeholders.innerHTML=info;
+    showToast('✅ School template loaded');
+  } catch(err) { status.textContent='⚠ Error: '+err.message; status.style.color='#E65100'; }
 };
 
 // Curriculum upload handler
@@ -5961,6 +5947,72 @@ document.getElementById('curriculumUpload').onchange = (e) => {
   };
   reader.readAsText(file);
 };
+
+
+// ── Upload Old Lesson / Convert ──
+function showUploadLessonModal() {
+  const modal = document.getElementById('uploadLessonModal');
+  if (!modal) return;
+  if (!checkTierAccess('convert')) { showUpgradePrompt('Upload & Convert Lesson'); return; }
+  modal.style.display = 'flex';
+  document.getElementById('uploadLessonStatus').textContent = '';
+  document.getElementById('uploadLessonPreview').innerHTML = '';
+  document.getElementById('applyParsedLessonBtn').style.display = 'none';
+  document.getElementById('uploadLessonFile').value = '';
+}
+document.getElementById('uploadLessonClose').addEventListener('click', () => {
+  document.getElementById('uploadLessonModal').style.display = 'none';
+});
+document.getElementById('uploadLessonModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('uploadLessonModal')) document.getElementById('uploadLessonModal').style.display = 'none';
+});
+document.getElementById('uploadLessonFile').onchange = async (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const statusEl = document.getElementById('uploadLessonStatus');
+  const previewEl = document.getElementById('uploadLessonPreview');
+  statusEl.textContent = '⏳ Reading lesson...'; statusEl.style.color = '#1565C0';
+  previewEl.innerHTML = '';
+  try {
+    let extractedText = '';
+    if ((file.name.endsWith('.docx')||file.name.endsWith('.doc')) && typeof mammoth !== 'undefined') {
+      const buf = await file.arrayBuffer();
+      const res = await mammoth.extractRawText({ arrayBuffer: buf });
+      extractedText = res.value;
+    } else { extractedText = await file.text().catch(()=>''); }
+    if (!extractedText.trim()) { statusEl.textContent = '⚠ Could not extract text. Try .docx or .txt.'; statusEl.style.color = '#E65100'; return; }
+    const parsed = parseLessonText(extractedText);
+    statusEl.textContent = '✅ Extracted — review below then click Apply.'; statusEl.style.color = '#2E7D32';
+    previewEl.innerHTML = Object.entries(parsed).filter(([,v])=>v)
+      .map(([k,v])=>'<div style="margin:5px 0;"><b style="color:#1565C0;font-size:11px;text-transform:uppercase;">'+k+':</b><br><span style="font-size:12px;color:#333;">'+v.substring(0,180)+(v.length>180?'…':'')+'</span></div>')
+      .join('<hr style="border:none;border-top:1px solid #eee;margin:4px 0;">');
+    window._parsedLesson = parsed;
+    document.getElementById('applyParsedLessonBtn').style.display = 'block';
+  } catch(err) { statusEl.textContent = '⚠ Error: '+err.message; statusEl.style.color = '#E65100'; }
+};
+function parseLessonText(rawText) {
+  const result = {title:'',learningIntention:'',successCriteria:'',equipment:'',intro:'',body:'',conclusion:'',differentiation:'',assessment:''};
+  const lines = rawText.split('\n').map(l=>l.trim()).filter(Boolean);
+  const sM = {'learning intention':'learningIntention','learning intentions':'learningIntention','success criteria':'successCriteria','success criterion':'successCriteria','equipment':'equipment','resources':'equipment','materials':'equipment','introduction':'intro','hook':'intro','warm up':'intro','warm-up':'intro','tuning in':'intro','body':'body','main activity':'body','explicit teaching':'body','making':'body','activities':'body','studio time':'body','conclusion':'conclusion','wrap up':'conclusion','reflection':'conclusion','sharing':'conclusion','differentiation':'differentiation','extension':'differentiation','adjustments':'differentiation','assessment':'assessment','evaluation':'assessment','evidence':'assessment'};
+  let cur = null;
+  for (let i=0;i<lines.length;i++) {
+    const line=lines[i], lower=line.toLowerCase().replace(/[^a-z\s\-]/g,'').trim();
+    let matched=false;
+    for (const [key,field] of Object.entries(sM)) {
+      if (lower===key||lower.startsWith(key+' ')||lower.startsWith(key+':')||lower.startsWith(key+'-')) {
+        cur=field; const rest=line.substring(line.toLowerCase().indexOf(key)+key.length).replace(/^[:\s\-]+/,'').trim();
+        if(rest)result[field]+=(result[field]?'\n':'')+rest; matched=true; break;
+      }
+    }
+    if (!matched){if(i<3&&!result.title)result.title=line;else if(cur)result[cur]+=(result[cur]?'\n':'')+line;}
+  }
+  Object.keys(result).forEach(k=>{result[k]=result[k].trim();}); return result;
+}
+document.getElementById('applyParsedLessonBtn').addEventListener('click', () => {
+  const p=window._parsedLesson; if(!p)return;
+  [['liInput',p.learningIntention],['scInput',p.successCriteria],['eqInput',p.equipment]].forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val)el.value=val;});
+  document.getElementById('uploadLessonModal').style.display='none';
+  showToast('✅ Lesson fields pre-filled! Select a subject to generate.');
+});
 
 // Save all settings to localStorage
 document.getElementById('saveAllSettingsBtn').onclick = () => {
