@@ -1014,6 +1014,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
 </head>
 <body>
@@ -1167,14 +1169,14 @@ document.addEventListener('click', function() {
     </div>
     <div id="singleUploadTab">
       <p style="color:#555;font-size:14px;margin:0 0 14px;">Upload a .docx or .txt lesson file and we'll extract the fields automatically.</p>
-      <input type="file" id="uploadLessonFile" accept=".docx,.doc,.txt" style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
+      <input type="file" id="uploadLessonFile" accept=".docx,.doc,.txt,.pptx,.ppt,.pdf" style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
       <div id="uploadLessonStatus" style="font-size:13px;color:#666;margin-bottom:10px;"></div>
       <div id="uploadLessonPreview" style="background:#f9f9f9;border-radius:8px;padding:14px;font-size:13px;color:#333;max-height:220px;overflow-y:auto;display:none;margin-bottom:14px;"></div>
       <button id="applyParsedLessonBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;">✓ Apply Fields &amp; Close</button>
     </div>
     <div id="bulkUploadTab" style="display:none;">
       <p style="color:#555;font-size:14px;margin:0 0 14px;">Select multiple lesson files to import them all at once.</p>
-      <input type="file" id="bulkUploadFiles" accept=".docx,.doc,.txt" multiple style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
+      <input type="file" id="bulkUploadFiles" accept=".docx,.doc,.txt,.pptx,.ppt,.pdf" multiple style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
       <div id="bulkUploadStatus" style="font-size:13px;color:#666;margin-bottom:10px;"></div>
       <div id="bulkUploadResults" style="display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto;margin-bottom:14px;"></div>
       <button id="bulkSaveAllBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;">💾 Save All to Library</button>
@@ -5878,9 +5880,7 @@ document.getElementById('templateUpload').onchange = async (e) => {
   status.textContent='⏳ Reading template...'; status.style.color='#1565C0';
   try {
     let extractedText='';
-    if ((file.name.endsWith('.docx')||file.name.endsWith('.doc'))&&typeof mammoth!=='undefined') {
-      const buf=await file.arrayBuffer(), res=await mammoth.extractRawText({arrayBuffer:buf}); extractedText=res.value;
-    } else if (!file.name.endsWith('.pdf')) { extractedText=await file.text().catch(()=>''); }
+    extractedText = await extractFileText(file).catch(function(){return '';});
     const fp=[...new Set((extractedText.match(/\{[A-Z_]+\}/g)||[]))];
     const lines=extractedText.split('\n').map(l=>l.trim()).filter(Boolean);
     const headings=lines.filter(l=>l.length<60&&l.length>2&&(l===l.toUpperCase()||/^[A-Z][A-Za-z\s&\/]+:?$/.test(l)));
@@ -5982,11 +5982,7 @@ document.getElementById('uploadLessonFile').onchange = async (e) => {
   previewEl.innerHTML = '';
   try {
     let extractedText = '';
-    if ((file.name.endsWith('.docx')||file.name.endsWith('.doc')) && typeof mammoth !== 'undefined') {
-      const buf = await file.arrayBuffer();
-      const res = await mammoth.extractRawText({ arrayBuffer: buf });
-      extractedText = res.value;
-    } else { extractedText = await file.text().catch(()=>''); }
+    extractedText = await extractFileText(file).catch(function(){return '';});
     if (!extractedText.trim()) { statusEl.textContent = '⚠ Could not extract text. Try .docx or .txt.'; statusEl.style.color = '#E65100'; return; }
     const parsed = parseLessonText(extractedText);
     statusEl.textContent = '✅ Extracted — review below then click Apply.'; statusEl.style.color = '#2E7D32';
@@ -6015,6 +6011,42 @@ function parseLessonText(rawText) {
   }
   Object.keys(result).forEach(k=>{result[k]=result[k].trim();}); return result;
 }
+
+  async function extractFileText(file) {
+    var name = file.name.toLowerCase();
+    if ((name.endsWith('.docx') || name.endsWith('.doc')) && typeof mammoth !== 'undefined') {
+      var ab  = await file.arrayBuffer();
+      var res = await mammoth.extractRawText({ arrayBuffer: ab });
+      return res.value;
+    } else if ((name.endsWith('.pptx') || name.endsWith('.ppt')) && typeof JSZip !== 'undefined') {
+      var ab  = await file.arrayBuffer();
+      var zip = await JSZip.loadAsync(ab);
+      var sfs = Object.keys(zip.files)
+        .filter(function(f) { return /^ppt\/slides\/slide\d+\.xml$/.test(f); })
+        .sort();
+      var txts = [];
+      for (var si = 0; si < sfs.length; si++) {
+        var xml = await zip.files[sfs[si]].async('string');
+        var ms  = xml.match(/<a:t[^>]*>([^<]+)<\/a:t>/g) || [];
+        ms.forEach(function(m) { txts.push(m.replace(/<[^>]+>/g, '')); });
+      }
+      return txts.join('\n');
+    } else if (name.endsWith('.pdf') && typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+      var ab  = await file.arrayBuffer();
+      var pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+      var txts = [];
+      for (var pi = 1; pi <= pdf.numPages; pi++) {
+        var page = await pdf.getPage(pi);
+        var tc   = await page.getTextContent();
+        txts.push(tc.items.map(function(i) { return i.str; }).join(' '));
+      }
+      return txts.join('\n');
+    } else {
+      return await file.text();
+    }
+  }
 document.getElementById('applyParsedLessonBtn').addEventListener('click', () => {
   const p=window._parsedLesson; if(!p)return;
   [['liInput',p.learningIntention],['scInput',p.successCriteria],['eqInput',p.equipment]].forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val)el.value=val;});
@@ -6055,13 +6087,7 @@ document.getElementById('applyParsedLessonBtn').addEventListener('click', () => 
       var file = files[i];
       try {
         var rawText = '';
-        if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
-          var ab  = await file.arrayBuffer();
-          var res = await mammoth.extractRawText({ arrayBuffer: ab });
-          rawText = res.value;
-        } else {
-          rawText = await file.text();
-        }
+        rawText = await extractFileText(file);
         var parsed = parseLessonText(rawText);
         bulkParsedLessons.push({ parsed: parsed, fileName: file.name });
 
