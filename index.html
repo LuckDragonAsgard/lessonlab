@@ -6226,21 +6226,27 @@ document.getElementById('applyParsedLessonBtn').addEventListener('click', () => 
       var item = bulkParsedLessons[j];
       var p    = item.parsed;
       var fn   = item.fileName;
-      var row  = {
-        user_id:           user.id,
-        title:             p.title             || fn.replace(/\.(docx?|txt)$/i, ''),
-        subject:           p.subject           || '',
-        year_level:        p.year              || '',
-        duration:          p.duration          || '',
-        learning_intention:p.learningIntention || '',
-        success_criteria:  p.successCriteria   || '',
-        equipment:         p.equipment         || '',
-        intro:             p.intro             || '',
-        body:              p.body              || '',
-        conclusion:        p.conclusion        || '',
-        created_at:        new Date().toISOString()
+      var row = {
+        user_id:            currentUser.id,
+        title:              p.title              || file.name,
+        subject:            p.subject            || '',
+        year_level:         p.year               || '',
+        learning_intention: p.learningIntention  || '',
+        success_criteria:   p.successCriteria    ? p.successCriteria.split(/[\n;]/).map(function(s){return s.trim();}).filter(Boolean) : [],
+        equipment:          p.equipment          || '',
+        lesson_data:        {
+          duration:         p.duration           || '',
+          intro:            p.intro              || '',
+          body:             p.body               || '',
+          conclusion:       p.conclusion         || '',
+          differentiation:  p.differentiation    || '',
+          assessment:       p.assessment         || ''
+        },
+        is_template:        false,
+        created_at:         new Date().toISOString(),
+        updated_at:         new Date().toISOString()
       };
-      var sr = await supabase.from('saved_lessons').insert([row]);
+      var sr = await supabase.from('lessons').insert([row]);
       if (!sr.error) saved++;
     }
     this.textContent = '\ud83d\udcbe Save All to Library';
@@ -7368,6 +7374,8 @@ console.log('LessonLab Auth & Cloud Integration loaded successfully');
           '<td style="padding:10px 8px;text-align:center;">' +adminChk+'</td>' +
           '<td style="padding:10px 8px;text-align:center;font-size:0.8rem;color:#6b7280;">' +(u.lesson_count||0)+'</td>' +
           '<td style="padding:10px 8px;font-size:0.75rem;color:#9ca3af;">' +(u.state||'—')+'</td>' +
+          '<td style="padding:10px 8px;font-size:0.75rem;color:#9ca3af;">' +(u.created_at ? new Date(u.created_at).toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'2-digit'}) : '—')+'</td>' +
+          '<td style="padding:10px 8px;font-size:0.75rem;color:#9ca3af;">' +(u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'2-digit'}) : 'Never')+'</td>' +
           '</tr>';
       }).join('');
       tableEl.innerHTML = rows;
@@ -7410,7 +7418,7 @@ console.log('LessonLab Auth & Cloud Integration loaded successfully');
           <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Tier</th>
           <th style="padding:10px 8px;text-align:center;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Admin</th>
           <th style="padding:10px 8px;text-align:center;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Lessons</th>
-          <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">State</th>
+          <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">State</th><th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Joined</th><th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Last Login</th>
         </tr></thead>
         <tbody id="adminUsersTable"></tbody>
       </table>
