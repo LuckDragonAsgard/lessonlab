@@ -1062,10 +1062,10 @@
   </div>
   <div id="header-right" style="display:flex;gap:8px;align-items:center;">
     
-    <button class="settings-btn" id="darkModeToggle">🌙</button>
-    <button class="settings-btn" id="uploadLessonBtn" title="Upload &amp; Convert Existing Lesson" onclick="showUploadLessonModal()">&#128228;</button>
+    <button class="settings-btn" id="darkModeToggle" style="display:none">🌙</button>
+    <button class="settings-btn" style="display:none" id="uploadLessonBtn" title="Upload &amp; Convert Existing Lesson" onclick="showUploadLessonModal()">&#128228;</button>
     <button class="settings-btn" id="settingsToggle" style="display:none">⚙ School Settings</button>
-    <button class="settings-btn" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{key:'?',shiftKey:true}))" title="Keyboard shortcuts" style="padding:8px 10px;">?</button>
+    <button class="settings-btn" id="helpBtn" style="display:none" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{key:'?',shiftKey:true}))" title="Keyboard shortcuts">?</button>
   </div>
 
 
@@ -1583,7 +1583,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   <!-- LANDING: SUBJECTS -->
   <div id="subjectsPanel" class="panel active">
     <div style="text-align:center;padding:28px 20px 16px;">
-      <div style="font-size:1.7rem;font-weight:700;color:var(--pri);margin-bottom:8px;line-height:1.2;">Lesson planning, done in minutes</div>
+      <div style="font-size:2.2rem;font-weight:800;color:var(--pri);margin-bottom:10px;line-height:1.2;">Lesson planning, done in minutes</div>
       <div style="font-size:0.95rem;color:#555;max-width:500px;margin:0 auto;">AI-powered and aligned to Victorian Curriculum 2.0 &amp; VTLM 2.0. Pick a subject below to generate a unit, or use <strong>Term Planner</strong> for a full term.</div>
     </div>
     <div class="subjects-grid" id="subjectsGrid" role="grid" aria-label="Subject selection"></div>
@@ -6580,6 +6580,12 @@ function updateAuthUI(user) {
     if (accountSettingsBtn) accountSettingsBtn.style.display = user ? 'block' : 'none';
         var settingsToggleBtn = document.getElementById('settingsToggle');
         if (settingsToggleBtn) settingsToggleBtn.style.display = user ? 'inline-flex' : 'none';
+        var darkModeBtn = document.getElementById('darkModeToggle');
+        if (darkModeBtn) darkModeBtn.style.display = user ? 'inline-flex' : 'none';
+        var uploadBtn = document.getElementById('uploadLessonBtn');
+        if (uploadBtn) uploadBtn.style.display = user ? 'inline-flex' : 'none';
+        var helpBtn = document.getElementById('helpBtn');
+        if (helpBtn) helpBtn.style.display = user ? 'inline-flex' : 'none';
     const displayName = currentProfile.display_name || user.email;
     const initials = displayName.charAt(0).toUpperCase();
 
