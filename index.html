@@ -1126,7 +1126,9 @@
           border-bottom: 1px solid var(--border, #e5e7eb);
         ">Account Settings</button>
 
-        <button id="signOutBtn" style="
+                <button id="adminPanelBtn" onclick="openAdminPanel()" style="display:none;width:100%;text-align:left;padding:0.75rem 1rem;background:none;border:none;border-top:1px solid #e5e7eb;cursor:pointer;font-size:0.875rem;color:#7c3aed;font-weight:500;">&#128737;&#65039; Admin Panel</button>
+
+<button id="signOutBtn" style="
           display: block;
           width: 100%;
           text-align: left;
@@ -6532,6 +6534,8 @@ function updateAuthUI(user) {
     // User is signed in
     if (signInBtn) signInBtn.style.display = 'none';
     if (userArea) userArea.style.display = 'flex';
+    var adminPanelBtn = document.getElementById('adminPanelBtn');
+    if (adminPanelBtn) adminPanelBtn.style.display = (currentProfile && currentProfile.is_admin) ? 'block' : 'none';
 
     const displayName = currentProfile.display_name || user.email;
     const initials = displayName.charAt(0).toUpperCase();
@@ -7317,7 +7321,102 @@ setInterval(() => {
 }, 10000); // Check every 10 seconds
 
 console.log('LessonLab Auth & Cloud Integration loaded successfully');
+
+  // ============================================================
+  // ADMIN PORTAL
+  // ============================================================
+
+  function openAdminPanel() {
+    document.getElementById('adminPanelModal').style.display = 'flex';
+    loadAdminUsers();
+  }
+  function closeAdminPanel() {
+    document.getElementById('adminPanelModal').style.display = 'none';
+  }
+  async function loadAdminUsers() {
+    var statusEl = document.getElementById('adminLoadStatus');
+    var tableEl  = document.getElementById('adminUsersTable');
+    statusEl.textContent = 'Loading...';
+    tableEl.innerHTML = '';
+    try {
+      var res = await sb.from('admin_users_view').select('*').order('created_at', { ascending: false });
+      if (res.error) throw res.error;
+      var data = res.data;
+      var total   = data.length;
+      var nFree   = data.filter(function(u){ return u.tier === 'free'; }).length;
+      var nPro    = data.filter(function(u){ return u.tier === 'pro'; }).length;
+      var nSchool = data.filter(function(u){ return u.tier === 'school'; }).length;
+      var nLess   = data.reduce(function(s,u){ return s + (u.lesson_count||0); }, 0);
+      document.getElementById('adminStatTotal').textContent   = total;
+      document.getElementById('adminStatFree').textContent    = nFree;
+      document.getElementById('adminStatPro').textContent     = nPro;
+      document.getElementById('adminStatSchool').textContent  = nSchool;
+      document.getElementById('adminStatLessons').textContent = nLess;
+      statusEl.textContent = '';
+      var rows = data.map(function(u) {
+        var tierSel =
+          '<select onchange="adminUpdateTier(\''+u.id+'\',this.value)" style="font-size:0.8rem;padding:3px 6px;border:1px solid #d1d5db;border-radius:4px;">' +
+          '<option value="free"'  +(u.tier==='free'?' selected':'')+'>Free</option>' +
+          '<option value="pro"'   +(u.tier==='pro'?' selected':'')+'>Pro</option>' +
+          '<option value="school"'+(u.tier==='school'?' selected':'')+'>School</option>' +
+          '</select>';
+        var adminChk = '<input type="checkbox"'+(u.is_admin?' checked':'')+' onchange="adminToggleAdmin(\''+u.id+'\',this.checked)">';
+        return '<tr style="border-bottom:1px solid #f3f4f6;">' +
+          '<td style="padding:10px 8px;font-size:0.8rem;">' +(u.email||'—')+'</td>' +
+          '<td style="padding:10px 8px;font-size:0.8rem;color:#6b7280;">' +(u.display_name||'—')+'</td>' +
+          '<td style="padding:10px 8px;">' +tierSel+'</td>' +
+          '<td style="padding:10px 8px;text-align:center;">' +adminChk+'</td>' +
+          '<td style="padding:10px 8px;text-align:center;font-size:0.8rem;color:#6b7280;">' +(u.lesson_count||0)+'</td>' +
+          '<td style="padding:10px 8px;font-size:0.75rem;color:#9ca3af;">' +(u.state||'—')+'</td>' +
+          '</tr>';
+      }).join('');
+      tableEl.innerHTML = rows;
+    } catch(err) {
+      statusEl.textContent = 'Error: ' + err.message;
+    }
+  }
+  async function adminUpdateTier(uid, tier) {
+    var r = await sb.from('profiles').update({ tier: tier, updated_at: new Date().toISOString() }).eq('id', uid);
+    showToast(r.error ? 'Update failed: '+r.error.message : 'Tier set to '+tier, r.error ? 'error' : 'success');
+  }
+  async function adminToggleAdmin(uid, makeAdmin) {
+    var r = await sb.from('profiles').update({ is_admin: makeAdmin, updated_at: new Date().toISOString() }).eq('id', uid);
+    showToast(r.error ? 'Failed' : (makeAdmin ? 'Admin access granted' : 'Admin access removed'), r.error ? 'error' : 'success');
+  }
 </script>
+<div id="adminPanelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:5000;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;">
+  <div style="background:white;border-radius:16px;width:100%;max-width:900px;padding:32px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h2 style="font-size:1.5rem;font-weight:700;color:#111827;">&#128737;&#65039; Admin Panel</h2>
+      <button onclick="closeAdminPanel()" style="font-size:1.5rem;background:none;border:none;cursor:pointer;color:#6b7280;">&times;</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;">
+      <div style="background:#f9fafb;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatTotal" style="font-size:1.75rem;font-weight:700;color:#111827;">&#8212;</div><div style="font-size:0.75rem;color:#6b7280;margin-top:2px;">Total Users</div></div>
+      <div style="background:#fef3c7;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatFree" style="font-size:1.75rem;font-weight:700;color:#92400e;">&#8212;</div><div style="font-size:0.75rem;color:#92400e;margin-top:2px;">Free</div></div>
+      <div style="background:#ede9fe;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatPro" style="font-size:1.75rem;font-weight:700;color:#7c3aed;">&#8212;</div><div style="font-size:0.75rem;color:#7c3aed;margin-top:2px;">Pro</div></div>
+      <div style="background:#d1fae5;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatSchool" style="font-size:1.75rem;font-weight:700;color:#065f46;">&#8212;</div><div style="font-size:0.75rem;color:#065f46;margin-top:2px;">School</div></div>
+      <div style="background:#dbeafe;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatLessons" style="font-size:1.75rem;font-weight:700;color:#1e40af;">&#8212;</div><div style="font-size:0.75rem;color:#1e40af;margin-top:2px;">Lessons</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="font-size:1rem;font-weight:600;color:#374151;">Users</h3>
+      <button onclick="loadAdminUsers()" style="font-size:0.8rem;padding:6px 14px;background:#f3f4f6;border:none;border-radius:6px;cursor:pointer;">&#8635; Refresh</button>
+    </div>
+    <div id="adminLoadStatus" style="font-size:0.85rem;color:#6b7280;margin-bottom:8px;"></div>
+    <div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:10px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+          <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Email</th>
+          <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Name</th>
+          <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Tier</th>
+          <th style="padding:10px 8px;text-align:center;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Admin</th>
+          <th style="padding:10px 8px;text-align:center;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">Lessons</th>
+          <th style="padding:10px 8px;text-align:left;font-size:0.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;">State</th>
+        </tr></thead>
+        <tbody id="adminUsersTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
