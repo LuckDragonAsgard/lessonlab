@@ -1126,7 +1126,8 @@
           border-bottom: 1px solid var(--border, #e5e7eb);
         ">Account Settings</button>
 
-                <button id="adminPanelBtn" onclick="openAdminPanel()" style="display:none;width:100%;text-align:left;padding:0.75rem 1rem;background:none;border:none;border-top:1px solid #e5e7eb;cursor:pointer;font-size:0.875rem;color:#7c3aed;font-weight:500;">&#128737;&#65039; Admin Panel</button>
+                <button id="<button id="accountSettingsBtn" onclick="openAccountSettings()" style="display:none;width:100%;text-align:left;padding:0.75rem 1rem;background:none;border:none;border-top:1px solid #e5e7eb;cursor:pointer;font-size:0.875rem;color:#374151;">⚙️ My Account</button>
+adminPanelBtn" onclick="openAdminPanel()" style="display:none;width:100%;text-align:left;padding:0.75rem 1rem;background:none;border:none;border-top:1px solid #e5e7eb;cursor:pointer;font-size:0.875rem;color:#7c3aed;font-weight:500;">&#128737;&#65039; Admin Panel</button>
 
 <button id="signOutBtn" style="
           display: block;
@@ -5749,7 +5750,29 @@ function printStudentTracker(idx) {
   html += '.check{width:40px;}';
   html += '.footer{margin-top:10px;font-size:9px;color:#999;text-align:center;}';
   html += '@media print{body{margin:10mm;}@page{margin:10mm;}}';
-  html += '</style></head><body>';
+  html += '
+@media (max-width: 768px) {
+  header { flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem 1rem; }
+  .header-logo { gap: 0.5rem; }
+  .header-title h1 { font-size: 1.1rem; }
+  .header-title .school { font-size: 0.7rem; }
+  .user-area { gap: 0.375rem; }
+  #signInBtn, #signUpBtn { padding: 0.375rem 0.625rem; font-size: 0.8rem; }
+  .subjects-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; padding: 0.75rem; }
+  .subject-card { padding: 1rem 0.75rem; }
+  .lesson-container { padding: 0.5rem; gap: 0.5rem; }
+  .btn-group { flex-wrap: wrap; gap: 0.375rem; }
+  .result-actions { flex-wrap: wrap; gap: 0.375rem; }
+  .settings-panel { width: 100% !important; min-width: unset !important; }
+  .modal-overlay { padding: 0.5rem; }
+}
+@media (max-width: 480px) {
+  .subjects-grid { grid-template-columns: 1fr; }
+  header { padding: 0.5rem 0.75rem; }
+  .header-title h1 { font-size: 1rem; }
+  .subject-card { padding: 0.875rem 0.625rem; }
+  .btn-group button, .result-actions button { font-size: 0.8rem; padding: 0.375rem 0.5rem; }
+}</style></head><body>';
   html += '<h1>' + (d.subject || '') + ' — Week ' + d.week + ': ' + d.title + '</h1>';
   html += '<h2>' + (d.school || '') + ' · ' + (d.year || '') + ' · ' + (d.term || '') + '</h2>';
   html += '<table><thead><tr><th class="name">Student</th><th class="check">Present</th>';
@@ -6546,6 +6569,8 @@ function updateAuthUI(user) {
     var adminPanelBtn = document.getElementById('adminPanelBtn');
     if (adminPanelBtn) adminPanelBtn.style.display = (currentProfile && currentProfile.is_admin) ? 'block' : 'none';
 
+    var accountSettingsBtn = document.getElementById('accountSettingsBtn');
+    if (accountSettingsBtn) accountSettingsBtn.style.display = user ? 'block' : 'none';
     const displayName = currentProfile.display_name || user.email;
     const initials = displayName.charAt(0).toUpperCase();
 
@@ -7384,7 +7409,56 @@ console.log('LessonLab Auth & Cloud Integration loaded successfully');
     var r = await sb.from('profiles').update({ is_admin: makeAdmin, updated_at: new Date().toISOString() }).eq('id', uid);
     showToast(r.error ? 'Failed' : (makeAdmin ? 'Admin access granted' : 'Admin access removed'), r.error ? 'error' : 'success');
   }
-</script>
+
+function openAccountSettings() {
+  var dd = document.getElementById('userDropdown');
+  if (dd) dd.style.display = 'none';
+  var modal = document.getElementById('accountSettingsModal');
+  document.getElementById('acctDisplayName').value = (currentProfile && currentProfile.display_name) || '';
+  document.getElementById('acctSchoolName').value = (state && state.school) || '';
+  document.getElementById('acctNewPassword').value = '';
+  document.getElementById('acctConfirmPassword').value = '';
+  document.getElementById('acctMessage').style.display = 'none';
+  modal.style.display = 'flex';
+}
+function closeAccountSettings() {
+  document.getElementById('accountSettingsModal').style.display = 'none';
+}
+async function saveAccountSettings() {
+  var displayName = document.getElementById('acctDisplayName').value.trim();
+  var schoolName = document.getElementById('acctSchoolName').value.trim();
+  var newPass = document.getElementById('acctNewPassword').value;
+  var confirmPass = document.getElementById('acctConfirmPassword').value;
+  var msg = document.getElementById('acctMessage');
+  if (newPass && newPass !== confirmPass) {
+    msg.textContent = 'Passwords do not match.';
+    msg.style.cssText = 'display:block;padding:0.75rem;border-radius:0.375rem;font-size:0.875rem;margin-bottom:1rem;background:#fee2e2;color:#991b1b;';
+    return;
+  }
+  try {
+    if (displayName && currentUser) {
+      await sb.from('profiles').update({display_name: displayName}).eq('user_id', currentUser.id);
+      if (currentProfile) currentProfile.display_name = displayName;
+    }
+    if (state && schoolName !== state.school) {
+      state.school = schoolName;
+      var el = document.getElementById('headerSchool');
+      if (el) el.textContent = schoolName;
+      if (typeof saveState === 'function') saveState();
+    }
+    if (newPass) {
+      var r = await sb.auth.updateUser({password: newPass});
+      if (r.error) throw r.error;
+    }
+    if (typeof updateAuthUI === 'function') updateAuthUI(currentUser);
+    msg.textContent = 'Changes saved!';
+    msg.style.cssText = 'display:block;padding:0.75rem;border-radius:0.375rem;font-size:0.875rem;margin-bottom:1rem;background:#dcfce7;color:#166534;';
+    setTimeout(function(){ closeAccountSettings(); }, 1400);
+  } catch(e) {
+    msg.textContent = 'Error: ' + (e.message || 'Could not save changes.');
+    msg.style.cssText = 'display:block;padding:0.75rem;border-radius:0.375rem;font-size:0.875rem;margin-bottom:1rem;background:#fee2e2;color:#991b1b;';
+  }
+}</script>
 <div id="adminPanelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:5000;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;">
   <div style="background:white;border-radius:16px;width:100%;max-width:900px;padding:32px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
@@ -7419,5 +7493,20 @@ console.log('LessonLab Auth & Cloud Integration loaded successfully');
   </div>
 </div>
 
-</body>
+
+<div id="accountSettingsModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:0.5rem;padding:2rem;max-width:440px;width:90%;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <h2 style="margin:0;font-size:1.25rem;color:#1f2937;">My Account</h2>
+      <button onclick="closeAccountSettings()" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:#6b7280;">✕</button>
+    </div>
+    <div style="margin-bottom:1.25rem;"><label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.375rem;">Display Name</label><input id="acctDisplayName" type="text" style="width:100%;padding:0.5rem 0.75rem;border:1px solid #d1d5db;border-radius:0.375rem;font-size:0.875rem;box-sizing:border-box;" placeholder="Your name"/></div>
+    <div style="margin-bottom:1.25rem;"><label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.375rem;">School Name</label><input id="acctSchoolName" type="text" style="width:100%;padding:0.5rem 0.75rem;border:1px solid #d1d5db;border-radius:0.375rem;font-size:0.875rem;box-sizing:border-box;" placeholder="Your school"/></div>
+    <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.25rem 0;"/>
+    <div style="margin-bottom:1.25rem;"><label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.375rem;">New Password <span style="font-weight:400;color:#6b7280;">(leave blank to keep current)</span></label><input id="acctNewPassword" type="password" style="width:100%;padding:0.5rem 0.75rem;border:1px solid #d1d5db;border-radius:0.375rem;font-size:0.875rem;box-sizing:border-box;" placeholder="New password"/></div>
+    <div style="margin-bottom:1.5rem;"><label style="display:block;font-size:0.875rem;font-weight:500;color:#374151;margin-bottom:0.375rem;">Confirm Password</label><input id="acctConfirmPassword" type="password" style="width:100%;padding:0.5rem 0.75rem;border:1px solid #d1d5db;border-radius:0.375rem;font-size:0.875rem;box-sizing:border-box;" placeholder="Confirm new password"/></div>
+    <div id="acctMessage" style="display:none;padding:0.75rem;border-radius:0.375rem;font-size:0.875rem;margin-bottom:1rem;"></div>
+    <button onclick="saveAccountSettings()" style="width:100%;padding:0.75rem;background:#3b82f6;color:white;border:none;border-radius:0.375rem;font-weight:600;cursor:pointer;">Save Changes</button>
+  </div>
+</div></body>
 </html>
