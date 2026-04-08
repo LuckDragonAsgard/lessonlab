@@ -1008,6 +1008,22 @@
       50% { opacity: 0.5; }
       100% { opacity: 1; }
     }
+  
+    @media (max-width: 768px) {
+      header[role="banner"] { flex-direction: column !important; align-items: stretch !important; justify-content: flex-start !important; padding: 8px 12px !important; gap: 4px !important; }
+      .header-left { display: flex !important; align-items: center !important; gap: 8px !important; }
+      #header-right { display: flex !important; align-items: center !important; gap: 6px !important; flex-wrap: wrap !important; }
+      #authHeader { margin-left: 0 !important; width: auto !important; }
+      .header-tags { display: none !important; }
+      .subjects-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; padding: 0.75rem !important; }
+      .subject-card { padding: 1rem 0.75rem !important; }
+      .settings-panel { width: 100% !important; min-width: unset !important; }
+    }
+    @media (max-width: 480px) {
+      .subjects-grid { grid-template-columns: 1fr !important; }
+      .settings-btn { padding: 5px 7px !important; font-size: 0.85rem !important; }
+      #signInBtn, #signUpBtn { padding: 5px 10px !important; font-size: 0.8rem !important; }
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
