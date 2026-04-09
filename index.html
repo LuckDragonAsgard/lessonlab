@@ -1775,6 +1775,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       <button class="btn btn-pri" id="downloadAllBtn">Download All</button>
       <button class="btn btn-pri" id="printAllBtn">Print All</button>
       <button class="btn btn-pri" id="exportCompassBtn">Export to Compass</button>
+      <button class="btn btn-pri" id="generateSlidesBtn" title="Generate a PowerPoint slide deck for this term plan (Pro/School)">📊 Generate Slides</button>
       <button class="btn btn-sec" id="printCRTBtn">Print CRT Summaries</button>
       <button class="btn btn-sec" id="equipmentChecklistBtn">Equipment Checklist</button>
       <button class="btn btn-sec" id="emailDigestBtn">Email Digest</button>
@@ -5957,6 +5958,7 @@ document.getElementById('compareModal').onclick = (e) => {
   }
 };
 document.getElementById('exportCompassBtn').onclick = exportCompass;
+document.getElementById('generateSlidesBtn').onclick = generateLessonSlideshow;
 document.getElementById('generateTermPlansBtn').onclick = generateTermPlans;
 document.getElementById('saveTermConfigBtn').onclick = saveTermConfig;
 document.getElementById('loadTermConfigBtn').onclick = () => renderSavedConfigs();
@@ -5965,6 +5967,211 @@ document.getElementById('printTermOverviewFromResultsBtn').onclick = printTermOv
 document.getElementById('backToSubjectsFromTerm').onclick = () => {
   goPanel('subjects');
 };
+
+// ============================================================================
+// SLIDE GENERATOR (Pro/School feature)
+// ============================================================================
+
+async function generateLessonSlideshow() {
+  // Tier gate
+  if (!currentProfile || (currentProfile.tier !== 'pro' && currentProfile.tier !== 'school')) {
+    showToast('📊 Generate Slides is a Pro feature — upgrade your account to unlock it.', 'error');
+    return;
+  }
+  if (!state.lessons || state.lessons.length === 0) {
+    showToast('No lessons to generate slides for.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('generateSlidesBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating…';
+
+  try {
+    // Dynamically load PptxGenJS from CDN if not already loaded
+    await new Promise((resolve, reject) => {
+      if (window.PptxGenJS) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Failed to load PptxGenJS'));
+      document.head.appendChild(s);
+    });
+
+    const pres = new PptxGenJS();
+    pres.layout = 'LAYOUT_16x9';
+    pres.title = 'LessonLab — Term Plan';
+    pres.author = 'LessonLab';
+
+    const school = state.school || 'School';
+    const termNum = state.term || '';
+
+    // Helper functions
+    function getCfgForSlide(subjectName) {
+      const k = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === subjectName);
+      return k ? SUBJ_CFG[k] : { name: subjectName, colour:'#374151', accent:'#6B7280', icon:'📋', phases:['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'], times:['10 min','10 min','10 min','15 min','5 min'] };
+    }
+    function hex(c) { return (c || '374151').replace('#', ''); }
+    function trunc(s, n) { return s && s.length > n ? s.slice(0, n - 1) + '…' : (s || ''); }
+
+    const PHASE_COLORS = [
+      ['EFF6FF','1E40AF'],
+      ['F0FDF4','166534'],
+      ['FFF7ED','92400E'],
+      ['FDF4FF','6B21A8'],
+      ['FEF2F2','991B1B'],
+    ];
+
+    const subjects = [...new Set(state.lessons.map(l => l.data.subject).filter(Boolean))];
+
+    // ── COVER SLIDE ─────────────────────────────────────────────────────
+    const cover = pres.addSlide();
+    cover.background = { color: '111827' };
+
+    const firstCfg = getCfgForSlide(subjects[0] || '');
+    cover.addShape('rect', {
+      x: 0, y: 0, w: 10, h: 0.12,
+      fill: { color: hex(firstCfg.colour) }, line: { color: hex(firstCfg.colour) }
+    });
+    cover.addText('LessonLab', {
+      x: 0.5, y: 0.3, w: 9, h: 0.45,
+      fontSize: 12, fontFace: 'Calibri', color: '4B5563', bold: false
+    });
+    cover.addText('Term Plan', {
+      x: 0.5, y: 0.95, w: 9, h: 1.4,
+      fontSize: 60, fontFace: 'Georgia', color: 'FFFFFF', bold: true
+    });
+    cover.addText([
+      { text: school, options: { bold: true, color: 'F9FAFB', fontSize: 20, fontFace: 'Calibri' } },
+      { text: '   |   ' + (termNum ? 'Term ' + termNum : ''), options: { color: 'D1D5DB', fontSize: 20, fontFace: 'Calibri' } },
+    ], { x: 0.5, y: 2.55, w: 9, h: 0.6 });
+
+    // Subject pills
+    let pillX = 0.5;
+    subjects.forEach(subj => {
+      const cfg = getCfgForSlide(subj);
+      const pillW = Math.max(1.6, subj.length * 0.145 + 0.7);
+      cover.addShape('rect', {
+        x: pillX, y: 3.45, w: pillW, h: 0.48,
+        fill: { color: hex(cfg.colour) }, line: { color: hex(cfg.colour) }
+      });
+      cover.addText((cfg.icon || '') + '  ' + subj, {
+        x: pillX, y: 3.45, w: pillW, h: 0.48,
+        fontSize: 12, fontFace: 'Calibri', color: 'FFFFFF', bold: true, align: 'center', margin: 0
+      });
+      pillX += pillW + 0.18;
+    });
+
+    cover.addText(state.lessons.length + ' lessons generated by LessonLab', {
+      x: 0.5, y: 4.15, w: 9, h: 0.4,
+      fontSize: 13, fontFace: 'Calibri', color: '6B7280'
+    });
+    cover.addShape('rect', {
+      x: 0, y: 5.325, w: 10, h: 0.3,
+      fill: { color: '0F172A' }, line: { color: '0F172A' }
+    });
+    cover.addText('lessonlab-tau.vercel.app', {
+      x: 0.5, y: 5.33, w: 9, h: 0.28,
+      fontSize: 9, fontFace: 'Calibri', color: '374151', align: 'right'
+    });
+
+    // ── LESSON SLIDES ────────────────────────────────────────────────────
+    const grouped = {};
+    state.lessons.forEach(l => {
+      const s = (l.data && l.data.subject) || 'General';
+      if (!grouped[s]) grouped[s] = [];
+      grouped[s].push(l);
+    });
+
+    Object.entries(grouped).forEach(([subjectName, lessons]) => {
+      const cfg = getCfgForSlide(subjectName);
+      const c = hex(cfg.colour);
+
+      // Subject divider slide (only when >1 subject)
+      if (subjects.length > 1) {
+        const div = pres.addSlide();
+        div.background = { color: c };
+        for (let i = 0; i < 12; i++) {
+          div.addShape('rect', {
+            x: 0, y: i * 0.47, w: 10, h: 0.01,
+            fill: { color: 'FFFFFF', transparency: 92 }, line: { color: 'FFFFFF', transparency: 92 }
+          });
+        }
+        div.addText(cfg.icon || '', { x: 2, y: 0.8, w: 6, h: 1.6, fontSize: 80, align: 'center' });
+        div.addText(subjectName, { x: 0.5, y: 2.4, w: 9, h: 1.1, fontSize: 54, fontFace: 'Georgia', color: 'FFFFFF', bold: true, align: 'center' });
+        div.addText(lessons.length + ' lesson' + (lessons.length > 1 ? 's' : ''), { x: 0.5, y: 3.6, w: 9, h: 0.5, fontSize: 16, fontFace: 'Calibri', color: 'FFFFFF', align: 'center' });
+      }
+
+      lessons.sort((a, b) => (a.week || 0) - (b.week || 0));
+
+      lessons.forEach(lesson => {
+        const d = lesson.data || {};
+        const sc = (d.sc || '').split('\n').filter(s => s.trim()).slice(0, 4);
+        const phases = cfg.phases || [];
+        const times = cfg.times || [];
+
+        const slide = pres.addSlide();
+        slide.background = { color: 'FFFFFF' };
+
+        // Header bar
+        slide.addShape('rect', { x: 0, y: 0, w: 10, h: 0.75, fill: { color: c }, line: { color: c } });
+        slide.addShape('rect', { x: 0.95, y: 0.1, w: 0.02, h: 0.55, fill: { color: 'FFFFFF', transparency: 40 }, line: { color: 'FFFFFF', transparency: 40 } });
+        slide.addText('WK\n' + (lesson.week || ''), { x: 0, y: 0, w: 0.95, h: 0.75, fontSize: 12, fontFace: 'Arial', color: 'FFFFFF', bold: true, align: 'center', valign: 'middle', margin: 0 });
+        slide.addText(trunc(d.title || 'Lesson', 62), { x: 1.08, y: 0, w: 6.45, h: 0.75, fontSize: 15, fontFace: 'Calibri', color: 'FFFFFF', bold: true, valign: 'middle' });
+        slide.addText((cfg.icon || '') + '  ' + subjectName + '  ·  Year ' + (d.year || ''), { x: 7.55, y: 0, w: 2.35, h: 0.75, fontSize: 10, fontFace: 'Calibri', color: 'FFFFFF', align: 'right', valign: 'middle' });
+
+        // Left column: LI + SC
+        const LX = 0.22, LW = 5.85, LY = 0.88;
+        slide.addText('📚  Learning Intention', { x: LX, y: LY, w: LW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
+        slide.addShape('rect', { x: LX, y: LY + 0.31, w: LW, h: 0.76, fill: { color: 'EFF6FF' }, line: { color: 'BFDBFE', pt: 0.8 } });
+        slide.addText('Students will ' + trunc(d.li || '', 130), { x: LX + 0.1, y: LY + 0.34, w: LW - 0.2, h: 0.7, fontSize: 11, fontFace: 'Calibri', color: '1E40AF', italic: true, valign: 'middle' });
+
+        slide.addText('✅  Success Criteria', { x: LX, y: LY + 1.15, w: LW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
+        const scBoxH = Math.min(sc.length * 0.54 + 0.22, 3.0);
+        slide.addShape('rect', { x: LX, y: LY + 1.46, w: LW, h: scBoxH, fill: { color: 'F9FAFB' }, line: { color: 'E5E7EB', pt: 0.8 } });
+        if (sc.length > 0) {
+          slide.addText(
+            sc.map((s, i) => ({ text: s.replace(/^[-•]\s*/, '').trim(), options: { bullet: true, breakLine: i < sc.length - 1, fontSize: 11, fontFace: 'Calibri', color: '111827', paraSpaceAfter: 8 } })),
+            { x: LX + 0.15, y: LY + 1.52, w: LW - 0.28, h: scBoxH - 0.15 }
+          );
+        }
+
+        // Right column: Phase boxes
+        const RX = 6.28, RW = 3.5, RY = 0.88;
+        slide.addText('Lesson Phases', { x: RX, y: RY, w: RW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
+
+        const phaseBoxH = 0.80, phaseGap = 0.04;
+        phases.slice(0, 5).forEach((phase, i) => {
+          const py = RY + 0.27 + i * (phaseBoxH + phaseGap);
+          const [bg, fg] = PHASE_COLORS[i];
+          slide.addShape('rect', { x: RX, y: py, w: RW, h: phaseBoxH, fill: { color: bg }, line: { color: 'E5E7EB', pt: 0.8 } });
+          slide.addShape('rect', { x: RX, y: py, w: 0.06, h: phaseBoxH, fill: { color: c }, line: { color: c } });
+          slide.addText([
+            { text: phase, options: { bold: true, fontSize: 10, color: fg, fontFace: 'Calibri', breakLine: true } },
+            { text: times[i] || '', options: { fontSize: 9, color: '9CA3AF', fontFace: 'Calibri' } },
+          ], { x: RX + 0.14, y: py + 0.06, w: RW - 0.2, h: phaseBoxH - 0.1 });
+        });
+
+        // Footer
+        slide.addShape('rect', { x: 0, y: 5.42, w: 10, h: 0.205, fill: { color: 'F9FAFB' }, line: { color: 'E5E7EB', pt: 0.5 } });
+        slide.addText('LessonLab  ·  ' + school + '  ·  Year ' + (d.year || '') + (termNum ? '  ·  Term ' + termNum : '') + '  ·  Week ' + (lesson.week || ''), {
+          x: 0.3, y: 5.43, w: 9.4, h: 0.19,
+          fontSize: 8, fontFace: 'Calibri', color: '9CA3AF', align: 'right'
+        });
+      });
+    });
+
+    // Trigger download
+    await pres.writeFile({ fileName: 'LessonLab_Term_Slides.pptx' });
+    showToast('📊 Slide deck downloaded!', 'success');
+  } catch (err) {
+    console.error('Slide generator error:', err);
+    showToast('Could not generate slides: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📊 Generate Slides';
+  }
+}
 
 // ============================================================================
 // SCHOOL BRANDING & TEMPLATE SYSTEM
