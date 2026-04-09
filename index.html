@@ -3109,113 +3109,45 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
     };
   }
 
-  // ── LITERACY ──────────────────────────────────────────────────
-  if (subj === 'literacy') {
-    const litWeeks = {
-      reading: [
-        {t:`Introduction to Reading Routines`, li:`understand our reading routines and choose a just-right book`, sc:['I can follow our reading routine','I can choose a book at my level','I can read quietly for 5 minutes'], eq:'Class library, book boxes, reading logs'},
-        {t:`Making Predictions`, li:`use the title, cover and pictures to make predictions before reading`, sc:['I can look at the cover and predict what might happen','I can explain why I made my prediction','I can check my prediction as I read'], eq:'Shared text, prediction chart, sticky notes'},
-        {t:`Making Connections`, li:`connect what I read to my own experiences`, sc:['I can identify a text-to-self connection','I can explain how the connection helps me understand','I can share my connection with a partner'], eq:'Shared text, connection chart, reading journals'},
-        {t:`Asking Questions`, li:`ask questions before, during and after reading to deepen understanding`, sc:['I can ask a question before reading','I can ask questions while reading','I can discuss answers with a partner'], eq:'Shared text, question stems, sticky notes'},
-        {t:`Visualising`, li:`create mental images while reading to understand the text better`, sc:['I can describe what I see in my mind','I can draw what I visualise','I can explain how visualising helps me understand'], eq:'Descriptive text, drawing materials, visualisation chart'},
-        {t:`Summarising Key Ideas`, li:`identify and retell the main ideas in a text`, sc:['I can identify the main idea','I can retell key events in order','I can leave out unimportant details'], eq:'Shared text, summary frames, graphic organisers'},
-        {t:`Inferring Meaning`, li:`use clues in the text to work out what the author means`, sc:['I can find clues in the text','I can combine clues with what I know','I can explain my inference'], eq:'Inference texts, evidence chart, sticky notes'},
-        {t:`Comparing Texts`, li:`compare two texts on a similar topic or by the same author`, sc:['I can identify similarities between texts','I can identify differences between texts','I can explain which text I preferred and why'], eq:'Two related texts, Venn diagram, comparison chart'},
-        {t:`Reading Fluency Focus`, li:`read with expression, accuracy and appropriate pace`, sc:['I can read smoothly without stopping','I can use expression to match the meaning','I can self-correct when something doesn\'t sound right'], eq:'Fluency passages, timer, recording device'},
-        {t:`Reading Celebration & Goals`, li:`reflect on my reading growth and set new reading goals`, sc:['I can name 3 strategies I use well','I can identify an area to improve','I can set a specific reading goal'], eq:'Reading journals, goal-setting sheets, certificates'}
-      ],
-      writing: [
-        {t:`Writing Routines & Writer's Notebook`, li:`understand our writing routines and begin a writer\'s notebook`, sc:['I can follow our writing routine','I can write in my notebook for 10 minutes','I can share an idea with a partner'], eq:'Writer\'s notebooks, pencils, anchor charts'},
-        {t:`Generating Ideas`, li:`use strategies to generate writing ideas`, sc:['I can brainstorm at least 3 ideas','I can choose my best idea','I can explain why I chose it'], eq:'Brainstorm sheets, mentor texts, idea charts'},
-        {t:`Planning & Organising`, li:`plan my writing using a graphic organiser`, sc:['I can use a planning template','I can organise my ideas in order','I can identify my audience and purpose'], eq:'Planning templates, graphic organisers, mentor texts'},
-        {t:`Drafting with Detail`, li:`write a draft that includes details to engage the reader`, sc:['I can write a clear beginning','I can add details to the middle','I can write an ending'], eq:'Draft paper, word walls, writing checklists'},
-        {t:`Revising for Meaning`, li:`reread my writing and make changes to improve meaning`, sc:['I can reread my draft aloud','I can add or change words to make it clearer','I can ask a peer for feedback'], eq:'Coloured pens, revision checklist, peer feedback forms'},
-        {t:`Editing for Conventions`, li:`edit my writing for spelling, punctuation and grammar`, sc:['I can check my spelling','I can check my punctuation','I can fix at least 3 errors'], eq:'Editing checklist, dictionaries, coloured pens'},
-        {t:`Sentence Variety`, li:`use different sentence beginnings and lengths to make writing interesting`, sc:['I can start sentences in different ways','I can use short and long sentences','I can identify boring sentence patterns'], eq:'Sentence starters, mentor texts, highlighters'},
-        {t:`Publishing & Presenting`, li:`publish a polished piece of writing to share with an audience`, sc:['I can write a neat final copy','I can add illustrations or features','I can present my writing to others'], eq:'Publishing paper, art materials, display space'},
-        {t:`Author\'s Craft Study`, li:`identify and use techniques authors use to engage readers`, sc:['I can identify a technique the author uses','I can explain why it works','I can try the technique in my own writing'], eq:'Mentor texts, craft chart, writer\'s notebooks'},
-        {t:`Writing Celebration & Goals`, li:`reflect on my writing growth and celebrate our published work`, sc:['I can name 3 things I improved','I can share my favourite piece','I can set a writing goal for next term'], eq:'Published work, goal sheets, celebration materials'}
-      ],
-      phonics: [
-        {t:`Sound Review & New Sound Introduction`, li:`review known sounds and learn a new letter-sound correspondence`, sc:['I can say the sounds I know','I can hear the new sound in words','I can write the new sound'], eq:'Sound cards, whiteboards, markers'},
-        {t:`Blending & Segmenting`, li:`blend sounds together to read words and segment words into sounds`, sc:['I can blend sounds to read a word','I can segment a word into its sounds','I can write the sounds I hear'], eq:'Sound cards, elkonin boxes, whiteboards'},
-        {t:`Spelling Patterns`, li:`identify and apply a spelling pattern in reading and writing`, sc:['I can identify the pattern in words','I can read words with this pattern','I can spell words using this pattern'], eq:'Word cards, spelling lists, whiteboards'},
-        {t:`High-Frequency Words`, li:`read and spell high-frequency words automatically`, sc:['I can read the words quickly','I can spell the words correctly','I can use the words in a sentence'], eq:'Word wall, flashcards, sentence strips'},
-        {t:`Word Building`, li:`build and manipulate words by changing sounds and letters`, sc:['I can change one sound to make a new word','I can add sounds to make longer words','I can explain the changes I made'], eq:'Letter tiles, magnetic letters, whiteboards'},
-        {t:`Morphemes & Word Parts`, li:`identify prefixes, suffixes and root words to understand meaning`, sc:['I can identify the root word','I can explain what the prefix/suffix means','I can use word parts to work out meaning'], eq:'Morpheme cards, word sort activities, dictionaries'},
-        {t:`Vocabulary Building`, li:`learn and use new vocabulary from our reading and across subjects`, sc:['I can explain what the new word means','I can use the word in a sentence','I can connect the word to words I know'], eq:'Vocabulary journals, word walls, context cards'},
-        {t:`Word Investigation`, li:`investigate spelling rules and word origins`, sc:['I can identify a spelling rule','I can find examples that follow the rule','I can explain exceptions I found'], eq:'Dictionaries, etymology resources, investigation sheets'},
-        {t:`Dictation & Application`, li:`apply phonics and spelling knowledge in dictation and writing`, sc:['I can spell words correctly in dictation','I can use my knowledge in free writing','I can self-correct spelling errors'], eq:'Dictation passages, whiteboards, writing materials'},
-        {t:`Phonics Review & Assessment`, li:`demonstrate phonics and word knowledge growth`, sc:['I can read words with all patterns learned','I can spell target words correctly','I can set a goal for next term'], eq:'Assessment sheets, word lists, goal templates'}
-      ]
-    };
-    const weekArr = litWeeks[unit];
-    if (weekArr && weekArr[w-1]) {
-      const wd = weekArr[w-1];
-      return {
-        title: wd.t,
-        li: wd.li,
-        sc: wd.sc.join('\n'),
-        equipment: wd.eq,
-        context: `Week ${w} of ${totalWeeks}. ${phase === 'intro' ? 'Introducing concepts and building routines.' : phase === 'develop' ? 'Developing skills through guided and independent practice.' : 'Applying skills independently and demonstrating mastery.'}`,
-        differentiation: {
-          support: 'Provide levelled texts, sentence starters, writing frames, word walls. Pair with a reading/writing buddy. Break tasks into smaller steps. Use audio support.',
-          extension: 'Provide complex texts, extended writing challenges. Encourage author study, genre exploration, peer mentoring, and independent research.'
-        },
-        grouping: { whole: 'Shared reading/writing and explicit teaching', pairs: 'Partner reading, peer conferencing', small: 'Guided reading/writing groups of 4-6', individual: 'Independent reading/writing practice' }
-      };
-    }
-    // Fallback for literacy
-    return {
-      title: `${F}: Week ${w} — Developing Skills`,
-      li: `develop ${f} skills through structured practice`,
-      sc: ['I can apply the strategy taught\nI can work independently\nI can reflect on my learning'],
-      equipment: 'Texts, writing materials, anchor charts',
-      context: `Week ${w} of ${totalWeeks}. ${phase} phase.`,
-      differentiation: { support: 'Levelled materials, visual supports, buddy system.', extension: 'Complex texts, extended responses, peer teaching.' },
-      grouping: { whole: 'Explicit teaching', pairs: 'Partner practice', small: 'Guided groups', individual: 'Independent work' }
-    };
-  }
-
-  // ── NUMERACY ──────────────────────────────────────────────────
+    // ── NUMERACY ─────────────────────────────────────────────────────
   if (subj === 'numeracy') {
     const numWeeks = {
-      number: [
-        {t:`Exploring Numbers Around Us`, li:`identify and represent numbers in our environment`, sc:['I can find numbers around the classroom','I can read and say numbers correctly','I can show a number in different ways'], eq:'Number cards, counters, ten frames, whiteboards'},
-        {t:`Counting & Ordering`, li:`count forwards and backwards and order numbers on a number line`, sc:['I can count forwards accurately','I can count backwards','I can place numbers in order'], eq:'Number lines, counters, ordering cards'},
-        {t:`Place Value: Understanding Tens & Ones`, li:`understand that numbers are made up of tens and ones`, sc:['I can show a number using tens and ones','I can partition a number into tens and ones','I can explain what each digit means'], eq:'Base-10 blocks, place value charts, whiteboards'},
-        {t:`Comparing & Ordering Numbers`, li:`compare numbers using greater than, less than and equal to`, sc:['I can compare two numbers','I can use >, < and = symbols correctly','I can order a set of numbers'], eq:'Number cards, comparison symbols, number lines'},
-        {t:`Partitioning Numbers`, li:`partition numbers in different ways to show flexible thinking`, sc:['I can break a number into parts','I can show more than one way to partition','I can use partitioning to solve problems'], eq:'Part-part-whole mats, counters, whiteboards'},
-        {t:`Rounding Numbers`, li:`round numbers to the nearest ten or hundred`, sc:['I can identify which ten a number is closest to','I can round to the nearest ten','I can explain my rounding strategy'], eq:'Number lines, rounding charts, whiteboards'},
-        {t:`Number Patterns`, li:`identify and continue number patterns`, sc:['I can find the rule in a pattern','I can continue the pattern','I can create my own number pattern'], eq:'Hundred charts, pattern strips, calculators'},
-        {t:`Mental Computation Strategies`, li:`use mental strategies to solve number problems efficiently`, sc:['I can use a strategy to solve mentally','I can explain my thinking','I can choose the best strategy'], eq:'Problem cards, strategy posters, whiteboards'},
-        {t:`Number Problem Solving`, li:`apply number knowledge to solve real-world problems`, sc:['I can identify what the problem is asking','I can choose a strategy','I can check my answer makes sense'], eq:'Word problem cards, manipulatives, whiteboards'},
-        {t:`Number Knowledge Review`, li:`demonstrate my number and place value understanding`, sc:['I can represent numbers in multiple ways','I can solve number problems confidently','I can explain my mathematical thinking'], eq:'Assessment activities, manipulatives, reflection sheets'}
+      'number-place-value': [
+        {t:`Exploring Numbers: What Do We Know?`,li:`read, write and represent numbers using place value understanding`,sc:[`I can read and write numbers to ${sk0}`,`I can identify the place value of each digit`,`I can represent numbers using materials or diagrams`],eq:'Place value charts, MAB blocks, number cards, whiteboards'},
+        {t:`Partitioning Numbers`,li:`partition numbers into hundreds, tens and ones in different ways`,sc:[`I can partition a number in at least two ways`,`I can show my partitioning using materials`,`I can explain what each part means`],eq:'MAB blocks, place value charts, blank number sentences'},
+        {t:`Comparing and Ordering Numbers`,li:`compare and order numbers using place value knowledge`,sc:[`I can use > < = symbols correctly`,`I can order a set of numbers from smallest to largest`,`I can explain how I compared the numbers`],eq:'Number cards, whiteboards, number lines'},
+        {t:`Counting Patterns`,li:`identify and continue number patterns using skip counting`,sc:[`I can continue a counting pattern`,`I can identify the rule in a pattern`,`I can create my own counting pattern`],eq:'Hundreds chart, number lines, pattern cards'},
+        {t:`Rounding Numbers`,li:`round numbers to the nearest 10 and 100`,sc:[`I can round a number to the nearest 10`,`I can round a number to the nearest 100`,`I can explain why I rounded up or down`],eq:'Number lines, rounding charts, whiteboards'},
+        {t:`Representing Numbers in Different Ways`,li:`represent numbers using numerals, words, pictures and materials`,sc:[`I can write a number in words`,`I can draw a number using place value`,`I can match different representations of the same number`],eq:'Number cards, MAB blocks, dice, whiteboards'},
+        {t:`Problem Solving with Place Value`,li:`apply place value understanding to solve problems`,sc:[`I can use place value to solve a problem`,`I can explain my strategy`,`I can check my answer makes sense`],eq:'Word problem cards, whiteboards, manipulatives'},
+        {t:`Number Lines and Estimation`,li:`place numbers on a number line and estimate values`,sc:[`I can place a number on a number line`,`I can estimate where a number belongs`,`I can explain my reasoning`],eq:'Large number lines, whiteboards, benchmark number cards'},
+        {t:`Consolidating Place Value`,li:`demonstrate place value understanding across a range of numbers`,sc:[`I can confidently work with numbers to ${sk0}`,`I can explain the value of each digit`,`I can apply place value to solve problems`],eq:'Mixed place value materials, assessment tasks'},
+        {t:`Reflecting on Our Number Learning`,li:`reflect on place value strategies and explain my thinking`,sc:[`I can demonstrate my best place value strategy`,`I can explain what I found challenging`,`I can set a goal for next steps`],eq:'Reflection journals, number talk prompts'},
       ],
-      addition: [
-        {t:`Addition: Combining Groups`, li:`understand addition as combining two or more groups`, sc:['I can combine two groups and count the total','I can write an addition number sentence','I can draw a picture to show addition'], eq:'Counters, dice, whiteboards, ten frames'},
-        {t:`Addition Mental Strategies: Counting On`, li:`use counting on as a strategy for addition`, sc:['I can start from the bigger number','I can count on accurately','I can explain the counting on strategy'], eq:'Number lines, counters, whiteboards'},
-        {t:`Addition: Doubles & Near Doubles`, li:`use doubles facts and near doubles to add efficiently`, sc:['I can recall doubles facts quickly','I can use near doubles to solve additions','I can explain my strategy'], eq:'Doubles charts, ten frames, whiteboards'},
-        {t:`Addition: Making Ten`, li:`use the make-ten strategy to add numbers efficiently`, sc:['I can identify number bonds to 10','I can use make-ten to solve additions','I can explain how making ten helps'], eq:'Ten frames, counters, number bond cards'},
-        {t:`Subtraction: Taking Away & Finding Difference`, li:`understand subtraction as taking away and finding the difference`, sc:['I can take away and find how many are left','I can find the difference between two numbers','I can write a subtraction number sentence'], eq:'Counters, number lines, whiteboards'},
-        {t:`Subtraction Mental Strategies`, li:`use mental strategies for subtraction`, sc:['I can count back to subtract','I can use known facts to help','I can choose an efficient strategy'], eq:'Number lines, strategy cards, whiteboards'},
-        {t:`Fact Families`, li:`understand the relationship between addition and subtraction`, sc:['I can write a fact family for a set of numbers','I can use addition to check subtraction','I can explain how they are related'], eq:'Fact family triangles, number cards, whiteboards'},
-        {t:`Written Methods`, li:`use a written method to solve addition and subtraction problems`, sc:['I can set out a written calculation correctly','I can solve using the method step by step','I can check my answer'], eq:'Place value materials, lined paper, whiteboards'},
-        {t:`Word Problems`, li:`solve addition and subtraction word problems using appropriate strategies`, sc:['I can read and understand the problem','I can choose the correct operation','I can show my working and check my answer'], eq:'Word problem cards, manipulatives, whiteboards'},
-        {t:`Addition & Subtraction Review`, li:`demonstrate fluency with addition and subtraction strategies`, sc:['I can solve problems using efficient strategies','I can explain my reasoning','I can set a goal for improvement'], eq:'Mixed problem sets, reflection sheets'}
+      'addition-subtraction': [
+        {t:`Exploring ${F}: What Strategies Do We Know?`,li:`share and record strategies for addition and subtraction`,sc:[`I can name at least 2 strategies for ${f}`,`I can show a strategy using materials or a diagram`,`I can explain when I would use each strategy`],eq:'Number cards, whiteboards, 100s chart'},
+        {t:`Mental Strategies: Making Tens`,li:`use making tens as a mental strategy for addition`,sc:[`I can make a ten to solve an addition problem`,`I can record my thinking in a number sentence`,`I can explain why making tens helps`],eq:'Ten frames, counters, whiteboards'},
+        {t:`Mental Strategies: Jump Strategy`,li:`use the jump strategy on a number line`,sc:[`I can jump forward to add`,`I can jump back to subtract`,`I can show jumps on a number line`],eq:'Open number lines, whiteboards, coloured markers'},
+        {t:`Written Methods`,li:`use a written algorithm to solve addition and subtraction problems`,sc:[`I can set out a written algorithm correctly`,`I can explain what to do when there is trading/renaming`,`I can check my answer using estimation`],eq:'Grid paper, whiteboards, calculators for checking'},
+        {t:`Word Problems`,li:`solve word problems using addition and subtraction strategies`,sc:[`I can identify whether to add or subtract`,`I can write a number sentence from a word problem`,`I can explain my answer in context`],eq:'Word problem cards, whiteboards, manipulatives'},
+        {t:`Estimation and Checking`,li:`estimate answers and check solutions to ${f} problems`,sc:[`I can estimate a reasonable answer before calculating`,`I can check my answer using a different strategy`,`I can explain whether my answer is reasonable`],eq:'Whiteboards, number lines, problem cards'},
+        {t:`Doubles and Near Doubles`,li:`use doubles and near doubles facts for efficient calculation`,sc:[`I can recall doubles facts to 20`,`I can use near doubles to solve problems`,`I can apply doubles facts to two-digit numbers`],eq:'Doubles posters, ten frames, fact cards'},
+        {t:`Mixed Problem Solving`,li:`choose efficient strategies for a range of ${f} problems`,sc:[`I can choose an appropriate strategy`,`I can solve a range of problem types`,`I can explain why I chose my strategy`],eq:'Mixed problem sets, whiteboards, strategy posters'},
+        {t:`${F}: Consolidation`,li:`demonstrate fluency and flexibility with ${f} strategies`,sc:[`I can solve ${f} problems with confidence`,`I can use multiple strategies`,`I can explain my thinking clearly`],eq:'Assessment tasks, mixed problem cards'},
+        {t:`Sharing Our Strategies`,li:`communicate ${f} strategies and reflect on my learning`,sc:[`I can share a strategy that works for me`,`I can give feedback to a classmate`,`I can identify what I want to work on`],eq:'Maths journals, reflection prompts'},
       ],
-      multiplication: [
-        {t:`Introduction to Groups & Arrays`, li:`understand multiplication as equal groups and arrays`, sc:['I can make equal groups','I can build an array','I can count the total using groups'], eq:'Counters, array cards, whiteboards'},
-        {t:`Skip Counting`, li:`use skip counting as a strategy for multiplication`, sc:['I can skip count by 2s, 5s and 10s','I can connect skip counting to multiplication','I can record skip counting on a number line'], eq:'Number lines, hundred charts, counters'},
-        {t:`Times Tables: Building Fluency`, li:`practise and recall multiplication facts with increasing fluency`, sc:['I can recall target times table facts','I can use a strategy for facts I don\'t know','I can beat my previous time'], eq:'Flashcards, times table charts, games'},
-        {t:`Multiplication Strategies`, li:`use strategies like doubling, halving and known facts to multiply`, sc:['I can use doubling to multiply','I can use a known fact to find an unknown','I can explain my strategy'], eq:'Strategy posters, whiteboards, problem cards'},
-        {t:`Division as Sharing & Grouping`, li:`understand division as equal sharing and grouping`, sc:['I can share equally between groups','I can make equal groups from a total','I can write a division number sentence'], eq:'Counters, sharing mats, whiteboards'},
-        {t:`Division Strategies`, li:`use strategies to solve division problems efficiently`, sc:['I can use multiplication facts to divide','I can use halving to divide','I can explain my division strategy'], eq:'Multiplication charts, whiteboards, problem cards'},
-        {t:`Multiplication & Division Connections`, li:`understand the inverse relationship between multiplication and division`, sc:['I can write a fact family','I can use multiplication to check division','I can explain how they are connected'], eq:'Fact family cards, arrays, whiteboards'},
-        {t:`Written Methods for Multiplication`, li:`use a written method to solve larger multiplication problems`, sc:['I can set out a multiplication correctly','I can solve step by step','I can estimate to check my answer'], eq:'Grid paper, place value materials, whiteboards'},
-        {t:`Problem Solving with All Operations`, li:`choose the correct operation to solve multi-step problems`, sc:['I can identify which operation to use','I can solve multi-step problems','I can explain my reasoning'], eq:'Word problems, strategy cards, whiteboards'},
-        {t:`Multiplication & Division Review`, li:`demonstrate fluency with multiplication and division`, sc:['I can recall key facts quickly','I can solve problems using efficient strategies','I can explain my mathematical thinking'], eq:'Mixed assessments, reflection sheets, certificates'}
-      ]
+      'multiplication-division': [
+        {t:`Understanding Multiplication`,li:`understand multiplication as groups of equal size`,sc:[`I can make equal groups to show multiplication`,`I can write a multiplication number sentence`,`I can explain what each number means`],eq:'Counters, arrays mats, whiteboards'},
+        {t:`Arrays and Multiplication`,li:`use arrays to model and solve multiplication problems`,sc:[`I can make an array to match a multiplication fact`,`I can write two facts from one array`,`I can use arrays to explain commutativity`],eq:'Square tiles, dot paper, whiteboards'},
+        {t:`Times Tables: Building Fluency`,li:`build fluency with times table facts for ${f}`,sc:[`I can recall multiplication facts for ${sk0}`,`I can explain a strategy for facts I don't know yet`,`I can apply these facts to solve problems`],eq:'Times tables charts, fact cards, dice'},
+        {t:`Division as Sharing and Grouping`,li:`understand division as sharing equally and as grouping`,sc:[`I can model division as sharing`,`I can model division as grouping`,`I can write a division number sentence`],eq:'Counters, sharing mats, whiteboards'},
+        {t:`Fact Families`,li:`identify and use fact families linking multiplication and division`,sc:[`I can write a fact family for a given set of numbers`,`I can use a multiplication fact to solve a division`,`I can explain the connection between × and ÷`],eq:'Fact family cards, whiteboards, number triangles'},
+        {t:`Word Problems: ${F}`,li:`solve multiplication and division word problems`,sc:[`I can identify whether to multiply or divide`,`I can write a number sentence from a word problem`,`I can explain my answer in context`],eq:'Word problem cards, counters, whiteboards'},
+        {t:`Written Methods for Multiplication`,li:`use a written strategy to solve multiplication problems`,sc:[`I can use a written strategy such as split or area model`,`I can record my working clearly`,`I can check my answer using estimation`],eq:'Grid paper, whiteboards, worked examples'},
+        {t:`Remainders and Division`,li:`solve division problems that have remainders`,sc:[`I can identify when a division will have a remainder`,`I can record a remainder correctly`,`I can explain what the remainder means in context`],eq:'Counters, division problem cards, whiteboards'},
+        {t:`Applying ${F} Skills`,li:`apply multiplication and division skills to real-world contexts`,sc:[`I can solve real-world problems using ${f}`,`I can choose an efficient strategy`,`I can check that my answer is reasonable`],eq:'Real-world problem sets, whiteboards, calculators'},
+        {t:`${F}: Reflection`,li:`reflect on multiplication and division learning and share strategies`,sc:[`I can demonstrate my strongest ${f} strategy`,`I can explain what helped me learn`,`I can identify my next goal`],eq:'Maths journals, strategy posters'},
+      ],
     };
     const weekArr = numWeeks[unit];
     if (weekArr && weekArr[w-1]) {
@@ -3225,26 +3157,41 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
         li: wd.li,
         sc: wd.sc.join('\n'),
         equipment: wd.eq,
-        context: `Week ${w} of ${totalWeeks}. ${phase === 'intro' ? 'Building conceptual understanding with concrete materials.' : phase === 'develop' ? 'Developing fluency and applying strategies.' : 'Applying skills to solve problems independently.'}`,
+        context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 Mathematics.`,
         differentiation: {
-          support: 'Provide concrete materials, visual supports, number lines. Reduce quantity not complexity. Pair with a maths buddy. Use simpler numbers.',
-          extension: 'Provide open-ended problems, larger numbers, multi-step challenges. Encourage proof, pattern investigation, and peer teaching.'
+          support: `Provide concrete materials (MAB, counters, number lines). Use pre-made templates. Pair with a buddy. Break tasks into smaller steps. Use ${sk0} at a lower level of complexity.`,
+          extension: `Apply ${sk0} to multi-step and open-ended problems. Explore patterns and generalisations. Create own problems for peers to solve. Work with larger numbers.`
         },
-        grouping: { whole: 'Number talk and explicit teaching', pairs: 'Partner problem-solving and strategy sharing', small: 'Guided maths groups of 4-6', individual: 'Independent practice and investigation' }
+        grouping: { whole: 'Number talk and explicit teaching', pairs: 'Partner practice — explain your thinking', small: 'Guided maths group', individual: 'Independent problem solving and journalling' }
       };
     }
-    // Fallback for numeracy
+    // Dynamic fallback for other numeracy units
+    const numTitles = [
+      [`${F}: Making Connections (Week ${w})`, `Exploring ${F} (Week ${w})`, `${F}: Concrete Foundations (Week ${w})`],
+      [`${F}: Developing Strategies (Week ${w})`, `${F}: Practising with Partners (Week ${w})`, `${F}: Applying to Problems (Week ${w})`, `${F}: Making Connections (Week ${w})`],
+      [`${F}: Flexible Thinking (Week ${w})`, `${F}: Consolidation (Week ${w})`, `${F}: Reflection and Sharing (Week ${w})`]
+    ];
+    const phIdx = phase === 'intro' ? 0 : phase === 'develop' ? 1 : 2;
+    const posInPhase = phase === 'intro' ? w - 1 : phase === 'develop' ? w - Math.ceil(totalWeeks*0.3) - 1 : w - Math.ceil(totalWeeks*0.7) - 1;
     return {
-      title: `${F}: Week ${w} — Building Understanding`,
-      li: `develop ${f} skills through concrete and abstract tasks`,
-      sc: ['I can use a strategy to solve problems\nI can explain my thinking\nI can check my answer'],
-      equipment: 'Manipulatives, whiteboards, problem cards',
-      context: `Week ${w} of ${totalWeeks}. ${phase} phase.`,
-      differentiation: { support: 'Concrete materials, reduced quantity, visual supports.', extension: 'Open-ended problems, larger numbers, prove it tasks.' },
-      grouping: { whole: 'Number talk', pairs: 'Strategy sharing', small: 'Guided groups', individual: 'Independent practice' }
+      title: numTitles[phIdx][Math.max(0, posInPhase) % numTitles[phIdx].length],
+      li: phase === 'intro' ? `explore and model ${f} using concrete materials and representations` :
+          phase === 'develop' ? `apply ${f} strategies to solve a range of problems with increasing independence` :
+          `demonstrate flexible thinking and fluency with ${f} concepts`,
+      sc: [
+        `I can ${phase === 'intro' ? 'use materials to show' : phase === 'develop' ? 'explain a strategy for' : 'choose an efficient strategy for'} ${f}`,
+        `I can ${phase === 'intro' ? 'record my thinking in a number sentence' : phase === 'develop' ? 'solve problems and explain my reasoning' : 'apply my knowledge to solve real-world problems'}`,
+        `I can ${phase === 'intro' ? 'share my thinking with a partner' : phase === 'develop' ? 'check my answer using a different method' : 'reflect on my learning and identify my next steps'}`
+      ].join('\n'),
+      equipment: 'Whiteboards, manipulatives (MAB, counters, number lines), problem cards, maths journals',
+      context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 Mathematics.`,
+      differentiation: {
+        support: `Concrete materials always available. Pre-made number sentences with blanks. Buddy support. Reduced quantity, same concept. Visual representations alongside abstract notation.`,
+        extension: `Open-ended investigations. Multi-step problems. Create own problems. Apply to real-world contexts. Explore generalisations and patterns.`
+      },
+      grouping: { whole: 'Number talk and explicit teaching', pairs: 'Partner work — think, show, share', small: 'Guided maths group (3–4 students)', individual: 'Independent practice and reflection' }
     };
   }
-
   // ── LITERACY ─────────────────────────────────────────────
   if (subj === 'literacy') {
     const litWeeks = {
