@@ -56,15 +56,15 @@ console.log('\n── 2. Equipment Cross-Contamination ────────�
 // Subject line ranges (1-indexed, inclusive) — covers data declarations AND inline week blocks
 // Each subject can have MULTIPLE ranges (data decl block + inline weeks block)
 const SUBJECT_RANGES_MULTI = {
-  'pe':           [[3023, 3106],  [3648, 3726]],
-  'science':      [[3107, 3262],  [3918, 3986], [4598, 4699]],
-  'visual-art':   [[3263, 3346],  [3727, 3806]],
-  'music':        [[3347, 3394],  [4045, 4094]],
-  'drama':        [[3395, 3442],  [4095, 4145]],
-  'digital_tech': [[3443, 3562],  [3987, 4044]],
-  'french':       [[3563, 3647],  [3807, 3917]],
-  'numeracy':     [[4146, 4412]],
-  'literacy':     [[4413, 4597]],
+  'pe':           [[3092, 3175],  [3716, 3794]],
+  'science':      [[3176, 3331],  [3986, 4054], [4666, 4768]],
+  'visual-art':   [[3332, 3415],  [3795, 3874]],
+  'music':        [[3416, 3463],  [4113, 4162]],
+  'drama':        [[3464, 3511],  [4163, 4212]],
+  'digital_tech': [[3512, 3631],  [4055, 4112]],
+  'french':       [[3632, 3715],  [3875, 3985]],
+  'numeracy':     [[4213, 4481]],
+  'literacy':     [[4482, 4665]],
 };
 
 // Flatten to a lookup function
