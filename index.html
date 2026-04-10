@@ -3004,8 +3004,9 @@ let state = {
 // PROGRESSION ENGINE
 // ============================================================================
 
-function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
+function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
   const phase = weekNum <= totalWeeks * 0.3 ? 'intro' : weekNum <= totalWeeks * 0.7 ? 'develop' : 'apply';
+  const yl = yearLevel || 'Years 3-4';
   const f = focus.toLowerCase();
   const F = focus;
   const w = weekNum;
@@ -3409,6 +3410,135 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
 
     // ── NUMERACY ─────────────────────────────────────────────────────
   if (subj === 'numeracy') {
+    // ── Year-level-specific overrides ──
+    const _numFoundation = {
+      'number-place-value': [
+        {t:'Counting Objects to 10',li:'count a collection of objects up to 10 using one-to-one correspondence',sc:['I can touch each object as I count it','I can say number names in order to 10','I can tell how many objects are in the group'],eq:'Counting objects (bears, blocks, stones), number cards 0-10, ten frames'},
+        {t:'Numbers on a Line to 10',li:'order numbers from 0 to 10 on a number line',sc:['I can find a number on the number line','I can say which number comes next','I can order numbers from 0 to 10'],eq:'Floor number line, number cards, pegs, magnetic numbers'},
+        {t:'Counting to 20',li:'count and represent numbers to 20 using objects and pictures',sc:['I can count on from any number to 20','I can represent a number to 20 using objects','I can draw a picture to show a number'],eq:'Counters, ten frames, number cards 0-20, whiteboards'},
+        {t:'Subitising: How Many Without Counting?',li:'recognise small collections without counting (subitise) to 5',sc:['I can see how many without counting for small groups','I can say how many dots on a dice without counting','I can explain how I knew'],eq:'Dot cards, dice, ten frames, dominoes'},
+        {t:'Comparing Groups: More, Fewer, Same',li:'compare two groups and say which has more, fewer or the same',sc:['I can use the words more, fewer and the same','I can line up objects to compare two groups','I can point to the group with more'],eq:'Sorting mats, two sets of objects, balance scales'},
+        {t:'Teen Numbers: 10 and Some More',li:'recognise teen numbers as 10 and some more',sc:['I can make 14 as 10 and 4 more','I can say teen numbers in order','I can show a teen number on a ten frame'],eq:'Ten frames, counters, teen number cards, MAB ones and tens'},
+        {t:'Making Groups of a Given Number',li:'make a group of objects to match a given numeral',sc:['I can make a group of a given number','I can count my group to check','I can match a numeral card to a group'],eq:'Counters, numeral cards 0-10, small containers, dice'},
+        {t:'Counting Forwards and Backwards',li:'count forwards and backwards from any number within 20',sc:['I can count backwards from 10','I can count on from a given number','I can use a number line to help me'],eq:'Number line to 20, number cards, snap cubes'},
+        {t:'Numbers Around Us',li:'recognise and use numbers in everyday contexts to 20',sc:['I can find numbers around the classroom','I can count objects in a picture','I can match a numeral to a real-world amount'],eq:'Environmental number hunt cards, magazines, number posters'},
+        {t:'Showing What I Know: Numbers 0 to 20',li:'represent and explain numbers from 0 to 20 in different ways',sc:['I can show a number in more than one way','I can count a group and write the numeral','I can order a set of numbers from 0 to 20'],eq:'Number cards, counters, ten frames, whiteboards'},
+      ],
+      'addition-subtraction': [
+        {t:'Combining Groups: How Many Altogether?',li:'combine two groups and find how many altogether by counting all',sc:['I can put two groups together','I can count all the objects to find the total','I can say the number sentence'],eq:'Counters, small objects, joining mats, whiteboards'},
+        {t:'Making 5 in Different Ways',li:'find all the combinations that make 5',sc:['I can make 5 in different ways (e.g. 2 and 3)','I can record my combinations','I can draw pictures to show my ideas'],eq:'Five frames, two-colour counters, number bond cards'},
+        {t:'Making 10 in Different Ways',li:'find combinations of numbers that make 10',sc:['I can make 10 in different ways','I can record a number bond for 10','I can use a ten frame to show combinations'],eq:'Ten frames, two-colour counters, snap cubes'},
+        {t:'One More, One Less',li:'find one more and one less than any number to 10',sc:['I can find one more than a number','I can find one less than a number','I can use a number line to help me'],eq:'Number line, number cards, snap cubes'},
+        {t:'Taking Away: How Many Left?',li:'separate a group and count how many are left',sc:['I can take objects away from a group','I can count what is left','I can say how many I started with'],eq:'Counters, subtraction mat, number stories'},
+        {t:'Adding Using Objects',li:'add two small numbers by counting all or counting on',sc:['I can count all to add','I can try counting on from the bigger number','I can write or say the number sentence'],eq:'Counters, dice, number sentence frames, whiteboards'},
+        {t:'Subtracting Using Objects',li:'subtract a small number by removing objects and counting what remains',sc:['I can take away objects to subtract','I can count what is left','I can say how many I started with and how many are left'],eq:'Counters, subtraction stories, whiteboards'},
+        {t:'Number Stories: Adding',li:'solve simple addition stories using objects and drawing',sc:['I can listen to a number story and find the answer','I can use objects to help me solve','I can say or draw the number sentence'],eq:'Story problem cards, counters, drawing paper'},
+        {t:'Number Stories: Taking Away',li:'solve simple subtraction stories using objects and drawing',sc:['I can listen to a subtraction story and find the answer','I can use objects to solve','I can explain what happened in the story'],eq:'Story problem cards, counters, drawing paper'},
+        {t:'Adding and Subtracting: Putting It Together',li:'solve addition and subtraction problems using objects and number lines',sc:['I can decide whether to add or subtract','I can use objects or a number line to help','I can explain how I worked it out'],eq:'Number line, counters, mixed problem cards, whiteboards'},
+      ],
+      'multiplication-division': [
+        {t:'Sorting Into Equal Groups',li:'sort objects into equal groups and say how many in each group',sc:['I can sort objects so each group has the same amount','I can count how many groups I made','I can say how many altogether'],eq:'Sorting objects, small plates, muffin trays, counters'},
+        {t:'Groups Of: Making Equal Groups',li:'make and describe equal groups using the words "groups of"',sc:['I can say "I have ___ groups of ___"','I can make equal groups of a given number','I can count all to find the total'],eq:'Counters, plates, multiplication mats'},
+        {t:'Skip Counting by 2s',li:'skip count by 2s to find how many in groups of 2',sc:['I can count by 2s to 20','I can use skip counting to count pairs','I can record skip counting on a number line'],eq:'Pairs of objects, number line, hundreds chart'},
+        {t:'Skip Counting by 5s',li:'skip count by 5s using hands and objects',sc:['I can count by 5s to 50','I can group objects into fives','I can use a hundreds chart to skip count by 5s'],eq:'Five-groups of counters, clock face, hundreds chart'},
+        {t:'Skip Counting by 10s',li:'skip count by 10s using bundles of 10',sc:['I can count by 10s to 100','I can bundle objects into groups of 10','I can skip count by 10s on a hundreds chart'],eq:'Bundles of 10, hundreds chart, base-10 blocks'},
+        {t:'Sharing Equally Between 2',li:'share a collection equally between 2 and check each share is equal',sc:['I can share objects one at a time between 2','I can check that each share is equal','I can say how many each person gets'],eq:'Objects to share, two plates or mats'},
+        {t:'Halving a Group',li:'find half of a small group by sharing into two equal parts',sc:['I can share a group into 2 equal parts','I can say what half of a small even number is','I can check that both halves are equal'],eq:'Two-colour counters, folding shapes, mirrors'},
+        {t:'Arrays: Rows and Columns',li:'describe and create simple rectangular arrays',sc:['I can make an array with equal rows','I can say how many rows and how many in each row','I can count all to find the total'],eq:'Square grid paper, counters, egg cartons'},
+        {t:'Equal Groups Stories',li:'solve simple sharing and grouping stories using objects',sc:['I can listen to a sharing story and act it out','I can use objects to find the answer','I can say how many altogether or in each share'],eq:'Story problem cards, counters, sorting mats'},
+        {t:'Sharing and Grouping: What Did We Learn?',li:'compare equal sharing and equal grouping situations',sc:['I can share objects equally','I can make equal groups','I can explain the difference between sharing and grouping'],eq:'Counters, story cards, sorting mats'},
+      ],
+      'measurement': [
+        {t:'How Long? Comparing Length',li:'compare and order the length of objects directly',sc:['I can line up objects to compare length','I can use the words longer, shorter and the same length','I can order 3 objects from shortest to longest'],eq:'Objects of different lengths, string, ribbon'},
+        {t:'Measuring with Informal Units',li:'measure length using informal units and record the count',sc:['I can measure using informal units (blocks, hands, steps)','I can say how many units long an object is','I can record my measurement'],eq:'Informal units (blocks, feet, paper strips), objects to measure'},
+        {t:'Heavy or Light? Comparing Mass',li:'compare the mass of objects by hefting',sc:['I can hold objects and say which is heavier','I can use the words heavier, lighter and about the same','I can check using a balance scale'],eq:'Balance scales, classroom objects of different masses'},
+        {t:'Full, Half Full or Empty?',li:'compare and describe the capacity of containers',sc:['I can use the words full, half full and empty','I can compare the capacity of two containers','I can estimate which holds more'],eq:'Plastic containers, sand, water, pouring tools'},
+        {t:'Ordering Events: Before and After',li:'order familiar events and use time language',sc:['I can say what happens before and after school','I can order 3 events on a timeline','I can use the words morning, afternoon and night'],eq:'Event picture cards, timeline strips'},
+        {t:'Days of the Week',li:'name and order the days of the week',sc:['I can say the days of the week in order','I can identify today and tomorrow','I can use a weekly calendar'],eq:'Calendar, day labels, song or poem'},
+        {t:'Seasons and Months',li:'connect months and seasons in sequence',sc:['I can name the seasons in order','I can say which season we are in','I can connect months to seasons'],eq:'Season pictures, month cards, class calendar'},
+        {t:'Which Is Bigger? Comparing Area',li:'compare the area of two surfaces by covering',sc:['I can cover a surface with informal units','I can compare two areas by covering','I can say which surface is bigger'],eq:'Tiles, sticky notes, leaves, surfaces to cover'},
+        {t:'Measurement Vocabulary',li:'use mathematical measurement language accurately',sc:['I can use measurement words correctly (long, short, heavy, light, full, empty)','I can describe an object using measurement language','I can compare two objects using measurement words'],eq:'Classroom objects, measurement word wall'},
+        {t:'Measurement in Our World',li:'identify and describe measurement in everyday situations',sc:['I can find examples of measurement around the classroom','I can explain why we measure','I can choose the right tool or unit to measure'],eq:'Classroom objects, measurement scenario cards'},
+      ],
+    };
+    const _num12 = {
+      'number-place-value': [
+        {t:'Place Value: Tens and Ones',li:'read, write and represent 2-digit numbers using place value understanding',sc:['I can identify the tens and ones in a 2-digit number','I can represent a number using MAB blocks and place value chart','I can write a number in words and numerals'],eq:'MAB blocks, place value chart, number cards 0-100'},
+        {t:'Partitioning 2-Digit Numbers',li:'partition 2-digit numbers into tens and ones in different ways',sc:['I can partition 47 as 40 + 7','I can partition a number in more than one way','I can explain the value of each digit'],eq:'MAB blocks, place value chart, whiteboards'},
+        {t:'Comparing and Ordering to 100',li:'compare and order 2-digit numbers using place value knowledge',sc:['I can use > < = to compare 2-digit numbers','I can order a set of 5 numbers from smallest to largest','I can explain why one number is bigger'],eq:'Number cards, number line to 100, whiteboards'},
+        {t:'Skip Counting: 2s, 5s, 10s',li:'skip count by 2s, 5s and 10s forwards and backwards',sc:['I can count by 2s to 40','I can count by 5s to 100','I can count by 10s forwards and backwards from any decade'],eq:'Hundreds chart, number line, counters in groups'},
+        {t:'Numbers Before, Between and After',li:'identify and explain numbers that come before, between and after',sc:['I can say the number before and after any 2-digit number','I can find a missing number in a sequence','I can explain my reasoning'],eq:'Number line, number cards, sequencing strips'},
+        {t:'Representing Numbers Multiple Ways',li:'represent 2-digit numbers using materials, words, numerals and pictures',sc:['I can show a number with MAB, numerals, words and a picture','I can match different representations of the same number','I can explain what each digit means'],eq:'MAB blocks, number cards, representation matching cards'},
+        {t:'Rounding to the Nearest 10',li:'round 2-digit numbers to the nearest ten using a number line',sc:['I can find the nearest ten for a number','I can use a number line to round','I can explain why I rounded up or down'],eq:'Number line, rounding chart, whiteboards'},
+        {t:'Numbers to 120',li:'read, write and order numbers to 120 and beyond',sc:['I can count past 100','I can read and write numbers to 120','I can show a number on a number line to 120'],eq:'Number line to 120, hundreds chart extended, number cards'},
+        {t:'Odd and Even Numbers',li:'identify and explain odd and even numbers to 100',sc:['I can say if a number is odd or even','I can sort a set of numbers into odd and even','I can explain the rule for odd and even numbers'],eq:'Counters, sorting mats, odd/even anchor chart'},
+        {t:'Place Value Check-In',li:'demonstrate understanding of 2-digit place value in different contexts',sc:['I can represent any 2-digit number in 3 ways','I can order a set of 2-digit numbers','I can explain place value to a partner'],eq:'MAB blocks, place value mat, number cards, whiteboards'},
+      ],
+      'addition-subtraction': [
+        {t:'Counting On to Add',li:'use the counting-on strategy to add single-digit numbers',sc:['I can start counting from the larger number','I can use a number line to count on','I can add without counting from 1'],eq:'Number line to 20, counters, addition cards'},
+        {t:'Adding Tens',li:'add multiples of 10 mentally using place value understanding',sc:['I can add 10 to any 2-digit number in my head','I can add 20 or 30 mentally','I can explain what changes when I add tens'],eq:'MAB blocks, hundreds chart, whiteboards'},
+        {t:'Adding 2-Digit Numbers: No Regrouping',li:'add two 2-digit numbers by adding tens then ones',sc:['I can add the tens first then the ones','I can record my working','I can check my answer makes sense'],eq:'MAB blocks, place value chart, recording sheets'},
+        {t:'Regrouping When Adding',li:'regroup 10 ones as 1 ten when adding 2-digit numbers',sc:['I can identify when regrouping is needed','I can regroup 10 ones as 1 ten','I can record addition with regrouping correctly'],eq:'MAB blocks, place value chart, regrouping recording sheets'},
+        {t:'Counting Back to Subtract',li:'subtract by counting back on a number line',sc:['I can count back to subtract','I can show subtraction on a number line','I can write the subtraction number sentence'],eq:'Number line to 100, subtraction cards, whiteboards'},
+        {t:'Subtracting Tens',li:'subtract multiples of 10 using place value strategies',sc:['I can subtract 10 from any 2-digit number mentally','I can subtract 20 or 30 mentally','I can explain what changes when I subtract tens'],eq:'MAB blocks, hundreds chart, whiteboards'},
+        {t:'Subtraction with Regrouping',li:'regroup a ten into ones to enable subtraction',sc:['I can identify when I need to regroup to subtract','I can exchange 1 ten for 10 ones','I can record subtraction with regrouping'],eq:'MAB blocks, place value chart, recording sheets'},
+        {t:'Fact Families',li:'use fact families to connect addition and subtraction',sc:['I can write all four facts for a fact family','I can use addition to check a subtraction answer','I can explain how fact families are connected'],eq:'Fact family triangles, number cards, whiteboards'},
+        {t:'Choosing Add or Subtract',li:'solve word problems by deciding to add or subtract',sc:['I can identify whether a problem needs adding or subtracting','I can write a number sentence to solve','I can check my answer makes sense in context'],eq:'Word problem cards, number lines, whiteboards'},
+        {t:'Mental Strategies Review',li:'apply a range of mental strategies for addition and subtraction',sc:['I can choose an efficient strategy','I can explain my strategy to a partner','I can solve addition and subtraction problems mentally'],eq:'Strategy anchor chart, mental maths cards, whiteboards'},
+      ],
+      'multiplication-division': [
+        {t:'Arrays: Equal Rows and Columns',li:'model multiplication using arrays with equal rows and columns',sc:['I can make an array for a multiplication','I can write a multiplication sentence for an array','I can count the total in an array efficiently'],eq:'Grid paper, counters, array cards'},
+        {t:'2 Times Table',li:'build understanding and recall of the 2 times table',sc:['I can count by 2s to 24','I can write the 2 times table facts','I can use arrays to show 2 times facts'],eq:'Array cards, skip counting strips, multiplication fact cards'},
+        {t:'5 Times Table',li:'build understanding and recall of the 5 times table',sc:['I can count by 5s to 60','I can recall 5 times table facts','I can connect the 5 times table to clock faces'],eq:'Fact cards, clock faces, hundreds chart'},
+        {t:'10 Times Table',li:'build understanding and recall of the 10 times table',sc:['I can multiply any number by 10','I can skip count by 10s from any number','I can use place value to explain multiplying by 10'],eq:'MAB blocks, hundreds chart, fact cards'},
+        {t:'Doubling and Halving',li:'use doubling and halving as multiplication and division strategies',sc:['I can double numbers to 20','I can halve even numbers to 20','I can use doubling to find related multiplication facts'],eq:'Double/halve strips, mirrors, counters'},
+        {t:'Equal Sharing: Division',li:'model division by sharing equally into groups',sc:['I can share a number of objects equally into groups','I can write a division sentence','I can check my sharing is equal'],eq:'Counters, sharing mats, division cards'},
+        {t:'Equal Grouping: Division',li:'model division by making equal groups from a total',sc:['I can make equal groups from a total','I can count the number of groups I made','I can write the division sentence'],eq:'Counters, grouping mats, division cards'},
+        {t:'Connecting Multiplication and Division',li:'use fact families to connect multiplication and division',sc:['I can write a division fact from a multiplication fact','I can use known times tables to solve division','I can explain how multiplication and division are related'],eq:'Fact family triangles, fact cards'},
+        {t:'Multiplication Word Problems',li:'solve multiplication word problems using arrays and skip counting',sc:['I can identify multiplication in a word problem','I can draw an array or use skip counting to solve','I can write the number sentence and answer'],eq:'Word problem cards, grid paper, counters'},
+        {t:'Times Tables Fluency: 2, 5 and 10',li:'recall multiplication facts for 2, 5 and 10 with increasing fluency',sc:['I can recall 2, 5 and 10 times facts quickly','I can apply these facts to solve problems','I can explain a strategy for any fact I am unsure of'],eq:'Fact cards, multiplication games, whiteboards'},
+      ],
+    };
+    const _num56 = {
+      'number-place-value': [
+        {t:'Numbers to 1 000 000',li:'read, write and compare numbers up to 1 000 000 using place value',sc:['I can read and write 6-digit numbers','I can identify the place value of each digit in a large number','I can compare and order large numbers'],eq:'Place value chart to millions, number cards, whiteboards'},
+        {t:'Partitioning Large Numbers',li:'partition numbers to 1 000 000 into place value parts',sc:['I can partition a 6-digit number into its place value parts','I can rename a number in at least two ways (e.g. 4000 + 250 or 3000 + 1250)','I can explain the value of any digit'],eq:'Place value chart, large number cards, whiteboards'},
+        {t:'Negative Numbers',li:'represent and compare negative numbers in context',sc:['I can read and write negative numbers','I can order positive and negative numbers on a number line','I can explain what a negative number means in context (e.g. temperature, finance)'],eq:'Number line with negatives, thermometer, whiteboards'},
+        {t:'Decimals: Tenths and Hundredths',li:'read, write and represent decimals to hundredths',sc:['I can read and write decimals to hundredths','I can represent a decimal using a place value chart','I can compare decimals using place value'],eq:'Place value chart, decimal number cards, base-10 blocks'},
+        {t:'Decimals: Thousandths',li:'extend understanding of decimals to thousandths',sc:['I can read and write decimals to thousandths','I can order decimals to thousandths on a number line','I can convert between fractions and decimals (e.g. 3/1000 = 0.003)'],eq:'Place value chart to thousandths, decimal cards, whiteboards'},
+        {t:'Comparing and Ordering Decimals',li:'compare and order decimals using place value reasoning',sc:['I can compare decimals using place value (not length)','I can order a set of decimals from smallest to largest','I can explain common misconceptions (e.g. 0.3 > 0.25)'],eq:'Decimal number lines, ordering strips, whiteboards'},
+        {t:'Rounding to Significant Figures',li:'round numbers and decimals to a given place value',sc:['I can round to the nearest 10, 100 or 1000','I can round decimals to the nearest whole, tenth or hundredth','I can explain why rounding is useful'],eq:'Number lines, rounding cards, calculator for checking'},
+        {t:'Powers of 10',li:'understand and apply the structure of the base-10 number system',sc:['I can multiply and divide by 10, 100 and 1000 using place value','I can explain what happens to digits when multiplying by 10','I can use powers of 10 to solve problems'],eq:'Place value chart, calculator, patterns recording sheets'},
+        {t:'Scientific Notation Introduction',li:'interpret and represent large and small numbers in a variety of ways',sc:['I can read numbers in the millions and explain the place value','I can convert between expanded and standard form','I can use large numbers in problem-solving contexts'],eq:'News articles with large numbers, place value chart, whiteboards'},
+        {t:'Number Sense: Estimation and Reasonableness',li:'use estimation and number sense to assess the reasonableness of answers',sc:['I can estimate a calculation before solving','I can judge whether an answer is reasonable','I can adjust my estimate and explain my reasoning'],eq:'Estimation problems, calculator, whiteboards'},
+      ],
+      'fractions': [
+        {t:'Fractions as Equal Parts',li:'explain fractions as equal parts of a whole or collection',sc:['I can define a fraction as equal parts of a whole','I can identify the numerator and denominator','I can explain why equal parts are important'],eq:'Fraction circles/bars, folding paper, whiteboards'},
+        {t:'Equivalent Fractions',li:'find and explain equivalent fractions using models and reasoning',sc:['I can find fractions equivalent to ½, ⅓ and ¼','I can explain why equivalent fractions have the same value','I can simplify a fraction to its lowest terms'],eq:'Fraction wall, number lines, fraction cards'},
+        {t:'Comparing Fractions',li:'compare and order fractions with related denominators',sc:['I can compare fractions using a number line','I can order fractions with different denominators','I can explain which fraction is greater and why'],eq:'Fraction number lines, comparison cards, whiteboards'},
+        {t:'Mixed Numbers and Improper Fractions',li:'convert between mixed numbers and improper fractions',sc:['I can convert a mixed number to an improper fraction','I can convert an improper fraction to a mixed number','I can explain what each form means'],eq:'Number lines, fraction bars, recording sheets'},
+        {t:'Adding and Subtracting Fractions',li:'add and subtract fractions with the same and related denominators',sc:['I can add fractions with the same denominator','I can add fractions by finding a common denominator','I can check my answer using a model'],eq:'Fraction bars, number lines, recording sheets'},
+        {t:'Fractions of a Quantity',li:'find fractions of a whole number quantity',sc:['I can find ½ and ¼ of a quantity','I can find any unit fraction of a quantity by dividing','I can apply fraction of a quantity to problem-solving'],eq:'Counters, fraction problem cards, whiteboards'},
+        {t:'Decimals as Fractions',li:'connect fractions and decimals up to thousandths',sc:['I can write a fraction as a decimal (e.g. ¾ = 0.75)','I can write a decimal as a fraction in lowest terms','I can place fractions and decimals on the same number line'],eq:'Fraction-decimal matching cards, number lines, whiteboards'},
+        {t:'Percentages',li:'understand percentages as hundredths and connect to fractions and decimals',sc:['I can convert between percentages, fractions and decimals','I can find a percentage of a quantity','I can apply percentages to real-world problems (e.g. discounts)'],eq:'Hundred grids, percentage-fraction-decimal triangles, whiteboards'},
+        {t:'Ratio and Proportion',li:'understand and apply ratio to describe proportional relationships',sc:['I can write a ratio in the form a:b','I can simplify a ratio to its simplest form','I can use ratio to solve sharing problems'],eq:'Ratio problem cards, counters, whiteboards'},
+        {t:'Fractions, Decimals and Percentages: Putting It Together',li:'fluently convert and apply fractions, decimals and percentages',sc:['I can convert between all three forms fluently','I can choose the most efficient form to solve a problem','I can apply FDP knowledge to real-world contexts'],eq:'FDP challenge cards, calculator, whiteboards'},
+      ],
+      'addition-subtraction': [
+        {t:'Adding and Subtracting Large Numbers',li:'add and subtract numbers with up to 6 digits using efficient strategies',sc:['I can use the standard algorithm for addition and subtraction','I can choose between mental and written strategies','I can estimate to check my answer is reasonable'],eq:'Recording sheets, place value chart, calculator for checking'},
+        {t:'Adding and Subtracting Decimals',li:'add and subtract decimals including in real-world contexts',sc:['I can align decimal points when adding or subtracting','I can add and subtract money amounts accurately','I can solve decimal word problems and check for reasonableness'],eq:'Decimal recording sheets, calculators, real-world problem cards'},
+        {t:'Adding Negative Numbers',li:'add and subtract using positive and negative integers',sc:['I can add a negative number and explain what happens','I can subtract a negative number','I can use a number line to model integer operations'],eq:'Integer number lines, cards, whiteboards'},
+        {t:'Mental Strategies for Large Numbers',li:'apply mental strategies to add and subtract efficiently',sc:['I can use compensation strategy (e.g. 497 + 265 = 500 + 262)','I can split numbers to add and subtract','I can choose the most efficient mental strategy'],eq:'Mental strategy anchor chart, practice problems, whiteboards'},
+        {t:'Order of Operations',li:'apply order of operations when solving multi-step calculations',sc:['I can apply BODMAS/PEMDAS correctly','I can solve multi-step expressions','I can explain why order of operations matters'],eq:'Order of operations cards, whiteboards, calculators'},
+        {t:'Estimation in Context',li:'use estimation to solve and check multi-step problems',sc:['I can estimate the answer before calculating','I can adjust my estimate if needed','I can evaluate whether my answer is reasonable'],eq:'Estimation problem cards, whiteboards'},
+        {t:'Multi-Step Word Problems',li:'solve multi-step word problems involving addition and subtraction',sc:['I can identify what the problem is asking','I can choose the correct operations in order','I can check my final answer makes sense'],eq:'Multi-step problem cards, whiteboards, calculators'},
+        {t:'Financial Literacy: Budgeting',li:'apply addition and subtraction skills to financial contexts',sc:['I can calculate income and expenses','I can find the difference between two money amounts','I can explain what profit and loss mean'],eq:'Budget task cards, whiteboards, calculators'},
+        {t:'Problem Solving: Working Backwards',li:'use the working-backwards strategy to solve addition/subtraction problems',sc:['I can identify when working backwards is helpful','I can use the inverse operation to work backwards','I can check my solution by working forwards'],eq:'Working backwards problem cards, whiteboards'},
+        {t:'Addition and Subtraction: Reasoning and Justification',li:'explain and justify strategies for addition and subtraction',sc:['I can choose an efficient strategy and explain my choice','I can justify my answer using mathematical reasoning','I can evaluate a peer\'s strategy and give feedback'],eq:'Open-ended problems, whiteboards, peer feedback cards'},
+      ],
+    };
+    const numYearMap = {'Foundation': _numFoundation, 'Years 1-2': _num12, 'Years 5-6': _num56};
+    const _yearNumOverrides = numYearMap[yl] || {};
     const numWeeks = {
       'number-place-value': [
         {t:`Exploring Numbers: What Do We Know?`,li:`read, write and represent numbers using place value understanding`,sc:[`I can read and write numbers to ${sk0}`,`I can identify the place value of each digit`,`I can represent numbers using materials or diagrams`],eq:'Place value charts, MAB blocks, number cards, whiteboards'},
@@ -3447,6 +3577,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
         {t:`${F}: Reflection`,li:`reflect on multiplication and division learning and share strategies`,sc:[`I can demonstrate my strongest ${f} strategy`,`I can explain what helped me learn`,`I can identify my next goal`],eq:'Maths journals, strategy posters'},
       ],
     };
+    // Apply year-level specific overrides
+    Object.assign(numWeeks, _yearNumOverrides);
     const weekArr = numWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3455,10 +3587,16 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
         li: wd.li,
         sc: wd.sc.join('\n'),
         equipment: wd.eq,
-        context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 Mathematics.`,
+        context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 Mathematics — ${yl}.`,
         differentiation: {
-          support: `Provide concrete materials (MAB, counters, number lines). Use pre-made templates. Pair with a buddy. Break tasks into smaller steps. Use ${sk0} at a lower level of complexity.`,
-          extension: `Apply ${sk0} to multi-step and open-ended problems. Explore patterns and generalisations. Create own problems for peers to solve. Work with larger numbers.`
+          support: yl === 'Foundation' ? `Use concrete materials throughout (blocks, counters, number lines). Give one-step instructions. Pair with a buddy. Allow students to show answers using objects rather than writing.` :
+                   yl === 'Years 1-2' ? `Provide MAB blocks, number lines and hundred charts. Reduce number of problems. Pair with a buddy. Break tasks into smaller steps. Provide sentence frames for explanations.` :
+                   yl === 'Years 5-6' ? `Provide scaffolded recording sheets and worked examples. Allow calculator for multi-step problems. Focus on fewer problems with deeper reasoning. Pair with a buddy.` :
+                   `Provide concrete materials (MAB, counters, number lines). Use pre-made templates. Pair with a buddy. Break tasks into smaller steps. Use ${sk0} at a lower level of complexity.`,
+          extension: yl === 'Foundation' ? `Challenge students to find more examples, explain their thinking to a partner, or explore beyond 20.` :
+                     yl === 'Years 1-2' ? `Work with 3-digit numbers, create own problems for peers, explain thinking in two different ways.` :
+                     yl === 'Years 5-6' ? `Apply to complex real-world problems, investigate generalisations, prove or disprove a mathematical conjecture, mentor peers.` :
+                     `Apply ${sk0} to multi-step and open-ended problems. Explore patterns and generalisations. Create own problems for peers to solve. Work with larger numbers.`
         },
         grouping: { whole: 'Number talk and explicit teaching', pairs: 'Partner practice — explain your thinking', small: 'Guided maths group', individual: 'Independent problem solving and journalling' }
       };
@@ -3492,6 +3630,111 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
   }
   // ── LITERACY ─────────────────────────────────────────────
   if (subj === 'literacy') {
+    // ── Year-level-specific literacy overrides ──
+    const _litFoundation = {
+      'reading-comp': [
+        {t:'What Books Can Tell Us',li:'explore print concepts and explain how books work',sc:['I can hold a book correctly and turn pages carefully','I can point to where reading starts on a page','I can explain what the cover, title and author are'],eq:'Big books, picture books, pointer, reading journals'},
+        {t:'Sounds in Words: Rhyme',li:'recognise and produce rhyming words in shared texts',sc:['I can hear when two words rhyme','I can find a word that rhymes with a given word','I can join in with rhyming texts'],eq:'Rhyming picture books, rhyme cards, shared reading texts'},
+        {t:'Syllables: Clapping Words Apart',li:'segment words into syllables by clapping',sc:['I can clap the syllables in my name','I can count the syllables in a word','I can sort words by number of syllables'],eq:'Name cards, syllable sorting mats, picture cards'},
+        {t:'Beginning Sounds: Initial Phonemes',li:'identify and say the initial sound in spoken words',sc:['I can hear the first sound in a word','I can say a word that starts with a given sound','I can match pictures to their starting sound'],eq:'Alphabet cards, picture sorting cards, sound dice'},
+        {t:'Letter-Sound Relationships',li:'connect letters to their sounds and find them in texts',sc:['I can say the sound for at least 5 letters','I can find a letter in a shared text','I can write letters I know'],eq:'Alphabet chart, sand trays, magnetic letters, decodable readers'},
+        {t:'Reading Simple Decodable Words',li:'blend letter sounds together to read simple CVC words',sc:['I can say each sound and blend them together','I can read simple 3-letter words (CVC)','I can check if the word I said makes sense'],eq:'CVC word cards, decodable books, whiteboards'},
+        {t:'Sight Words: High-Frequency Reading',li:'read common high-frequency words on sight',sc:['I can read at least 10 sight words quickly','I can find sight words in a text','I can use sight words when reading'],eq:'Sight word cards, word wall, shared reading books'},
+        {t:'Retelling a Story',li:'retell the main events of a picture book in sequence',sc:['I can say what happened at the beginning','I can say what happened in the middle','I can say what happened at the end'],eq:'Picture books, story sequencing cards, retelling frames'},
+        {t:'Making Connections: Text to Self',li:'make connections between a text and personal experiences',sc:['I can say what the text reminds me of','I can explain how I feel like a character','I can share my connection with a partner'],eq:'Shared reading books, connection anchor chart, turn-and-talk prompts'},
+        {t:'Reading for Enjoyment: Choosing Books',li:'select and enjoy texts independently',sc:['I can choose a book that interests me','I can say what I liked about a book','I can share a recommendation with a friend'],eq:'Classroom library, reading sharing time, book recommendation cards'},
+      ],
+      'writing-narrative': [
+        {t:'I Can Draw and Label',li:'draw a picture and add letters or labels to communicate meaning',sc:['I can draw a picture about something I know','I can add labels or sounds I hear','I can read my writing back to someone'],eq:'Drawing paper, pencils, crayons, alphabet chart'},
+        {t:'Left to Right: How Writing Works',li:'understand that writing goes from left to right and top to bottom',sc:['I can start at the top left of the page','I can write from left to right','I can move to the next line when needed'],eq:'Lined paper, handwriting models, whiteboard practice'},
+        {t:'Writing My Name',li:'write my first name using correct letter formation',sc:['I can write the letters in my name','I can start with a capital letter','I can say the letter names in my name'],eq:'Name cards, sand trays, whiteboard practice'},
+        {t:'Writing Letters I Know',li:'write letters I know and connect them to sounds',sc:['I can write at least 5 letters correctly','I can say the sound each letter makes','I can use letters I know to start writing words'],eq:'Alphabet chart, sand trays, whiteboards, letter formation cards'},
+        {t:'Writing About Me',li:'write a simple sentence or caption about myself using sounds I know',sc:['I can say what I want to write before I write it','I can write some sounds I can hear','I can read my writing back to someone'],eq:'Sentence frames, pencils, alphabet chart, drawing paper'},
+        {t:'My Weekend: Simple Recounts',li:'draw and write to recount something that happened to me',sc:['I can draw a picture of something I did','I can write some words or sounds to go with my picture','I can say my sentence aloud before writing'],eq:'Recount writing frames, drawing paper, alphabet chart'},
+        {t:'Adding More Words',li:'add detail to my writing by including describing words',sc:['I can add a colour or size word to my writing','I can stretch out sounds to write harder words','I can re-read my work to check it makes sense'],eq:'Descriptive word bank, alphabet chart, writing books'},
+        {t:'Writing a Sentence',li:'write a complete simple sentence with a capital letter and full stop',sc:['I can write a sentence that makes sense','I can start with a capital letter','I can end with a full stop'],eq:'Sentence writing frames, whiteboards, writing books'},
+        {t:'Sharing Our Stories',li:'share my writing with others and listen to peer writing',sc:["I can read my writing to a partner",'I can say something kind about a partner\'s writing','I can tell what my writing is about'],eq:"Author's sharing chair, partner sharing prompt cards"},
+        {t:'Our Class Book',li:'contribute a page to a shared class writing project',sc:['I can write and draw for a class book','I can present my page neatly','I can explain what my page is about'],eq:'Class book template, pencils, crayons'},
+      ],
+      'phonics': [
+        {t:'Rhyme and Rhythm',li:'hear and produce rhyme in songs, poems and picture books',sc:['I can hear when words rhyme','I can finish a rhyming pattern','I can say a rhyming word'],eq:'Nursery rhyme books, rhyme cards, poems on chart paper'},
+        {t:'Syllable Segmentation',li:'break spoken words into syllables by clapping or tapping',sc:['I can clap the beats in my name','I can count syllables in 2-syllable words','I can sort words by syllable count'],eq:'Name cards, syllable sorting mats, objects of 1, 2 and 3 syllables'},
+        {t:'Onset and Rime',li:'hear and separate the first sound from the rest of a word (onset-rime)',sc:['I can split a word into its beginning sound and the part that rhymes','I can generate a new word by changing the onset','I can sort words by their rime'],eq:'Word family cards, magnetic letters, whiteboard'},
+        {t:'Initial Sounds: m, s, t, p',li:'identify and produce words that begin with m, s, t or p',sc:['I can say the sound for m, s, t and p','I can find objects that start with each sound','I can write the letters m, s, t and p'],eq:'Letter cards, picture sorting cards, sand trays'},
+        {t:'Initial Sounds: a, i, n, o',li:'identify and produce words that begin with a, i, n or o',sc:['I can say the sound for a, i, n and o','I can find and say words starting with each sound','I can write the letters correctly'],eq:'Alphabet chart, picture sorting cards, sand trays'},
+        {t:'Blending CVC Words',li:'blend consonant-vowel-consonant (CVC) sounds to read simple words',sc:['I can say each sound in a 3-letter word','I can blend the sounds together to say the word','I can read 5 CVC words'],eq:'CVC word cards, magnetic letters, decodable readers'},
+        {t:'Segmenting to Write CVC Words',li:'hear the sounds in CVC words and write them',sc:['I can say a CVC word and count the sounds','I can write each sound I hear','I can check my spelling by sounding out'],eq:'Sound buttons, whiteboard, sand trays, CVC picture cards'},
+        {t:'High-Frequency Sight Words 1',li:'read common sight words on sight without decoding',sc:['I can read the, I, is, my, we, a on sight','I can find these words in a text','I can write the sight words I know'],eq:'Sight word cards, word wall, decodable books'},
+        {t:'Digraphs: sh, ch, th',li:'recognise and use common digraphs sh, ch and th in words',sc:['I can say the sound for sh, ch and th','I can read words containing digraphs','I can write words with sh, ch or th'],eq:'Digraph cards, word sort, decodable readers with digraphs'},
+        {t:'Reading and Writing: Putting It Together',li:'apply phonics knowledge to read and write simple sentences',sc:['I can read a simple decodable sentence','I can write a sentence using sounds I know','I can check my reading and writing makes sense'],eq:'Decodable sentence cards, writing frames, whiteboard'},
+      ],
+    };
+    const _lit12 = {
+      'reading-comp': [
+        {t:'Decoding Strategies: Working Out Words',li:'use multiple strategies to decode unfamiliar words in texts',sc:['I can use my phonics knowledge to decode a word','I can re-read a sentence if it does not make sense','I can use the picture and context to help me read'],eq:'Levelled readers, strategy anchor chart, reading journals'},
+        {t:'Reading Fluency: Smooth and Expressive',li:'read aloud with appropriate fluency and expression',sc:['I can read at a steady pace without sounding choppy','I can change my voice to show punctuation','I can re-read to improve my expression'],eq:'Levelled readers, poetry, fluency tracking sheets'},
+        {t:'Predicting: Using Clues',li:'make and revise predictions using picture and text clues',sc:['I can use the cover and pictures to predict','I can update my prediction as I read more','I can explain the clues I used'],eq:'Picture books, graphic organisers, sticky notes'},
+        {t:'Retelling: What Happened?',li:'retell a story including characters, setting and key events in sequence',sc:['I can name the main character(s) and setting','I can retell 3 or more key events in order','I can include the problem and solution'],eq:'Story retelling mats, sequencing strips, reading journals'},
+        {t:'Making Connections to Understand',li:'make text-to-self connections to deepen understanding',sc:['I can make a connection between the text and my life','I can explain how the connection helps me understand','I can share my connection with a partner'],eq:'Connection anchor chart, sticky notes, partner sharing time'},
+        {t:'Characters: How Do They Feel?',li:'identify and describe a character\'s feelings and motivations',sc:['I can identify how a character feels','I can find evidence in the text','I can explain why the character feels that way'],eq:'Emotion word bank, character feeling cards, reading journals'},
+        {t:'Finding the Main Idea',li:'identify the main idea and supporting details in a text',sc:['I can identify the main idea of a paragraph or text','I can find at least 2 supporting details','I can write the main idea in my own words'],eq:'Main idea graphic organiser, simple informational texts, reading journals'},
+        {t:'Questions Before, During and After',li:'generate questions to deepen understanding of a text',sc:['I can ask a question before reading to set a purpose','I can ask a question during reading','I can find answers to my questions in the text'],eq:'Question stems anchor chart, sticky notes, reading journals'},
+        {t:'Responding to Text: Written Response',li:'write a simple response to a text using evidence',sc:['I can state my opinion about a text','I can give a reason from the text','I can write at least 2 sentences in response'],eq:'Response frames, mentor texts, reading journals'},
+        {t:'Celebrating Reading: Sharing Our Thinking',li:'share reading responses and reflect on reading growth',sc:['I can share a strategy that helped me this unit','I can give feedback on a partner\'s response','I can set a reading goal for next term'],eq:'Partner sharing cards, reading reflection journals'},
+      ],
+      'writing-narrative': [
+        {t:'What Makes a Good Story?',li:'identify the features of engaging narrative writing in mentor texts',sc:['I can name at least 3 features of a narrative','I can identify orientation, complication and resolution','I can explain what makes a story interesting'],eq:'Mentor texts, narrative features chart, reading journals'},
+        {t:'Planning: Story Mountain',li:'plan a simple narrative using a story mountain or arc',sc:['I can identify my character and setting','I can plan a problem and a solution','I can put my plan in order on a story mountain'],eq:'Story mountain planners, character/setting cards, pencils'},
+        {t:'Writing the Beginning: Hook the Reader',li:'write an engaging opening that introduces character and setting',sc:['I can start with an interesting sentence to hook the reader','I can introduce my character and setting','I can use a capital letter to start and a full stop to end sentences'],eq:'Hook examples, mentor texts, writing books'},
+        {t:'Writing the Middle: The Problem',li:'write a complication that creates a problem for the character',sc:['I can introduce a clear problem','I can describe how the character reacts','I can write in sentences with correct punctuation'],eq:'Complication examples, sentence frames, writing books'},
+        {t:'Action and Description: Show, Don\'t Tell',li:'use action and describing words to paint a picture for the reader',sc:['I can use adjectives to describe a character or setting','I can use action verbs to move the story forward','I can replace a "boring" word with a more interesting one'],eq:'Describing word bank, showing/telling examples, thesaurus, writing books'},
+        {t:'Writing the Ending: Resolution',li:'write a satisfying resolution that solves the problem',sc:['I can resolve the main problem in my story','I can write an ending that feels complete','I can avoid a sudden or rushed ending'],eq:'Resolution examples, mentor texts, writing books'},
+        {t:'Checking Punctuation',li:'check and correct sentence punctuation in my writing',sc:['I can find where sentences begin and end','I can check for capital letters and full stops','I can correct punctuation errors in my own work'],eq:'Punctuation checklist, proofreading cards, coloured pens'},
+        {t:'Word Choice: Making Language Interesting',li:'improve word choice by replacing dull or repeated words',sc:['I can find dull words (big, nice, good, said) and replace them','I can use a thesaurus or word wall to find better words','I can read my improved writing aloud'],eq:'Thesaurus, word wall, word upgrade chart, writing books'},
+        {t:'Publishing: Neat Final Copy',li:'write a polished final copy of my narrative',sc:['I can write or type a neat final copy','I can check spelling and punctuation one more time','I can add an illustration if helpful'],eq:'Good copy paper, pencils, art supplies (optional)'},
+        {t:'Author\'s Chair: Sharing Our Stories',li:'share narratives and give and receive feedback',sc:["I can read my narrative to a partner or the class",'I can say something I am proud of','I can give a kind, helpful comment to a peer'],eq:"Author's chair, feedback cards, reflection journals"},
+      ],
+      'phonics': [
+        {t:'Review: Blending and Segmenting',li:'blend and segment sounds in words fluently',sc:['I can blend sounds quickly to read words','I can segment words into all their sounds','I can apply blending/segmenting to unfamiliar words'],eq:'Word cards, whiteboards, decodable readers'},
+        {t:'Long Vowels: Magic E',li:'read and spell words with the VCe (magic e) pattern',sc:['I can explain how magic e changes a vowel sound','I can read CVCe words (e.g. cake, pine, home)','I can write CVCe words from sound to spelling'],eq:'Magic e cards, word sort, decodable texts'},
+        {t:'Vowel Teams: ai, ay',li:'read and spell words with ai and ay vowel patterns',sc:['I can read words with ai and ay','I can write words with ai and ay when I hear the sound','I can sort words by their spelling pattern'],eq:'Vowel team cards, word sort, decodable readers'},
+        {t:'Vowel Teams: ee, ea',li:'read and spell words with ee and ea patterns',sc:['I can read words with ee and ea','I can write words with ee and ea patterns','I can use these words when reading and writing'],eq:'Vowel team cards, word sort, decodable readers'},
+        {t:'Digraphs and Blends Review',li:'read and write words with consonant blends and digraphs',sc:['I can read words with initial blends (str, spl, scr)','I can read and write words with digraphs (ch, sh, th, wh)','I can write blend/digraph words in a sentence'],eq:'Blend and digraph cards, word lists, whiteboards'},
+        {t:'Suffix: -ing and -ed',li:'read and spell words with -ing and -ed endings',sc:['I can add -ing and -ed to base words','I can explain the doubling rule','I can read and use -ing/-ed words in context'],eq:'Suffix cards, word building strips, writing books'},
+        {t:'Suffix: -s and -es',li:'make words plural by adding -s or -es',sc:['I can decide when to add -s or -es','I can write plural words correctly','I can use plurals in my writing'],eq:'Plural rule cards, word sort, writing books'},
+        {t:'Compound Words',li:'read and build compound words by joining two words',sc:['I can identify two words inside a compound word','I can build my own compound words','I can read compound words fluently'],eq:'Compound word cards, matching cards, whiteboards'},
+        {t:'High-Frequency Words: Reading and Writing',li:'read and spell common high-frequency words automatically',sc:['I can read the first 100 high-frequency words','I can spell at least 20 high-frequency words','I can use high-frequency words in my writing'],eq:'Word wall, sight word activities, decodable readers'},
+        {t:'Applying Phonics: Independent Reading and Writing',li:'apply phonics knowledge to read and write independently',sc:['I can decode an unfamiliar word using phonics','I can check my reading makes sense','I can spell words using phonics patterns I know'],eq:'Decodable readers, independent writing task, whiteboards'},
+      ],
+    };
+    const _lit56 = {
+      'reading-comp': [
+        {t:'Analytical Reading: What Is the Author Doing?',li:'analyse the choices an author makes and explain their effect',sc:['I can identify a specific technique the author uses','I can explain the effect on the reader','I can support my analysis with evidence from the text'],eq:'Complex mentor texts, annotation guides, reading journals'},
+        {t:'Inferring: Reading Between the Lines',li:'make and justify sophisticated inferences beyond the literal text',sc:['I can make an inference using evidence from the text','I can explain the reasoning behind my inference','I can distinguish between what is stated and what is implied'],eq:'Complex texts, inference graphic organiser, reading journals'},
+        {t:'Evaluating Perspective and Bias',li:'identify and evaluate the perspective, voice and potential bias in a text',sc:['I can identify whose perspective the text is written from','I can explain how perspective affects the message','I can suggest a different perspective that could be represented'],eq:'Persuasive texts, news articles, comparison graphic organiser'},
+        {t:'Structural Analysis: How Is This Text Organised?',li:'analyse how the structure of a text supports its purpose',sc:['I can identify the text structure (problem/solution, cause/effect, compare/contrast)','I can explain how the structure supports the purpose','I can use structural features to navigate and summarise the text'],eq:'Informational texts, text structure graphic organisers, reading journals'},
+        {t:'Vocabulary in Context',li:'use context clues and word parts to determine the meaning of complex vocabulary',sc:['I can use context clues to infer the meaning of a word','I can use prefixes and suffixes to work out meaning','I can explain a complex word in my own words'],eq:'Complex texts, vocabulary graphic organisers, thesaurus'},
+        {t:'Comparing Texts: Same Topic, Different Perspectives',li:'compare how two texts treat the same topic differently',sc:['I can identify similarities and differences between two texts','I can explain how each author\'s purpose influences the text','I can form an opinion about which text is more effective and justify it'],eq:'Paired texts on same topic, comparison chart, reading journals'},
+        {t:'Synthesising Information Across Texts',li:'synthesise information from multiple sources to build understanding',sc:['I can identify common ideas across multiple texts','I can note where texts agree or disagree','I can combine information to write a synthesised response'],eq:'Multiple texts on one topic, synthesis graphic organiser'},
+        {t:'Critical Literacy: Whose Story Is Not Being Told?',li:'critically evaluate texts by considering missing voices and perspectives',sc:['I can identify whose voice is centred in a text','I can identify a perspective that is missing or marginalised','I can write an alternative response from a different viewpoint'],eq:'A range of texts, critical literacy questioning cards, reading journals'},
+        {t:'Long-Form Reading: Independent Response',li:'read a sustained text independently and respond analytically',sc:['I can read a complex text and identify key themes','I can write an extended analytical response','I can support my response with specific evidence'],eq:'Sustained text selection, reading journals, analytical response frames'},
+        {t:'Reading Reflection and Goal Setting',li:'reflect on my reading development and set goals for future learning',sc:['I can name strategies that have strengthened my comprehension','I can identify a reading challenge and how I addressed it','I can set specific, measurable reading goals'],eq:'Reading reflection journals, goal-setting templates'},
+      ],
+      'writing-narrative': [
+        {t:'Studying the Craft: Reading Like a Writer',li:'analyse the craft techniques used in complex mentor texts',sc:['I can identify at least 3 craft techniques in a mentor text','I can explain the effect of each technique on the reader','I can plan to use a craft technique in my own writing'],eq:'Complex mentor texts, craft analysis guides, reading journals'},
+        {t:'Developing Complex Characters',li:'create multi-dimensional characters with clear motivations and growth',sc:['I can develop a character with contrasting traits','I can show character motivation through action and dialogue','I can plan how my character will change or grow'],eq:'Character development matrices, mentor texts, planning sheets'},
+        {t:'Establishing Setting and Atmosphere',li:'craft a detailed setting that creates atmosphere and mood',sc:['I can use sensory language to build a vivid setting','I can explain how my setting affects the mood','I can show how the setting influences character behaviour'],eq:'Atmosphere exemplars, sensory language bank, writing books'},
+        {t:'Narrative Structure: Beyond the Basics',li:'plan a narrative using sophisticated structural techniques (e.g. flashback, foreshadowing)',sc:['I can use foreshadowing or flashback effectively','I can explain the structural technique I used','I can assess how my technique affects the reader\'s experience'],eq:'Structural technique exemplars, planning templates, writing books'},
+        {t:'Writing Dialogue with Purpose',li:'use dialogue to develop character, advance plot and create tension',sc:['I can write dialogue that reveals character personality','I can punctuate dialogue correctly in complex sentences','I can use dialogue to advance the plot rather than just to talk'],eq:'Dialogue exemplars, punctuation guide, writing books'},
+        {t:'Building Tension and Suspense',li:'use a range of language techniques to create tension and suspense',sc:['I can use short sentences, ellipsis and pacing to create suspense','I can vary sentence length for effect','I can identify the moment of highest tension in my narrative'],eq:'Tension technique examples, sentence variety chart, writing books'},
+        {t:'Figurative Language: Enhancing Effect',li:'use figurative language (metaphor, simile, personification) for deliberate effect',sc:['I can use metaphor to describe a character or emotion','I can explain the effect of my figurative language choice','I can avoid clichés by creating original comparisons'],eq:'Figurative language examples, brainstorming cards, writing books'},
+        {t:'Editing for Craft: Self-Review',li:'critically review and improve own writing for craft, clarity and style',sc:['I can identify and improve at least 2 craft elements in my draft','I can rewrite a weak passage to strengthen the effect','I can explain the specific changes I made and why'],eq:'Editing checklist, peer editing cards, writing books'},
+        {t:'Publishing for a Real Audience',li:'produce a polished, final narrative for publication or performance',sc:['I can produce a polished narrative that demonstrates craft','I can choose an appropriate publication format','I can present my work with confidence'],eq:'Publication formats (book, blog, performance), display materials'},
+        {t:'Author\'s Reflection: What Did I Learn?',li:'reflect on the writing process and growth as an author',sc:['I can identify 3 craft techniques I used in this unit','I can explain what I found challenging and how I addressed it','I can set a writing goal based on mentor author techniques'],eq:"Author's reflection journals, goal-setting cards"},
+      ],
+    };
+    const litYearMap = {'Foundation': _litFoundation, 'Years 1-2': _lit12, 'Years 5-6': _lit56};
+    const _yearLitOverrides = litYearMap[yl] || {};
     const litWeeks = {
       'reading-comp': [
         {t:`Reading Strategies: What Do Good Readers Do?`,li:`identify and apply active reading strategies`,sc:[`I can name at least 3 reading strategies`,`I can choose a strategy to help my understanding`,`I can explain why good readers use strategies`],eq:'Anchor charts, mentor text, sticky notes, reading journals'},
@@ -3518,6 +3761,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
         {t:`Celebrating Writing and Reflecting`,li:`celebrate our narratives and reflect on our writing growth`,sc:[`I can identify three things I improved in this unit`,`I can give constructive feedback to a peer`,`I can set a writing goal for next time`],eq:"Author's chair setup, reflection journals, peer feedback cards"},
       ],
     };
+    // Apply year-level specific overrides
+    Object.assign(litWeeks, _yearLitOverrides);
     const weekArr = litWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3526,10 +3771,16 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks) {
         li: wd.li,
         sc: wd.sc.join('\n'),
         equipment: wd.eq,
-        context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 English.`,
+        context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 English — ${yl}.`,
         differentiation: {
-          support: `Sentence starters and frames provided. Word banks available. Graphic organisers to support planning. Reduce writing quantity but maintain same concept. Partner support during writing conferences.`,
-          extension: `Extended and complex texts. Add layers of craft (subplots, figurative language, complex structure). Peer mentoring and editing role. Publish for a wider or real-world audience.`
+          support: yl === 'Foundation' ? `Reduce writing to drawing+labelling. Scribe for students who need it. Use alphabet charts and sound walls. Allow oral responses. Buddy reading with a stronger reader.` :
+                   yl === 'Years 1-2' ? `Sentence starters and frames. Word walls and decodable text choices. Graphic organisers for planning. Allow students to dictate to an adult or record voice. Buddy reading.` :
+                   yl === 'Years 5-6' ? `Pre-reading vocabulary work. Scaffolded annotation guides. Sentence stems for analysis. Reduce response length but maintain analytical rigour. Guided small group for complex texts.` :
+                   `Sentence starters and frames. Word banks available. Graphic organisers to support planning. Reduce writing quantity but maintain same concept. Partner support during writing conferences.`,
+          extension: yl === 'Foundation' ? `Encourage students to write more labels, attempt sight words, or create their own book page.` :
+                     yl === 'Years 1-2' ? `Use more complex sentence structures, write for different purposes, read longer and more complex texts.` :
+                     yl === 'Years 5-6' ? `Analyse craft across multiple texts, write for a real audience (blog, letter, publication), take on peer mentoring or editing roles.` :
+                     `Extended and complex texts. Add layers of craft (subplots, figurative language, complex structure). Peer mentoring and editing role. Publish for a wider or real-world audience.`
         },
         grouping: { whole: 'Shared text and explicit teaching', pairs: 'Talk partners for discussion and feedback', small: 'Guided reading/writing group', individual: 'Independent reading or writing time' }
       };
@@ -4306,7 +4557,7 @@ function generateAll() {
     var curWeek = week;
     var curCount = count;
     var focus = state.selectedFocuses[curCount % state.selectedFocuses.length];
-    var lessonData = generateLesson(state.subject, state.unit, focus, curWeek, weeks);
+    var lessonData = generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel);
     var cds = (CD[state.subject] && CD[state.subject][state.yearLevel]) ? CD[state.subject][state.yearLevel] : [];
 
     var fullData = {
@@ -4799,6 +5050,112 @@ function _docxBuildNumbering() {
   '</w:numbering>';
 }
 
+// Map a template section heading to a lesson data field
+function _templateSectionToData(heading, lesson) {
+  var d = lesson.data;
+  var h = (heading || '').toLowerCase().replace(/[^a-z\s]/g, '').trim();
+  if (/learning intention|learning goal|we are learning/.test(h)) return 'We are learning to ' + (d.li || '');
+  if (/success criteria|i can|criteria/.test(h)) return (d.sc || '').split('\n').filter(function(s){return s.trim();}).join('\n');
+  if (/equipment|resources|materials|you will need/.test(h)) return d.equipment || '';
+  if (/differentiation|support|extension|adjustment/.test(h)) {
+    var diff = d.differentiation || {};
+    return 'Support: ' + (diff.support || '') + '\n\nExtension: ' + (diff.extension || '');
+  }
+  if (/lesson flow|lesson structure|phases|timing|schedule/.test(h)) return '[See lesson phases table above]';
+  if (/context|background|prior knowledge/.test(h)) return d.context || '';
+  if (/year level|year|grade/.test(h)) return d.year || '';
+  if (/subject|learning area/.test(h)) return d.subject || '';
+  if (/term/.test(h)) return 'Term ' + (d.term || '');
+  if (/week/.test(h)) return 'Week ' + (d.week || '');
+  if (/duration|time|length/.test(h)) return (d.duration || '') + ' minutes';
+  if (/school/.test(h)) return d.school || '';
+  return ''; // unknown section — leave blank for teacher to fill
+}
+
+function _docxBuildTemplateDocument(lessons, cfg, tmpl) {
+  // Build a DOCX that matches the uploaded school template structure
+  var phases = cfg.phases || ['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
+  var times = cfg.times || ['5 min','10 min','15 min','15 min','5 min'];
+  var sections = (tmpl.sections && tmpl.sections.length > 0) ? tmpl.sections : ['Learning Intention','Success Criteria','Equipment','Lesson Flow','Differentiation'];
+  var parts = [];
+
+  lessons.forEach(function(lesson, idx) {
+    var d = lesson.data;
+    var sc = d.sc.split('\n').filter(function(s){return s.trim();});
+
+    if (idx > 0) parts.push('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+
+    // Title — always first
+    parts.push(
+      '<w:p><w:pPr><w:pStyle w:val="LLHeading1"/><w:spacing w:before="0" w:after="60"/></w:pPr>' +
+      '<w:r><w:t xml:space="preserve"> ' + _xesc(d.title) + ' </w:t></w:r></w:p>'
+    );
+
+    // Metadata bar
+    parts.push(
+      '<w:p><w:pPr><w:spacing w:before="0" w:after="120"/><w:shd w:val="clear" w:color="auto" w:fill="D6E4F7"/><w:ind w:left="120"/></w:pPr>' +
+      '<w:r><w:rPr><w:b/><w:color w:val="1F3864"/><w:sz w:val="19"/></w:rPr>' +
+      '<w:t xml:space="preserve"> ' + _xesc([d.subject,'Year '+d.year,'Term '+d.term,'Week '+d.week,d.duration+' min',d.school].filter(Boolean).join('  |  ')) + ' </w:t></w:r></w:p>'
+    );
+
+    // Template sections
+    sections.forEach(function(section) {
+      var content = _templateSectionToData(section, lesson);
+
+      parts.push(
+        '<w:p><w:pPr><w:pStyle w:val="LLHeading2"/></w:pPr>' +
+        '<w:r><w:t>' + _xesc(section) + '</w:t></w:r></w:p>'
+      );
+
+      if (/lesson flow|lesson structure|phases|timing|schedule/i.test(section)) {
+        // Insert phases table for lesson flow section
+        parts.push(_docxBuildPhasesTable(phases, times, d));
+        parts.push('<w:p><w:pPr><w:spacing w:before="60" w:after="60"/></w:pPr></w:p>');
+      } else if (/success criteria|i can|criteria/i.test(section)) {
+        sc.forEach(function(s) {
+          parts.push(
+            '<w:p><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr><w:spacing w:before="30" w:after="30"/></w:pPr>' +
+            '<w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t>' + _xesc(s) + '</w:t></w:r></w:p>'
+          );
+        });
+      } else if (/differentiation/i.test(section)) {
+        var diff = d.differentiation || {};
+        parts.push(
+          '<w:p><w:pPr><w:spacing w:before="60" w:after="60"/><w:shd w:val="clear" w:color="auto" w:fill="FFFDE7"/><w:ind w:left="120" w:right="120"/></w:pPr>' +
+          '<w:r><w:rPr><w:b/><w:color w:val="1B5E20"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">Support: </w:t></w:r>' +
+          '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>' + _xesc(diff.support || '') + '</w:t></w:r></w:p>' +
+          '<w:p><w:pPr><w:spacing w:before="60" w:after="120"/><w:shd w:val="clear" w:color="auto" w:fill="FFF8E1"/><w:ind w:left="120" w:right="120"/></w:pPr>' +
+          '<w:r><w:rPr><w:b/><w:color w:val="B71C1C"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">Extension: </w:t></w:r>' +
+          '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>' + _xesc(diff.extension || '') + '</w:t></w:r></w:p>'
+        );
+      } else {
+        // Plain text content
+        var lines = String(content).split('\n');
+        lines.forEach(function(line) {
+          parts.push(
+            '<w:p><w:pPr><w:spacing w:before="30" w:after="30"/><w:ind w:left="180"/></w:pPr>' +
+            '<w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t xml:space="preserve">' + _xesc(line || '\u00a0') + '</w:t></w:r></w:p>'
+          );
+        });
+      }
+    });
+
+    // Template credit note
+    parts.push(
+      '<w:p><w:pPr><w:spacing w:before="120" w:after="0"/></w:pPr>' +
+      '<w:r><w:rPr><w:i/><w:color w:val="AAAAAA"/><w:sz w:val="16"/></w:rPr>' +
+      '<w:t xml:space="preserve">Generated from template: ' + _xesc(tmpl.name || 'School Template') + ' — LessonLab</w:t></w:r></w:p>'
+    );
+  });
+
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"' +
+    ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+    '<w:body>' + parts.join('') +
+    '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>' +
+    '</w:body></w:document>';
+}
+
 async function exportToWord() {
   if (!state.lessons || state.lessons.length === 0) {
     alert('No lessons to export. Generate lessons first.');
@@ -4856,7 +5213,10 @@ async function exportToWord() {
 
     zip.file('word/styles.xml', _docxBuildStyles());
     zip.file('word/numbering.xml', _docxBuildNumbering());
-    zip.file('word/document.xml', _docxBuildDocument(state.lessons, cfg));
+    var docXml = (typeof schoolTemplate !== 'undefined' && schoolTemplate && (schoolTemplate.sections || schoolTemplate.placeholders))
+      ? _docxBuildTemplateDocument(state.lessons, cfg, schoolTemplate)
+      : _docxBuildDocument(state.lessons, cfg);
+    zip.file('word/document.xml', docXml);
 
     var blob = await zip.generateAsync({
       type: 'blob',
@@ -5869,7 +6229,7 @@ function updateTermGrid() {
             const week = i + 1;
             const phaseColor = getPhaseColor(week, numWeeks);
             if (unitId && focus) {
-              const lesson = generateLesson(subj, unitId, focus, week, numWeeks);
+              const lesson = generateLesson(subj, unitId, focus, week, numWeeks, yearLevel);
               const shortTitle = lesson.title.length > 12 ? lesson.title.substring(0, 11) + '...' : lesson.title;
               const liPreview = lesson.li ? (lesson.li.length > 40 ? lesson.li.substring(0, 39) + '...' : lesson.li) : '';
               const tooltip = `${lesson.title}${liPreview ? '\n' + liPreview : ''}`;
@@ -5949,7 +6309,7 @@ function updateTermGrid() {
           const week = i + 1;
           const phaseColor = getPhaseColor(week, numWeeks);
           if (unitId && focus) {
-            const lesson = generateLesson(subj, unitId, focus, week, numWeeks);
+            const lesson = generateLesson(subj, unitId, focus, week, numWeeks, yearLevel);
             const shortTitle = lesson.title.length > 12 ? lesson.title.substring(0, 11) + '...' : lesson.title;
             const liPreview = lesson.li ? (lesson.li.length > 40 ? lesson.li.substring(0, 39) + '...' : lesson.li) : '';
             const tooltip = `${lesson.title}${liPreview ? '\n' + liPreview : ''}`;
@@ -6087,7 +6447,7 @@ function generateTermPlans() {
     const config = termConfig[subject];
     const week = weekIndex + 1;
 
-    const lessonData = generateLesson(subject, config.unitId, config.focusId, week, numWeeks);
+    const lessonData = generateLesson(subject, config.unitId, config.focusId, week, numWeeks, yearLevel);
     const subjectCfg = SUBJ_CFG[subject];
     const cds = (CD[subject] && CD[subject][yearLevel]) ? CD[subject][yearLevel] : [];
 
@@ -6720,7 +7080,7 @@ function generateAllYearPlans() {
     const focuses = data.focusId ? [data.focusId] : unit.focuses.map(f => f.id);
     for (let w = 1; w <= numWeeks; w++) {
       const focusId = focuses[(w - 1) % focuses.length];
-      const lesson = generateLesson(subjKey, data.unitId, focusId, w, numWeeks);
+      const lesson = generateLesson(subjKey, data.unitId, focusId, w, numWeeks, state.ypYearLevel || 'Years 3-4');
       if (lesson) { allLessons.push({ week: w, title: lesson.title || cfg.name + ' Week ' + w, li: lesson.li, html: '',
         data: { school: state.school || '', state: 'VIC', subject: cfg.name, year: state.ypYearLevel || 'Years 3-4',
           term: 'Term ' + term, week: w, duration: numWeeks, title: lesson.title || cfg.name + ' Week ' + w,
@@ -7401,6 +7761,8 @@ document.getElementById('templateUpload').onchange = async (e) => {
     if(!info) info='<span style="color:#E65100;">&#9888; No structure detected. Add headings or {PLACEHOLDER} fields.</span>';
     placeholders.innerHTML=info;
     showToast('✅ School template loaded');
+    var wordBtn = document.getElementById('exportWordBtn');
+    if (wordBtn) wordBtn.textContent = '\uD83D\uDCC4 Download Word (Your Template)';
   } catch(err) { status.textContent='⚠ Error: '+err.message; status.style.color='#E65100'; }
 };
 
