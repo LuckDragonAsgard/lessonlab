@@ -2064,6 +2064,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       <button class="btn btn-sec" id="undoBtn" disabled title="Undo last edit">↩ Undo</button>
       <button class="btn btn-sec" id="redoBtn" disabled title="Redo">↪ Redo</button>
       <button class="btn btn-pri" id="downloadAllBtn">Download All</button>
+      <button class="btn btn-pri" id="exportWordBtn" onclick="exportToWord()">&#128196; Download Word</button>
       <button class="btn btn-pri" id="printAllBtn">Print All</button>
       <button class="btn btn-pri" id="exportCompassBtn">Export to Compass</button>
       <button class="btn btn-pri" id="generateSlidesBtn" title="Generate a PowerPoint slide deck for this term plan (Pro/School)">📊 Generate Slides</button>
@@ -4321,7 +4322,8 @@ function generateAll() {
       sc: lessonData.sc,
       equipment: lessonData.equipment,
       context: lessonData.context,
-      logo: logoData
+      logo: logoData,
+      differentiation: lessonData.differentiation || null
     };
 
     buildHTMLAsync(fullData, state.subjectCfg, cds).then(function(html) {
@@ -4518,6 +4520,365 @@ function previewLesson(idx) {
   document.getElementById('previewTitle').textContent = `Week ${lesson.week}: ${lesson.title}`;
   document.getElementById('previewFrame').srcdoc = lesson.html;
   document.getElementById('previewModal').classList.add('show');
+}
+
+// ============================================================================
+// DOCX WORD EXPORT
+// ============================================================================
+
+function _xesc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function _docxCell(text, width, fill, bold, textColor, fontSize) {
+  var sz = fontSize || 20;
+  var bTag = bold ? '<w:b/>' : '';
+  var colTag = textColor ? '<w:color w:val="' + textColor + '"/>' : '';
+  var shdTag = fill ? '<w:shd w:val="clear" w:color="auto" w:fill="' + fill + '"/>' : '';
+  return '<w:tc>' +
+    '<w:tcPr>' +
+      '<w:tcW w:w="' + width + '" w:type="dxa"/>' +
+      '<w:tcBorders>' +
+        '<w:top w:val="single" w:sz="4" w:space="0" w:color="CCCCCC"/>' +
+        '<w:left w:val="single" w:sz="4" w:space="0" w:color="CCCCCC"/>' +
+        '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="CCCCCC"/>' +
+        '<w:right w:val="single" w:sz="4" w:space="0" w:color="CCCCCC"/>' +
+      '</w:tcBorders>' +
+      shdTag +
+      '<w:tcMar>' +
+        '<w:top w:w="80" w:type="dxa"/><w:left w:w="120" w:type="dxa"/>' +
+        '<w:bottom w:w="80" w:type="dxa"/><w:right w:w="120" w:type="dxa"/>' +
+      '</w:tcMar>' +
+    '</w:tcPr>' +
+    '<w:p><w:r><w:rPr>' + bTag + colTag + '<w:sz w:val="' + sz + '"/></w:rPr>' +
+    '<w:t xml:space="preserve">' + _xesc(text) + '</w:t></w:r></w:p>' +
+  '</w:tc>';
+}
+
+function _docxBuildPhasesTable(phases, times, d) {
+  var col1 = 2160, col2 = 1080, col3 = 6840; // total = 10080
+  var sc = d.sc.split('\n').filter(function(s){ return s.trim(); });
+  var activities = [
+    'Settle students. Introduce the learning intention: "' + d.li + '". Quick warm-up activity.',
+    'Explicit teaching. Demonstrate the key concept. Teaching points: ' + sc.slice(0, 3).join(' | '),
+    'Students practise the skill. Circulate and coach. Use signals for class management.',
+    'Students apply skills in a game, performance, or collaborative task. Observe and give feedback.',
+    'Pack up. Gather class. Reflect on success criteria. Exit ticket or thumbs up/down.'
+  ];
+  var headerRow = '<w:tr>' +
+    _docxCell('Phase', col1, '1F3864', true, 'FFFFFF', 20) +
+    _docxCell('Time', col2, '1F3864', true, 'FFFFFF', 20) +
+    _docxCell('What to Do', col3, '1F3864', true, 'FFFFFF', 20) +
+  '</w:tr>';
+  var dataRows = phases.map(function(phase, i) {
+    var fill = (i % 2 === 0) ? 'EEF4FB' : 'FFFFFF';
+    return '<w:tr>' +
+      _docxCell(phase, col1, fill, true, '1F3864', 19) +
+      _docxCell(times[i] || '10 min', col2, fill, false, '', 19) +
+      _docxCell(activities[i] || '', col3, fill, false, '', 19) +
+    '</w:tr>';
+  }).join('');
+  return '<w:tbl>' +
+    '<w:tblPr>' +
+      '<w:tblW w:w="10080" w:type="dxa"/>' +
+      '<w:tblBorders>' +
+        '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="CCCCCC"/>' +
+        '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="CCCCCC"/>' +
+      '</w:tblBorders>' +
+      '<w:tblCellMar>' +
+        '<w:top w:w="60" w:type="dxa"/><w:left w:w="100" w:type="dxa"/>' +
+        '<w:bottom w:w="60" w:type="dxa"/><w:right w:w="100" w:type="dxa"/>' +
+      '</w:tblCellMar>' +
+    '</w:tblPr>' +
+    '<w:tblGrid>' +
+      '<w:gridCol w:w="' + col1 + '"/>' +
+      '<w:gridCol w:w="' + col2 + '"/>' +
+      '<w:gridCol w:w="' + col3 + '"/>' +
+    '</w:tblGrid>' +
+    headerRow + dataRows +
+  '</w:tbl>';
+}
+
+function _docxBuildDocument(lessons, cfg) {
+  var phases = cfg.phases || ['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
+  var times = cfg.times || ['5 min','10 min','15 min','15 min','5 min'];
+  var parts = [];
+
+  lessons.forEach(function(lesson, idx) {
+    var d = lesson.data;
+    var sc = d.sc.split('\n').filter(function(s){ return s.trim(); });
+    var diff = d.differentiation || {};
+
+    if (idx > 0) {
+      parts.push('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+    }
+
+    // Title bar
+    parts.push(
+      '<w:p>' +
+        '<w:pPr>' +
+          '<w:pStyle w:val="LLHeading1"/>' +
+          '<w:spacing w:before="0" w:after="60"/>' +
+          '<w:ind w:left="120" w:right="120"/>' +
+        '</w:pPr>' +
+        '<w:r><w:t xml:space="preserve"> ' + _xesc(d.title) + ' </w:t></w:r>' +
+      '</w:p>'
+    );
+
+    // Metadata strip
+    var metaParts = [d.subject, 'Year ' + d.year, 'Term ' + d.term, 'Week ' + d.week, d.duration + ' min'];
+    parts.push(
+      '<w:p>' +
+        '<w:pPr>' +
+          '<w:spacing w:before="0" w:after="120"/>' +
+          '<w:shd w:val="clear" w:color="auto" w:fill="D6E4F7"/>' +
+          '<w:ind w:left="120" w:right="120"/>' +
+        '</w:pPr>' +
+        '<w:r><w:rPr><w:b/><w:color w:val="1F3864"/><w:sz w:val="19"/></w:rPr>' +
+        '<w:t xml:space="preserve"> ' + _xesc(metaParts.filter(Boolean).join('  |  ')) + ' </w:t></w:r>' +
+        (d.school ? '<w:r><w:rPr><w:color w:val="555555"/><w:sz w:val="19"/></w:rPr><w:t xml:space="preserve">     ' + _xesc(d.school) + '</w:t></w:r>' : '') +
+      '</w:p>'
+    );
+
+    // Learning Intention
+    parts.push(
+      '<w:p>' +
+        '<w:pPr><w:pStyle w:val="LLHeading2"/></w:pPr>' +
+        '<w:r><w:t>Learning Intention</w:t></w:r>' +
+      '</w:p>' +
+      '<w:p>' +
+        '<w:pPr>' +
+          '<w:spacing w:before="60" w:after="120"/>' +
+          '<w:shd w:val="clear" w:color="auto" w:fill="EBF5FB"/>' +
+          '<w:ind w:left="180" w:right="180"/>' +
+        '</w:pPr>' +
+        '<w:r><w:rPr><w:i/><w:sz w:val="22"/></w:rPr>' +
+        '<w:t xml:space="preserve">We are learning to ' + _xesc(d.li) + '</w:t></w:r>' +
+      '</w:p>'
+    );
+
+    // Success Criteria
+    parts.push(
+      '<w:p><w:pPr><w:pStyle w:val="LLHeading2"/></w:pPr><w:r><w:t>Success Criteria</w:t></w:r></w:p>'
+    );
+    sc.forEach(function(s) {
+      parts.push(
+        '<w:p>' +
+          '<w:pPr>' +
+            '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' +
+            '<w:spacing w:before="30" w:after="30"/>' +
+          '</w:pPr>' +
+          '<w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t>' + _xesc(s) + '</w:t></w:r>' +
+        '</w:p>'
+      );
+    });
+
+    // Equipment
+    if (d.equipment) {
+      parts.push(
+        '<w:p><w:pPr><w:pStyle w:val="LLHeading2"/></w:pPr><w:r><w:t>Equipment</w:t></w:r></w:p>' +
+        '<w:p>' +
+          '<w:pPr><w:spacing w:before="60" w:after="120"/><w:ind w:left="180"/></w:pPr>' +
+          '<w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t>' + _xesc(d.equipment) + '</w:t></w:r>' +
+        '</w:p>'
+      );
+    }
+
+    // Lesson Flow
+    parts.push(
+      '<w:p><w:pPr><w:pStyle w:val="LLHeading2"/></w:pPr><w:r><w:t>Lesson Flow</w:t></w:r></w:p>'
+    );
+    parts.push(_docxBuildPhasesTable(phases, times, d));
+    parts.push('<w:p><w:pPr><w:spacing w:before="60" w:after="60"/></w:pPr></w:p>');
+
+    // Differentiation
+    if (diff.support || diff.extension) {
+      parts.push(
+        '<w:p><w:pPr><w:pStyle w:val="LLHeading2"/></w:pPr><w:r><w:t>Differentiation</w:t></w:r></w:p>' +
+        '<w:p>' +
+          '<w:pPr>' +
+            '<w:spacing w:before="60" w:after="60"/>' +
+            '<w:shd w:val="clear" w:color="auto" w:fill="FFFDE7"/>' +
+            '<w:ind w:left="180" w:right="180"/>' +
+          '</w:pPr>' +
+          '<w:r><w:rPr><w:b/><w:color w:val="1B5E20"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">Support: </w:t></w:r>' +
+          '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>' + _xesc(diff.support || '') + '</w:t></w:r>' +
+        '</w:p>' +
+        '<w:p>' +
+          '<w:pPr>' +
+            '<w:spacing w:before="60" w:after="120"/>' +
+            '<w:shd w:val="clear" w:color="auto" w:fill="FFF8E1"/>' +
+            '<w:ind w:left="180" w:right="180"/>' +
+          '</w:pPr>' +
+          '<w:r><w:rPr><w:b/><w:color w:val="B71C1C"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">Extension: </w:t></w:r>' +
+          '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>' + _xesc(diff.extension || '') + '</w:t></w:r>' +
+        '</w:p>'
+      );
+    }
+
+    // Victorian Curriculum note
+    if (d.context) {
+      parts.push(
+        '<w:p>' +
+          '<w:pPr><w:spacing w:before="80" w:after="0"/><w:ind w:left="180"/></w:pPr>' +
+          '<w:r><w:rPr><w:i/><w:color w:val="999999"/><w:sz w:val="18"/></w:rPr>' +
+          '<w:t>' + _xesc(d.context) + '</w:t></w:r>' +
+        '</w:p>'
+      );
+    }
+  });
+
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"' +
+    ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+    '<w:body>' +
+      parts.join('') +
+      '<w:sectPr>' +
+        '<w:pgSz w:w="12240" w:h="15840"/>' +
+        '<w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/>' +
+      '</w:sectPr>' +
+    '</w:body></w:document>';
+}
+
+function _docxBuildStyles() {
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+    '<w:docDefaults>' +
+      '<w:rPrDefault><w:rPr>' +
+        '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>' +
+        '<w:sz w:val="22"/><w:szCs w:val="22"/>' +
+      '</w:rPr></w:rPrDefault>' +
+      '<w:pPrDefault><w:pPr><w:spacing w:after="120"/></w:pPr></w:pPrDefault>' +
+    '</w:docDefaults>' +
+    '<w:style w:type="paragraph" w:default="1" w:styleId="Normal">' +
+      '<w:name w:val="Normal"/>' +
+      '<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/></w:rPr>' +
+    '</w:style>' +
+    '<w:style w:type="paragraph" w:styleId="LLHeading1">' +
+      '<w:name w:val="LLHeading1"/><w:basedOn w:val="Normal"/>' +
+      '<w:pPr>' +
+        '<w:spacing w:before="240" w:after="60"/>' +
+        '<w:shd w:val="clear" w:color="auto" w:fill="1F3864"/>' +
+        '<w:ind w:left="120" w:right="120"/>' +
+      '</w:pPr>' +
+      '<w:rPr>' +
+        '<w:rFonts w:ascii="Arial" w:hAnsi="Arial"/>' +
+        '<w:b/><w:color w:val="FFFFFF"/><w:sz w:val="32"/>' +
+      '</w:rPr>' +
+    '</w:style>' +
+    '<w:style w:type="paragraph" w:styleId="LLHeading2">' +
+      '<w:name w:val="LLHeading2"/><w:basedOn w:val="Normal"/>' +
+      '<w:pPr>' +
+        '<w:spacing w:before="160" w:after="60"/>' +
+        '<w:shd w:val="clear" w:color="auto" w:fill="D6E4F7"/>' +
+        '<w:ind w:left="120" w:right="120"/>' +
+      '</w:pPr>' +
+      '<w:rPr>' +
+        '<w:rFonts w:ascii="Arial" w:hAnsi="Arial"/>' +
+        '<w:b/><w:color w:val="1F3864"/><w:sz w:val="22"/>' +
+      '</w:rPr>' +
+    '</w:style>' +
+  '</w:styles>';
+}
+
+function _docxBuildNumbering() {
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+    '<w:abstractNum w:abstractNumId="0">' +
+      '<w:multiLevelType w:val="hybridMultilevel"/>' +
+      '<w:lvl w:ilvl="0">' +
+        '<w:start w:val="1"/>' +
+        '<w:numFmt w:val="bullet"/>' +
+        '<w:lvlText w:val="&#x2713;"/>' +
+        '<w:lvlJc w:val="left"/>' +
+        '<w:pPr><w:ind w:left="400" w:hanging="400"/></w:pPr>' +
+        '<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>' +
+      '</w:lvl>' +
+    '</w:abstractNum>' +
+    '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>' +
+  '</w:numbering>';
+}
+
+async function exportToWord() {
+  if (!state.lessons || state.lessons.length === 0) {
+    alert('No lessons to export. Generate lessons first.');
+    return;
+  }
+  if (typeof JSZip === 'undefined') {
+    alert('JSZip not loaded — please refresh the page and try again.');
+    return;
+  }
+
+  var btn = document.getElementById('exportWordBtn');
+  if (btn) { btn.textContent = 'Building...'; btn.disabled = true; }
+
+  try {
+    var cfg = state.subjectCfg || {};
+    var zip = new JSZip();
+
+    zip.file('[Content_Types].xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+        '<Default Extension="xml" ContentType="application/xml"/>' +
+        '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+        '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+        '<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>' +
+        '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>' +
+      '</Types>'
+    );
+
+    zip.file('_rels/.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+      '</Relationships>'
+    );
+
+    zip.file('word/_rels/document.xml.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+        '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>' +
+        '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>' +
+      '</Relationships>'
+    );
+
+    zip.file('word/settings.xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+        '<w:defaultTabStop w:val="720"/>' +
+        '<w:compat>' +
+          '<w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>' +
+        '</w:compat>' +
+      '</w:settings>'
+    );
+
+    zip.file('word/styles.xml', _docxBuildStyles());
+    zip.file('word/numbering.xml', _docxBuildNumbering());
+    zip.file('word/document.xml', _docxBuildDocument(state.lessons, cfg));
+
+    var blob = await zip.generateAsync({
+      type: 'blob',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+
+    var school = (state.school || 'LessonLab').replace(/[^a-zA-Z0-9]/g, '_');
+    var subj = (cfg.name || 'Lessons').replace(/[^a-zA-Z0-9]/g, '_');
+    var term = state.term || 1;
+    var filename = school + '_' + subj + '_Term' + term + '_LessonPlans.docx';
+
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+
+    if (btn) { btn.textContent = 'Download Word'; btn.disabled = false; }
+  } catch(e) {
+    console.error('DOCX export error:', e);
+    alert('Word export failed: ' + e.message);
+    if (btn) { btn.textContent = 'Download Word'; btn.disabled = false; }
+  }
 }
 
 function downloadOne(idx) {
