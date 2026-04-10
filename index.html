@@ -774,6 +774,40 @@
     body.dark-mode .year-grid-cell .cell-topic { color: #ddd; }
     body.dark-mode .year-grid-cell .cell-focus { color: #aaa; }
 
+    /* CYCLE PLANNER TABS */
+    .cycle-tab {
+      padding: 8px 18px;
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.2s;
+    }
+    .cycle-tab.active {
+      background: var(--pri);
+      color: white;
+      border-color: var(--pri);
+    }
+    .cycle-coverage-overlap {
+      background: #fff3e0 !important;
+      border-left: 3px solid #FF9800 !important;
+    }
+    body.dark-mode .cycle-tab {
+      background: #2a2a2a;
+      color: #ccc;
+      border-color: #444;
+    }
+    body.dark-mode .cycle-tab.active {
+      background: var(--pri);
+      color: white;
+    }
+    body.dark-mode .cycle-coverage-overlap {
+      background: #3a2800 !important;
+    }
+
     /* RESULTS SUBJECT GROUPS */
     .results-group {
       margin-bottom: 24px;
@@ -1825,6 +1859,69 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       <div style="display:flex;gap:8px;justify-content:flex-end;">
         <button class="btn btn-sec" onclick="document.getElementById('ypCellModal').classList.remove('show')">Cancel</button>
         <button class="btn btn-pri" id="ypModalSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-YEAR CYCLE PLANNER -->
+  <div id="cyclePlannerPanel" class="panel">
+    <a class="back-link" id="backToSubjectsFromCycle">← Back to subjects</a>
+
+    <div class="year-planner-section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="color: var(--pri); margin:0;">🔄 2-Year Cycle Planner</h2>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-sec" id="cpLoadBtn" title="Load saved cycle plan">Load Plan</button>
+          <button class="btn btn-sec" id="cpSaveBtn" title="Save current cycle plan">Save Plan</button>
+        </div>
+      </div>
+
+      <div class="term-grid-controls">
+        <div class="term-control-item">
+          <label>Composite Class</label>
+          <div class="year-pills" id="cpCompositePills"></div>
+        </div>
+        <div class="term-control-item" style="margin-top:12px;">
+          <label>Weeks per Term</label>
+          <select id="cpWeeksPerTerm" style="padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:white;max-width:150px;">
+            <option value="8">8 weeks</option>
+            <option value="10" selected>10 weeks</option>
+            <option value="12">12 weeks</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:center; margin:20px 0 8px; flex-wrap:wrap;">
+        <button class="cycle-tab active" id="cycleTabA">📅 Cycle A — Year 1</button>
+        <button class="cycle-tab" id="cycleTabB">📅 Cycle B — Year 2</button>
+        <button class="btn btn-sec" id="cpCheckCoverageBtn" style="margin-left:auto;">🔍 Check Coverage</button>
+      </div>
+
+      <p style="font-size:12px;color:#888;margin-bottom:8px;">
+        Plan different units for each cycle so students don’t repeat content. Cycle A is taught one year, Cycle B the next.
+        Click <strong>Check Coverage</strong> to spot any overlapping units between cycles.
+      </p>
+
+      <div id="cpCoverageWarning" style="display:none;"></div>
+
+      <div style="overflow-x:auto;">
+        <table class="year-grid" id="cycleGrid">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Term 1</th>
+              <th>Term 2</th>
+              <th>Term 3</th>
+              <th>Term 4</th>
+            </tr>
+          </thead>
+          <tbody id="cycleGridBody"></tbody>
+        </table>
+      </div>
+
+      <div class="btn-group" style="margin-top:20px;">
+        <button class="btn btn-pri" id="cpGenerateAllBtn">Generate All — Cycle A</button>
+        <button class="btn btn-sec" id="cpExportBtn">Export Cycle Plan (.csv)</button>
       </div>
     </div>
   </div>
@@ -3963,6 +4060,17 @@ function initSubjects() {
   `;
   yearCard.onclick = () => initYearPlanner();
   grid.appendChild(yearCard);
+
+  const cycleCard = document.createElement('div');
+  cycleCard.className = 'subject-card';
+  cycleCard.style.color = '#6A1B9A';
+  cycleCard.innerHTML = `
+    <div class="subject-icon">🔄</div>
+    <div class="subject-name">Cycle Planner</div>
+    <div class="subject-phases">2-year curriculum for composite classes</div>
+  `;
+  cycleCard.onclick = () => initCyclePlanner();
+  grid.appendChild(cycleCard);
 
   // Landing stats
   const statsEl = document.getElementById('landingStats');
@@ -6227,6 +6335,266 @@ function exportYearPlanCSV() {
 loadYearPlanFromStorage();
 
 // ============================================================================
+// 2-YEAR CYCLE PLANNER
+// ============================================================================
+
+const cyclePlanData = { A: {}, B: {} };
+let currentCycleComposite = '3/4';
+let currentCycle = 'A';
+
+const COMPOSITE_CLASSES = [
+  { label: 'F/1',  lower: 'Foundation', upper: 'Year 1' },
+  { label: '1/2',  lower: 'Year 1',     upper: 'Year 2' },
+  { label: '2/3',  lower: 'Year 2',     upper: 'Year 3' },
+  { label: '3/4',  lower: 'Year 3',     upper: 'Year 4' },
+  { label: '4/5',  lower: 'Year 4',     upper: 'Year 5' },
+  { label: '5/6',  lower: 'Year 5',     upper: 'Year 6' },
+];
+
+function initCyclePlanner() {
+  if (!currentProfile || (currentProfile.tier !== 'pro' && currentProfile.tier !== 'school')) {
+    showUpgradePrompt('Cycle Planner');
+    return;
+  }
+  loadCyclePlanFromStorage();
+  currentCycle = 'A';
+  goPanel('cyclePlanner');
+  const pillsEl = document.getElementById('cpCompositePills');
+  pillsEl.innerHTML = '';
+  COMPOSITE_CLASSES.forEach(cc => {
+    const pill = document.createElement('button');
+    pill.className = 'year-pill' + (cc.label === currentCycleComposite ? ' active' : '');
+    pill.textContent = cc.label;
+    pill.onclick = () => {
+      currentCycleComposite = cc.label;
+      pillsEl.querySelectorAll('.year-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      renderCycleGrid();
+    };
+    pillsEl.appendChild(pill);
+  });
+  document.getElementById('cycleTabA').classList.add('active');
+  document.getElementById('cycleTabB').classList.remove('active');
+  document.getElementById('cpCoverageWarning').style.display = 'none';
+  updateCycleGenerateBtn();
+  renderCycleGrid();
+}
+
+function switchCycleTab(cycle) {
+  currentCycle = cycle;
+  document.getElementById('cycleTabA').classList.toggle('active', cycle === 'A');
+  document.getElementById('cycleTabB').classList.toggle('active', cycle === 'B');
+  updateCycleGenerateBtn();
+  renderCycleGrid();
+}
+
+function updateCycleGenerateBtn() {
+  const btn = document.getElementById('cpGenerateAllBtn');
+  if (btn) btn.textContent = 'Generate All — Cycle ' + currentCycle;
+}
+
+function renderCycleGrid() {
+  const tbody = document.getElementById('cycleGridBody');
+  tbody.innerHTML = '';
+  const data = cyclePlanData[currentCycle];
+  const otherData = cyclePlanData[currentCycle === 'A' ? 'B' : 'A'];
+  Object.entries(SUBJ_CFG).forEach(([key, cfg]) => {
+    const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    th.innerHTML = '<span style="color:' + cfg.colour + '">' + cfg.icon + '</span> ' + cfg.name;
+    th.style.cssText = 'text-align:left;padding:10px 12px;font-size:13px;border-right:2px solid var(--border);white-space:nowrap;background:var(--bg);';
+    tr.appendChild(th);
+    [1, 2, 3, 4].forEach(term => {
+      const cellKey = key + '-' + term;
+      const cellData = data[cellKey];
+      const otherCell = otherData[cellKey];
+      const isOverlap = cellData && otherCell && cellData.unitId && cellData.unitId === otherCell.unitId;
+      const td = document.createElement('td');
+      td.className = 'year-grid-cell' + (isOverlap ? ' cycle-coverage-overlap' : '');
+      if (cellData && cellData.unitId) {
+        const dot = cellData.generated ? '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + cfg.colour + ';margin-right:4px;vertical-align:middle;"></span>' : '';
+        td.innerHTML = '<div class="cell-content"><div style="font-weight:600;font-size:12px;">' + dot + cellData.unit + '</div>' +
+          (cellData.focus ? '<div style="font-size:11px;color:#888;margin-top:1px;">' + cellData.focus + '</div>' : '') +
+          (cellData.notes ? '<div style="font-size:10px;color:#aaa;margin-top:2px;">📝 ' + cellData.notes + '</div>' : '') +
+          (isOverlap ? '<div style="font-size:10px;color:#E65100;font-weight:600;margin-top:2px;">⚠️ Same as Cycle ' + (currentCycle === 'A' ? 'B' : 'A') + '</div>' : '') +
+          '</div><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromCycleCell('' + key + '',' + term + ')">Generate</button>';
+        if (cellData.generated) td.style.borderLeft = '3px solid ' + cfg.colour;
+      } else {
+        td.innerHTML = '<div class="cell-empty">+ Click to plan</div><button class="cell-gen-btn" onclick="event.stopPropagation();openCycleCellEditor('' + key + '',' + term + ')">Set up</button>';
+      }
+      td.onclick = () => openCycleCellEditor(key, term);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function openCycleCellEditor(subjKey, term) {
+  const cfg = SUBJ_CFG[subjKey];
+  const units = UNITS[subjKey] || [];
+  const cellKey = subjKey + '-' + term;
+  const existing = cyclePlanData[currentCycle][cellKey] || {};
+  document.getElementById('ypModalTitle').textContent = cfg.icon + ' ' + cfg.name + ' — Term ' + term + '  ·  Cycle ' + currentCycle;
+  const unitSelect = document.getElementById('ypModalUnit');
+  unitSelect.innerHTML = '<option value="">Select a unit…</option>';
+  units.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u.id; opt.textContent = u.name;
+    if (existing.unitId === u.id) opt.selected = true;
+    unitSelect.appendChild(opt);
+  });
+  const populateFocuses = () => {
+    const fs = document.getElementById('ypModalFocus');
+    fs.innerHTML = '<option value="">Select a focus…</option>';
+    const unit = units.find(u => u.id === unitSelect.value);
+    if (unit) {
+      unit.focuses.forEach(f => {
+        const opt = document.createElement('option');
+        const fVal = (typeof f === 'string') ? f : (f.id || f.name || String(f));
+        opt.value = fVal; opt.textContent = (typeof f === 'string') ? f : (f.name || String(f));
+        if (existing.focusId === fVal) opt.selected = true;
+        fs.appendChild(opt);
+      });
+    }
+  };
+  unitSelect.onchange = populateFocuses;
+  populateFocuses();
+  document.getElementById('ypModalNotes').value = existing.notes || '';
+  document.getElementById('ypModalSaveBtn').onclick = () => {
+    const unitId = unitSelect.value;
+    const unit = units.find(u => u.id === unitId);
+    const focusId = document.getElementById('ypModalFocus').value;
+    const notes = document.getElementById('ypModalNotes').value.trim();
+    if (unitId && unit) {
+      cyclePlanData[currentCycle][cellKey] = { unitId, unit: unit.name, focusId: focusId || '', focus: focusId || '', notes, generated: existing.generated || false };
+    } else { delete cyclePlanData[currentCycle][cellKey]; }
+    document.getElementById('ypCellModal').classList.remove('show');
+    renderCycleGrid();
+    saveCyclePlanToStorage();
+  };
+  document.getElementById('ypCellModal').classList.add('show');
+}
+
+function generateFromCycleCell(subjKey, term) {
+  const cellKey = subjKey + '-' + term;
+  const data = cyclePlanData[currentCycle][cellKey];
+  if (!data || !data.unitId) { showToast('Set up a unit first — click the cell to choose one.', 'error'); return; }
+  const cfg = SUBJ_CFG[subjKey];
+  const units = UNITS[subjKey] || [];
+  const unit = units.find(u => u.id === data.unitId);
+  const numWeeks = parseInt(document.getElementById('cpWeeksPerTerm').value) || 10;
+  const composite = COMPOSITE_CLASSES.find(c => c.label === currentCycleComposite) || COMPOSITE_CLASSES[3];
+  const yearLevel = currentCycle === 'A' ? composite.lower : composite.upper;
+  state.subject = subjKey; state.subjectCfg = cfg;
+  state.unit = data.unitId; state.unitData = unit;
+  state.focuses = unit ? unit.focuses : [];
+  state.selectedFocuses = data.focusId ? [data.focusId] : (unit ? unit.focuses.map(f => (typeof f === 'string') ? f : f.id) : []);
+  state.yearLevel = yearLevel; state.duration = numWeeks;
+  cyclePlanData[currentCycle][cellKey].generated = true;
+  saveCyclePlanToStorage();
+  generateAll();
+}
+
+function checkCycleCoverage() {
+  const warnings = [];
+  let totalPlanned = 0;
+  Object.keys(SUBJ_CFG).forEach(key => {
+    [1, 2, 3, 4].forEach(term => {
+      const cellKey = key + '-' + term;
+      const dataA = cyclePlanData.A[cellKey];
+      const dataB = cyclePlanData.B[cellKey];
+      if (dataA && dataA.unitId) totalPlanned++;
+      if (dataA && dataB && dataA.unitId && dataA.unitId === dataB.unitId) {
+        warnings.push(SUBJ_CFG[key].name + ' Term ' + term + ': both cycles use <strong>' + dataA.unit + '</strong>');
+      }
+    });
+  });
+  const el = document.getElementById('cpCoverageWarning');
+  if (totalPlanned === 0) {
+    el.style.cssText = 'display:block;padding:12px 16px;background:#e3f2fd;border-radius:8px;border-left:4px solid #1565C0;margin-bottom:16px;font-size:13px;';
+    el.innerHTML = '<strong>ℹ️ Nothing planned yet.</strong> Add units to both cycles then check for overlaps.';
+  } else if (warnings.length === 0) {
+    el.style.cssText = 'display:block;padding:12px 16px;background:#e8f5e9;border-radius:8px;border-left:4px solid #4CAF50;margin-bottom:16px;font-size:13px;';
+    el.innerHTML = '<strong>✅ No overlaps found!</strong> Cycles A and B use different content. Students won’t repeat any units.';
+  } else {
+    el.style.cssText = 'display:block;padding:12px 16px;background:#fff3e0;border-radius:8px;border-left:4px solid #FF9800;margin-bottom:16px;font-size:13px;';
+    el.innerHTML = '<strong>⚠️ ' + warnings.length + ' overlap' + (warnings.length > 1 ? 's' : '') + ' found</strong> — students will repeat these units:<ul style="margin:8px 0 0 20px;">' + warnings.map(w => '<li style="margin-bottom:2px;">' + w + '</li>').join('') + '</ul>';
+  }
+  renderCycleGrid();
+}
+
+function generateAllCyclePlans() {
+  if (!currentProfile || (currentProfile.tier !== 'pro' && currentProfile.tier !== 'school')) { showUpgradePrompt('Cycle Planner'); return; }
+  const filled = Object.keys(cyclePlanData[currentCycle]).filter(k => cyclePlanData[currentCycle][k] && cyclePlanData[currentCycle][k].unitId);
+  if (!filled.length) { showToast('No units planned for Cycle ' + currentCycle + ' — click cells to set up units first.', 'error'); return; }
+  const parts = filled[0].split('-');
+  generateFromCycleCell(parts[0], parseInt(parts[1]));
+  showToast('Generating Cycle ' + currentCycle + ' lessons…', 'success');
+}
+
+function saveCyclePlanToStorage() {
+  try { localStorage.setItem('lessonlab_cycleplan', JSON.stringify({ data: cyclePlanData, composite: currentCycleComposite })); } catch(e) {}
+}
+
+function loadCyclePlanFromStorage() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('lessonlab_cycleplan') || 'null');
+    if (saved && saved.data) {
+      Object.assign(cyclePlanData.A, saved.data.A || {});
+      Object.assign(cyclePlanData.B, saved.data.B || {});
+      if (saved.composite) currentCycleComposite = saved.composite;
+    }
+  } catch(e) {}
+}
+
+function saveCyclePlanNamed() {
+  const name = prompt('Name this cycle plan:', 'Cycle Plan ' + currentCycleComposite + ' ' + new Date().getFullYear());
+  if (!name) return;
+  const saved = JSON.parse(localStorage.getItem('lessonlab_cycle_saved') || '[]');
+  saved.push({ name, data: JSON.parse(JSON.stringify(cyclePlanData)), composite: currentCycleComposite, date: new Date().toLocaleDateString() });
+  localStorage.setItem('lessonlab_cycle_saved', JSON.stringify(saved));
+  showToast('Saved as "' + name + '"', 'success');
+}
+
+function loadCyclePlanNamed() {
+  const saved = JSON.parse(localStorage.getItem('lessonlab_cycle_saved') || '[]');
+  if (!saved.length) { showToast('No saved cycle plans found.', 'error'); return; }
+  const list = saved.map((s, i) => (i+1) + '. ' + s.name + ' (' + s.date + ')').join('
+');
+  const choice = prompt('Enter number to load:
+' + list);
+  if (!choice) return;
+  const idx = parseInt(choice) - 1;
+  if (saved[idx]) {
+    Object.keys(cyclePlanData.A).forEach(k => delete cyclePlanData.A[k]);
+    Object.keys(cyclePlanData.B).forEach(k => delete cyclePlanData.B[k]);
+    Object.assign(cyclePlanData.A, saved[idx].data.A || {});
+    Object.assign(cyclePlanData.B, saved[idx].data.B || {});
+    if (saved[idx].composite) currentCycleComposite = saved[idx].composite;
+    saveCyclePlanToStorage();
+    initCyclePlanner();
+    showToast('Loaded "' + saved[idx].name + '"', 'success');
+  }
+}
+
+function exportCyclePlanCSV() {
+  const rows = [['Cycle','Subject','Term 1','Term 2','Term 3','Term 4']];
+  ['A','B'].forEach(cycle => {
+    Object.entries(SUBJ_CFG).forEach(([key, cfg]) => {
+      const row = [cycle, cfg.name];
+      [1,2,3,4].forEach(t => { const d = cyclePlanData[cycle][key+'-'+t]; row.push(d && d.unitId ? d.unit + (d.focus ? ' / '+d.focus : '') : ''); });
+      rows.push(row);
+    });
+  });
+  const csv = rows.map(r => r.map(c => '"'+c+'"').join(',')).join('
+');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'CyclePlan_' + currentCycleComposite.replace('/','_') + '.csv';
+  a.click();
+}
+
+// ============================================================================
 // EVENT LISTENERS
 // ============================================================================
 
@@ -6278,6 +6646,16 @@ document.getElementById('printTermOverviewFromResultsBtn').onclick = printTermOv
 document.getElementById('backToSubjectsFromTerm').onclick = () => {
   goPanel('subjects');
 };
+
+// Cycle Planner event listeners
+document.getElementById('backToSubjectsFromCycle').onclick = () => { goPanel('subjects'); };
+document.getElementById('cycleTabA').onclick = () => switchCycleTab('A');
+document.getElementById('cycleTabB').onclick = () => switchCycleTab('B');
+document.getElementById('cpCheckCoverageBtn').onclick = checkCycleCoverage;
+document.getElementById('cpGenerateAllBtn').onclick = generateAllCyclePlans;
+document.getElementById('cpExportBtn').onclick = exportCyclePlanCSV;
+document.getElementById('cpSaveBtn').onclick = saveCyclePlanNamed;
+document.getElementById('cpLoadBtn').onclick = loadCyclePlanNamed;
 
 // Year Planner event listeners
 document.getElementById('backToSubjectsFromYear').onclick = () => { goPanel('subjects'); };
@@ -7472,6 +7850,8 @@ function updateSubjectLocking() {
       // Restore original onclick (may have been overridden by the lock handler)
       if (subject === 'Year Planner') {
         card.onclick = () => initYearPlanner();
+      } else if (subject === 'Cycle Planner') {
+        card.onclick = () => initCyclePlanner();
       } else {
         const subjKey = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === subject);
         if (subjKey) {
