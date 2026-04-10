@@ -1966,13 +1966,14 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
         <div class="pricing-price" style="font-size:2.8rem;">$12 <span>/ month</span></div>
         <div class="pricing-desc" style="margin-bottom:20px;">Cancel anytime. No lock-in.</div>
         <ul class="pricing-features">
-          <li>All 9 subjects (Maths, Literacy, PE, Art, Music, Drama, French &amp; more)</li>
-          <li>AI lesson plan generator — full unit sequences</li>
+          <li>✅ Victorian Curriculum 2.0 &amp; VTLM 2.0 aligned</li>
+          <li>All 9 subjects — Maths, Literacy, PE, Visual Art, Music, Drama, French &amp; more</li>
+          <li>AI lesson plan generator — full unit sequences, week by week</li>
           <li>Term Planner, Year Planner &amp; 2-Year Cycle Planner</li>
-          <li>Slide generator (PowerPoint export)</li>
-          <li>Save, export &amp; print lessons</li>
-          <li>School branding — logo, colours, footer</li>
-          <li>DOCX template upload</li>
+          <li>Slide generator — PowerPoint export, ready to teach</li>
+          <li>Upload your school's lesson plan template — outputs match your exact format</li>
+          <li>Save, export &amp; print — PDF, Word, slides</li>
+          <li>School branding on every output — logo, colours, footer</li>
         </ul>
         <button class="pricing-btn pro-btn" id="proUpgradeBtn" onclick="startCheckout('pro')" style="width:100%;margin-top:8px;font-size:1.1rem;padding:14px;">Get LessonLab — $12/mo</button>
         <div class="pricing-current" id="proCurrentLabel" style="display:none;text-align:center;margin-top:12px;font-weight:600;color:#1565C0;">✓ Your current plan</div>
@@ -7108,7 +7109,7 @@ document.getElementById('curriculumUpload').onchange = (e) => {
 function showUploadLessonModal() {
   const modal = document.getElementById('uploadLessonModal');
   if (!modal) return;
-  if (!checkTierAccess('convert')) { showUpgradePrompt('Upload & Convert Lesson'); return; }
+  if (!currentUser) { showAuthModal('signup'); return; }
   modal.style.display = 'flex';
   document.getElementById('uploadLessonStatus').textContent = '';
   document.getElementById('uploadLessonPreview').innerHTML = '';
