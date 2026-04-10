@@ -1722,7 +1722,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   <div id="subjectsPanel" class="panel active">
     <div style="text-align:center;padding:28px 20px 16px;">
       <div style="font-size:2.2rem;font-weight:800;color:var(--pri);margin-bottom:10px;line-height:1.2;">Lesson planning, done in minutes</div>
-      <div style="font-size:0.95rem;color:#555;max-width:500px;margin:0 auto;">AI-powered and aligned to Victorian Curriculum 2.0 &amp; VTLM 2.0. Pick a subject below to generate a unit, or use <strong>Term Planner</strong> for a full term.</div>
+      <div style="font-size:0.95rem;color:#555;max-width:500px;margin:0 auto;">Structured lesson plans aligned to Victorian Curriculum 2.0 &amp; VTLM 2.0. Pick a subject below to generate a unit, or use <strong>Term Planner</strong> for a full term.</div>
     </div>
     <div class="subjects-grid" id="subjectsGrid" role="grid" aria-label="Subject selection"></div>
     <div id="landingStats" style="margin-top:30px;text-align:center;color:#999;font-size:13px;"></div>
@@ -1957,26 +1957,42 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
 
   <!-- PRICING MODAL -->
 <div id="pricingModal" class="pricing-modal-overlay" style="display:none">
-  <div class="pricing-modal" style="max-width:420px;">
+  <div class="pricing-modal" style="max-width:640px;">
     <button class="pricing-modal-close" onclick="closePricingModal()">&times;</button>
     <h2 style="text-align:center;">LessonLab</h2>
-    <p class="pricing-subtitle" style="text-align:center;">One plan. Every feature. Built for teachers.</p>
-    <div class="pricing-grid" style="grid-template-columns:1fr;">
+    <p class="pricing-subtitle" style="text-align:center;">Every feature. Built for Australian teachers.</p>
+    <div class="pricing-grid" style="grid-template-columns:1fr 1fr;gap:14px;">
+      <!-- PRO -->
       <div class="pricing-card featured" style="max-width:100%;">
-        <div class="pricing-price" style="font-size:2.8rem;">$12 <span>/ month</span></div>
-        <div class="pricing-desc" style="margin-bottom:20px;">Cancel anytime. No lock-in.</div>
-        <ul class="pricing-features">
-          <li>✅ Victorian Curriculum 2.0 &amp; VTLM 2.0 aligned</li>
-          <li>All 9 subjects — Maths, Literacy, PE, Visual Art, Music, Drama, French &amp; more</li>
-          <li>AI lesson plan generator — full unit sequences, week by week</li>
-          <li>Term Planner, Year Planner &amp; 2-Year Cycle Planner</li>
-          <li>Slide generator — PowerPoint export, ready to teach</li>
-          <li>Upload your school's lesson plan template — outputs match your exact format</li>
-          <li>Save, export &amp; print — PDF, Word, slides</li>
-          <li>School branding on every output — logo, colours, footer</li>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1565C0;margin-bottom:4px;">Pro</div>
+        <div class="pricing-price" style="font-size:2.2rem;">$12 <span>/ mo</span></div>
+        <div class="pricing-desc" style="margin-bottom:14px;font-size:13px;">For individual teachers.</div>
+        <ul class="pricing-features" style="margin-bottom:14px;">
+          <li>✅ Victorian Curriculum 2.0 aligned</li>
+          <li>All 9 subject areas</li>
+          <li>Save unlimited lessons</li>
+          <li>Term, Year &amp; Cycle Planners</li>
+          <li>PowerPoint slide export</li>
+          <li>PDF &amp; Word export</li>
         </ul>
-        <button class="pricing-btn pro-btn" id="proUpgradeBtn" onclick="startCheckout('pro')" style="width:100%;margin-top:8px;font-size:1.1rem;padding:14px;">Get LessonLab — $12/mo</button>
-        <div class="pricing-current" id="proCurrentLabel" style="display:none;text-align:center;margin-top:12px;font-weight:600;color:#1565C0;">✓ Your current plan</div>
+        <button class="pricing-btn pro-btn" id="proUpgradeBtn" onclick="startCheckout('pro')" style="width:100%;margin-top:auto;font-size:1rem;padding:12px;">Get Pro — $12/mo</button>
+        <div class="pricing-current" id="proCurrentLabel" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#1565C0;font-size:13px;">✓ Your current plan</div>
+      </div>
+      <!-- SCHOOL -->
+      <div class="pricing-card" style="max-width:100%;border-color:#6A1B9A;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6A1B9A;margin-bottom:4px;">School</div>
+        <div class="pricing-price" style="font-size:2.2rem;">$49 <span>/ mo</span></div>
+        <div class="pricing-desc" style="margin-bottom:14px;font-size:13px;">For school teams &amp; curriculum leads.</div>
+        <ul class="pricing-features" style="margin-bottom:14px;">
+          <li>✅ Everything in Pro</li>
+          <li>School branding on exports</li>
+          <li>Upload school lesson template</li>
+          <li>Priority support</li>
+          <li>Early access to new features</li>
+          <li>Team collaboration (coming soon)</li>
+        </ul>
+        <button class="pricing-btn school-btn" id="schoolUpgradeBtn" onclick="startCheckout('school')" style="width:100%;margin-top:auto;font-size:1rem;padding:12px;">Get School — $49/mo</button>
+        <div class="pricing-current" id="schoolCurrentLabel" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#6A1B9A;font-size:13px;">✓ Your current plan</div>
       </div>
     </div>
     <p style="text-align:center;font-size:12px;color:#888;margin-top:16px;">Prices in AUD &nbsp;·&nbsp; Billed monthly &nbsp;·&nbsp; Cancel anytime</p>
@@ -9546,11 +9562,22 @@ function showPricingModal() {
   if (!modal) return;
   modal.style.display = 'flex';
   const tier = currentProfile ? currentProfile.tier : null;
-  const btn = document.getElementById('proUpgradeBtn');
-  const label = document.getElementById('proCurrentLabel');
-  const isSubscribed = tier === 'pro' || tier === 'school';
-  if (btn) { btn.disabled = isSubscribed; btn.textContent = isSubscribed ? 'Current plan' : 'Get LessonLab — $12/mo'; }
-  if (label) label.style.display = isSubscribed ? 'block' : 'none';
+  const isPro = tier === 'pro';
+  const isSchool = tier === 'school';
+  const proBtn = document.getElementById('proUpgradeBtn');
+  const proLabel = document.getElementById('proCurrentLabel');
+  const schoolBtn = document.getElementById('schoolUpgradeBtn');
+  const schoolLabel = document.getElementById('schoolCurrentLabel');
+  if (proBtn) {
+    proBtn.disabled = isPro || isSchool;
+    proBtn.textContent = isPro ? 'Current plan' : isSchool ? 'Included in School' : 'Get Pro — $12/mo';
+  }
+  if (proLabel) proLabel.style.display = isPro ? 'block' : 'none';
+  if (schoolBtn) {
+    schoolBtn.disabled = isSchool;
+    schoolBtn.textContent = isSchool ? 'Current plan' : 'Get School — $49/mo';
+  }
+  if (schoolLabel) schoolLabel.style.display = isSchool ? 'block' : 'none';
 }
 
 function closePricingModal() {
@@ -9560,7 +9587,9 @@ function closePricingModal() {
 
 async function startCheckout(tier) {
   if (!currentUser) { showAuthModal('signin'); return; }
-  const btn = document.getElementById('proUpgradeBtn');
+  const btnId = tier === 'school' ? 'schoolUpgradeBtn' : 'proUpgradeBtn';
+  const defaultText = tier === 'school' ? 'Get School — $49/mo' : 'Get Pro — $12/mo';
+  const btn = document.getElementById(btnId);
   if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
   try {
     const token = localStorage.getItem('ll_token');
@@ -9574,11 +9603,11 @@ async function startCheckout(tier) {
       window.location.href = data.url;
     } else {
       showToast(data.error || 'Checkout failed. Please try again.', 'error');
-      if (btn) { btn.disabled = false; btn.textContent = 'Get LessonLab — $12/mo'; }
+      if (btn) { btn.disabled = false; btn.textContent = defaultText; }
     }
   } catch(e) {
     showToast('Network error. Please try again.', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Get LessonLab — $12/mo'; }
+    if (btn) { btn.disabled = false; btn.textContent = defaultText; }
   }
 }
 
