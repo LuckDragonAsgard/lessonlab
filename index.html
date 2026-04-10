@@ -2033,6 +2033,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       </div>
       <div class="btn-group">
         <button class="btn btn-pri" id="generateBtn">Generate All Lessons</button>
+        <span id="genCounterBadge" style="display:none;"></span>
       </div>
     </div>
   </div>
@@ -4249,10 +4250,36 @@ function updateSummary() {
   `;
 }
 
+// ── Free generation limit ────────────────────────────────────────────────────
+var FREE_GEN_LIMIT = 3;
+function getGenCount() { return parseInt(localStorage.getItem('ll_gen_count') || '0'); }
+function incGenCount() { localStorage.setItem('ll_gen_count', getGenCount() + 1); updateGenCounter(); }
+function isPaidUser() { return currentProfile && (currentProfile.tier === 'pro' || currentProfile.tier === 'school'); }
+function updateGenCounter() {
+  var el = document.getElementById('genCounterBadge');
+  if (!el) return;
+  if (isPaidUser()) { el.style.display = 'none'; return; }
+  var used = getGenCount();
+  var left = Math.max(0, FREE_GEN_LIMIT - used);
+  el.style.display = left > 0 ? 'inline-block' : 'none';
+  el.textContent = left + ' free plan' + (left === 1 ? '' : 's') + ' left';
+  el.style.cssText += ';background:#FFF3E0;color:#E65100;border:1px solid #FFB74D;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:600;margin-left:8px;';
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function generateAll() {
   if (!state.unit || state.selectedFocuses.length === 0 || !state.yearLevel) {
     alert('Please select Unit, Focus Area(s), and Year Level');
     return;
+  }
+
+  // Free tier generation limit
+  if (!isPaidUser()) {
+    var used = getGenCount();
+    if (used >= FREE_GEN_LIMIT) {
+      showUpgradePrompt('lesson generator');
+      return;
+    }
   }
 
   state.lessons = [];
@@ -4270,6 +4297,7 @@ function generateAll() {
     if (count >= weeks) {
       displayResults();
       document.body.style.cursor = 'default';
+      if (!isPaidUser()) incGenCount();
       return;
     }
 
@@ -7665,14 +7693,14 @@ function updateAuthUI(user) {
     if (userAvatar) userAvatar.textContent = initials;
 
     // Update tier-locked subjects
-    updateSubjectLocking();
+    updateSubjectLocking(); updateGenCounter();
   } else {
     // User is not signed in
     if (signInBtn) signInBtn.style.display = 'block';
     if (userArea) userArea.style.display = 'none';
 
     // Lock all non-free subjects
-    updateSubjectLocking();
+    updateSubjectLocking(); updateGenCounter();
   }
 }
 
@@ -7931,6 +7959,9 @@ function updateSubjectLocking() {
  */
 function showUpgradePrompt(subject = null) {
   if (!currentUser) { showAuthModal('signup'); return; }
+  if (subject === 'lesson generator' && !isPaidUser()) {
+    showToast('You\'ve used your ' + FREE_GEN_LIMIT + ' free lesson plans. Subscribe to keep going.', 'info');
+  }
   showPricingModal();
 }
 
