@@ -6397,7 +6397,8 @@ function renderCycleGrid() {
   const tbody = document.getElementById('cycleGridBody');
   tbody.innerHTML = '';
   const data = cyclePlanData[currentCycle];
-  const otherData = cyclePlanData[currentCycle === 'A' ? 'B' : 'A'];
+  const otherKey = currentCycle === 'A' ? 'B' : 'A';
+  const otherData = cyclePlanData[otherKey];
   Object.entries(SUBJ_CFG).forEach(([key, cfg]) => {
     const tr = document.createElement('tr');
     const th = document.createElement('th');
@@ -6413,14 +6414,23 @@ function renderCycleGrid() {
       td.className = 'year-grid-cell' + (isOverlap ? ' cycle-coverage-overlap' : '');
       if (cellData && cellData.unitId) {
         const dot = cellData.generated ? '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + cfg.colour + ';margin-right:4px;vertical-align:middle;"></span>' : '';
-        td.innerHTML = '<div class="cell-content"><div style="font-weight:600;font-size:12px;">' + dot + cellData.unit + '</div>' +
-          (cellData.focus ? '<div style="font-size:11px;color:#888;margin-top:1px;">' + cellData.focus + '</div>' : '') +
-          (cellData.notes ? '<div style="font-size:10px;color:#aaa;margin-top:2px;">📝 ' + cellData.notes + '</div>' : '') +
-          (isOverlap ? '<div style="font-size:10px;color:#E65100;font-weight:600;margin-top:2px;">⚠️ Same as Cycle ' + (currentCycle === 'A' ? 'B' : 'A') + '</div>' : '') +
-          '</div><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromCycleCell('' + key + '',' + term + ')">Generate</button>';
+        const overlapWarn = isOverlap ? '<div style="font-size:10px;color:#E65100;font-weight:600;margin-top:2px;">[!] Same as Cycle ' + otherKey + '</div>' : '';
+        const notesTxt = cellData.notes ? '<div style="font-size:10px;color:#aaa;margin-top:2px;">[Note] ' + cellData.notes + '</div>' : '';
+        const focusTxt = cellData.focus ? '<div style="font-size:11px;color:#888;margin-top:1px;">' + cellData.focus + '</div>' : '';
+        td.innerHTML = '<div class="cell-content"><div style="font-weight:600;font-size:12px;">' + dot + cellData.unit + '</div>' + focusTxt + notesTxt + overlapWarn + '</div>';
         if (cellData.generated) td.style.borderLeft = '3px solid ' + cfg.colour;
+        const genBtn = document.createElement('button');
+        genBtn.className = 'cell-gen-btn';
+        genBtn.textContent = 'Generate';
+        genBtn.addEventListener('click', (e) => { e.stopPropagation(); generateFromCycleCell(key, term); });
+        td.appendChild(genBtn);
       } else {
-        td.innerHTML = '<div class="cell-empty">+ Click to plan</div><button class="cell-gen-btn" onclick="event.stopPropagation();openCycleCellEditor('' + key + '',' + term + ')">Set up</button>';
+        td.innerHTML = '<div class="cell-empty">+ Click to plan</div>';
+        const setupBtn = document.createElement('button');
+        setupBtn.className = 'cell-gen-btn';
+        setupBtn.textContent = 'Set up';
+        setupBtn.addEventListener('click', (e) => { e.stopPropagation(); openCycleCellEditor(key, term); });
+        td.appendChild(setupBtn);
       }
       td.onclick = () => openCycleCellEditor(key, term);
       tr.appendChild(td);
@@ -6428,7 +6438,6 @@ function renderCycleGrid() {
     tbody.appendChild(tr);
   });
 }
-
 function openCycleCellEditor(subjKey, term) {
   const cfg = SUBJ_CFG[subjKey];
   const units = UNITS[subjKey] || [];
