@@ -1961,7 +1961,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     <button class="pricing-modal-close" onclick="closePricingModal()">&times;</button>
     <h2 style="text-align:center;">LessonLab</h2>
     <p class="pricing-subtitle" style="text-align:center;">Every feature. Built for Australian teachers.</p>
-    <div class="pricing-grid" style="grid-template-columns:1fr 1fr;gap:14px;">
+    <div class="pricing-grid" style="grid-template-columns:1fr;gap:14px;max-width:340px;margin:0 auto;">
       <!-- PRO -->
       <div class="pricing-card featured" style="max-width:100%;">
         <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1565C0;margin-bottom:4px;">Pro</div>
@@ -1977,22 +1977,6 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
         </ul>
         <button class="pricing-btn pro-btn" id="proUpgradeBtn" onclick="startCheckout('pro')" style="width:100%;margin-top:auto;font-size:1rem;padding:12px;">Get Pro — $12/mo</button>
         <div class="pricing-current" id="proCurrentLabel" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#1565C0;font-size:13px;">✓ Your current plan</div>
-      </div>
-      <!-- SCHOOL -->
-      <div class="pricing-card" style="max-width:100%;border-color:#6A1B9A;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6A1B9A;margin-bottom:4px;">School</div>
-        <div class="pricing-price" style="font-size:2.2rem;">$49 <span>/ mo</span></div>
-        <div class="pricing-desc" style="margin-bottom:14px;font-size:13px;">For school teams &amp; curriculum leads.</div>
-        <ul class="pricing-features" style="margin-bottom:14px;">
-          <li>✅ Everything in Pro</li>
-          <li>School branding on exports</li>
-          <li>Upload school lesson template</li>
-          <li>Priority support</li>
-          <li>Early access to new features</li>
-          <li>Team collaboration (coming soon)</li>
-        </ul>
-        <button class="pricing-btn school-btn" id="schoolUpgradeBtn" onclick="startCheckout('school')" style="width:100%;margin-top:auto;font-size:1rem;padding:12px;">Get School — $49/mo</button>
-        <div class="pricing-current" id="schoolCurrentLabel" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#6A1B9A;font-size:13px;">✓ Your current plan</div>
       </div>
     </div>
     <p style="text-align:center;font-size:12px;color:#888;margin-top:16px;">Prices in AUD &nbsp;·&nbsp; Billed monthly &nbsp;·&nbsp; Cancel anytime</p>
@@ -9159,7 +9143,7 @@ let authStateInitialized = false;
 initAuth().then(() => {
   // Handle ?plan=pro or ?plan=school from landing page pricing buttons
   const urlPlan = new URLSearchParams(window.location.search).get('plan');
-  if (urlPlan === 'pro' || urlPlan === 'school') {
+  if (urlPlan === 'pro') {
     // Clean URL without reloading
     history.replaceState({}, '', window.location.pathname);
     // Small delay to let UI settle, then trigger checkout or signup
@@ -9643,22 +9627,14 @@ function showPricingModal() {
   if (!modal) return;
   modal.style.display = 'flex';
   const tier = currentProfile ? currentProfile.tier : null;
-  const isPro = tier === 'pro';
-  const isSchool = tier === 'school';
+  const isPro = tier === 'pro' || tier === 'school';
   const proBtn = document.getElementById('proUpgradeBtn');
   const proLabel = document.getElementById('proCurrentLabel');
-  const schoolBtn = document.getElementById('schoolUpgradeBtn');
-  const schoolLabel = document.getElementById('schoolCurrentLabel');
   if (proBtn) {
-    proBtn.disabled = isPro || isSchool;
-    proBtn.textContent = isPro ? 'Current plan' : isSchool ? 'Included in School' : 'Get Pro — $12/mo';
+    proBtn.disabled = isPro;
+    proBtn.textContent = isPro ? 'Current plan' : 'Get Pro — $12/mo';
   }
   if (proLabel) proLabel.style.display = isPro ? 'block' : 'none';
-  if (schoolBtn) {
-    schoolBtn.disabled = isSchool;
-    schoolBtn.textContent = isSchool ? 'Current plan' : 'Get School — $49/mo';
-  }
-  if (schoolLabel) schoolLabel.style.display = isSchool ? 'block' : 'none';
 }
 
 function closePricingModal() {
@@ -9668,8 +9644,8 @@ function closePricingModal() {
 
 async function startCheckout(tier) {
   if (!currentUser) { showAuthModal('signin'); return; }
-  const btnId = tier === 'school' ? 'schoolUpgradeBtn' : 'proUpgradeBtn';
-  const defaultText = tier === 'school' ? 'Get School — $49/mo' : 'Get Pro — $12/mo';
+  const btnId = 'proUpgradeBtn';
+  const defaultText = 'Get Pro — $12/mo';
   const btn = document.getElementById(btnId);
   if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
   try {
@@ -9986,7 +9962,7 @@ function openAccountSettings() {
     var TIER_STYLES = {
       free:   { label: 'Free',   bg: '#fef3c7', color: '#92400e' },
       pro:    { label: 'Pro',    bg: '#ede9fe', color: '#7c3aed' },
-      school: { label: 'School', bg: '#d1fae5', color: '#065f46' },
+      school: { label: 'Pro',    bg: '#ede9fe', color: '#7c3aed' },
     };
     var ts = TIER_STYLES[tier] || TIER_STYLES.free;
     badgeEl.textContent = ts.label;
@@ -10080,11 +10056,10 @@ async function saveAccountSettings() {
       <h2 style="font-size:1.5rem;font-weight:700;color:#111827;">&#128737;&#65039; Admin Panel</h2>
       <button onclick="closeAdminPanel()" style="font-size:1.5rem;background:none;border:none;cursor:pointer;color:#6b7280;">&times;</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
       <div style="background:#f9fafb;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatTotal" style="font-size:1.75rem;font-weight:700;color:#111827;">&#8212;</div><div style="font-size:0.75rem;color:#6b7280;margin-top:2px;">Total Users</div></div>
       <div style="background:#fef3c7;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatFree" style="font-size:1.75rem;font-weight:700;color:#92400e;">&#8212;</div><div style="font-size:0.75rem;color:#92400e;margin-top:2px;">Free</div></div>
       <div style="background:#ede9fe;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatPro" style="font-size:1.75rem;font-weight:700;color:#7c3aed;">&#8212;</div><div style="font-size:0.75rem;color:#7c3aed;margin-top:2px;">Pro</div></div>
-      <div style="background:#d1fae5;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatSchool" style="font-size:1.75rem;font-weight:700;color:#065f46;">&#8212;</div><div style="font-size:0.75rem;color:#065f46;margin-top:2px;">School</div></div>
       <div style="background:#dbeafe;border-radius:10px;padding:16px;text-align:center;"><div id="adminStatLessons" style="font-size:1.75rem;font-weight:700;color:#1e40af;">&#8212;</div><div style="font-size:0.75rem;color:#1e40af;margin-top:2px;">Lessons</div></div>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
