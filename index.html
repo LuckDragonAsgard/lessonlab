@@ -702,6 +702,78 @@
       font-size: 12px;
     }
 
+    /* YEAR PLANNER */
+    .year-planner-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .year-grid {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      table-layout: fixed;
+    }
+    .year-grid th, .year-grid td {
+      padding: 10px 12px;
+      text-align: left;
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .year-grid th {
+      background: var(--pri);
+      color: white;
+      font-weight: 600;
+      text-align: center;
+    }
+    .year-grid th:first-child {
+      text-align: left;
+      width: 180px;
+    }
+    .year-grid td:first-child {
+      font-weight: 600;
+    }
+    .year-grid-cell {
+      min-height: 60px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+      vertical-align: top;
+    }
+    .year-grid-cell:hover {
+      background: rgba(21, 101, 192, 0.06) !important;
+      box-shadow: inset 0 0 0 2px var(--pri);
+    }
+    .year-grid-cell .cell-topic { font-size: 12px; font-weight: 500; color: #333; margin-bottom: 4px; }
+    .year-grid-cell .cell-focus { font-size: 10px; color: #888; line-height: 1.3; }
+    .year-grid-cell .cell-status { position: absolute; top: 4px; right: 4px; font-size: 10px; }
+    .year-grid-cell .cell-empty { color: #bbb; font-size: 11px; font-style: italic; }
+    .year-grid-cell .cell-gen-btn {
+      display: none; position: absolute; bottom: 4px; right: 4px;
+      background: var(--acc); color: white; border: none; border-radius: 4px;
+      font-size: 10px; padding: 3px 8px; cursor: pointer; font-weight: 600;
+    }
+    .year-grid-cell:hover .cell-gen-btn { display: block; }
+    .year-subject-label { display: flex; align-items: center; gap: 8px; }
+    .year-subject-label .yp-icon { font-size: 20px; }
+    .year-subject-label .yp-name { font-size: 13px; }
+    .year-planner-modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+    }
+    .year-planner-modal-overlay.show { display: flex; }
+    .year-planner-modal {
+      background: white; border-radius: 12px; padding: 24px;
+      width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    body.dark-mode .year-planner-section, body.dark-mode .year-planner-modal { background: var(--card-bg, #1e1e1e); }
+    body.dark-mode .year-grid-cell .cell-topic { color: #ddd; }
+    body.dark-mode .year-grid-cell .cell-focus { color: #aaa; }
+
     /* RESULTS SUBJECT GROUPS */
     .results-group {
       margin-bottom: 24px;
@@ -1688,6 +1760,71 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       <div class="btn-group">
         <button class="btn btn-pri" id="generateTermPlansBtn">Generate All Term Plans</button>
         <button class="btn btn-sec" id="printTermOverviewBtn">Print Term Overview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- YEAR PLANNER -->
+  <div id="yearPlannerPanel" class="panel">
+    <a class="back-link" id="backToSubjectsFromYear">← Back to subjects</a>
+    <div class="year-planner-section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="color: var(--pri); margin:0;">📅 Year Planner</h2>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-sec" id="ypLoadBtn" title="Load saved year plan">Load Plan</button>
+          <button class="btn btn-sec" id="ypSaveBtn" title="Save current year plan">Save Plan</button>
+        </div>
+      </div>
+      <div class="term-grid-controls">
+        <div class="term-control-item">
+          <label>Year Level</label>
+          <div class="year-pills" id="ypYearPills"></div>
+        </div>
+        <div class="term-control-item" style="margin-top:12px;">
+          <label>Weeks per Term</label>
+          <select id="ypWeeksPerTerm" style="padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:white;max-width:150px;">
+            <option value="8">8 weeks</option>
+            <option value="10" selected>10 weeks</option>
+            <option value="12">12 weeks</option>
+          </select>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px;">Click any cell to set a unit/focus, or hover and click <strong>Generate</strong> to create lessons for that term.</p>
+      <div style="overflow-x:auto;">
+        <table class="year-grid" id="yearGrid">
+          <thead><tr><th>Subject</th><th>Term 1</th><th>Term 2</th><th>Term 3</th><th>Term 4</th></tr></thead>
+          <tbody id="yearGridBody"></tbody>
+        </table>
+      </div>
+      <div class="btn-group" style="margin-top:20px;">
+        <button class="btn btn-pri" id="ypGenerateAllBtn">Generate All Year Plans</button>
+        <button class="btn btn-sec" id="ypPrintOverviewBtn">Print Year Overview</button>
+        <button class="btn btn-sec" id="ypExportBtn">Export Year Plan (.csv)</button>
+      </div>
+    </div>
+  </div>
+  <!-- CELL EDITOR MODAL -->
+  <div class="year-planner-modal-overlay" id="ypCellModal">
+    <div class="year-planner-modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 id="ypModalTitle" style="margin:0;color:var(--pri);">Edit Cell</h3>
+        <button onclick="document.getElementById('ypCellModal').classList.remove('show')" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;">✕</button>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:4px;">Unit</label>
+        <select id="ypModalUnit" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;font-size:13px;"></select>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:4px;">Focus Area</label>
+        <select id="ypModalFocus" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;font-size:13px;"></select>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:4px;">Notes (optional)</label>
+        <textarea id="ypModalNotes" rows="2" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;font-size:13px;resize:vertical;" placeholder="e.g. Assessment focus, excursion week 6"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-sec" onclick="document.getElementById('ypCellModal').classList.remove('show')">Cancel</button>
+        <button class="btn btn-pri" id="ypModalSaveBtn">Save</button>
       </div>
     </div>
   </div>
@@ -3816,6 +3953,17 @@ function initSubjects() {
   termCard.onclick = () => initTermPlanner();
   grid.appendChild(termCard);
 
+  const yearCard = document.createElement('div');
+  yearCard.className = 'subject-card';
+  yearCard.style.color = '#2E7D32';
+  yearCard.innerHTML = `
+    <div class="subject-icon">📅</div>
+    <div class="subject-name">Year Planner</div>
+    <div class="subject-phases">Plan all subjects across 4 terms</div>
+  `;
+  yearCard.onclick = () => initYearPlanner();
+  grid.appendChild(yearCard);
+
   // Landing stats
   const statsEl = document.getElementById('landingStats');
   const savedConfigs = JSON.parse(localStorage.getItem('lessonlab_configs') || '[]');
@@ -5917,6 +6065,168 @@ function printStudentTracker(idx) {
 }
 
 // ============================================================================
+// YEAR PLANNER
+// ============================================================================
+
+const yearPlanData = {};
+
+function initYearPlanner() {
+  const yearLevels = ['Foundation', 'Years 1-2', 'Years 3-4', 'Years 5-6'];
+  const pills = document.getElementById('ypYearPills');
+  pills.innerHTML = '';
+  if (!state.ypYearLevel) state.ypYearLevel = 'Years 3-4';
+  yearLevels.forEach(level => {
+    const pill = document.createElement('button');
+    pill.className = 'pill' + (state.ypYearLevel === level ? ' active' : '');
+    pill.textContent = level;
+    pill.onclick = () => { state.ypYearLevel = level; document.querySelectorAll('#ypYearPills .pill').forEach(p => p.classList.remove('active')); pill.classList.add('active'); renderYearGrid(); };
+    pills.appendChild(pill);
+  });
+  renderYearGrid();
+  goPanel('yearPlanner');
+}
+
+function renderYearGrid() {
+  const tbody = document.getElementById('yearGridBody');
+  tbody.innerHTML = '';
+  const subjects = Object.entries(SUBJ_CFG);
+  subjects.forEach(([key, cfg]) => {
+    const tr = document.createElement('tr');
+    const tdSubj = document.createElement('td');
+    tdSubj.innerHTML = '<div class="year-subject-label"><span class="yp-icon">' + cfg.icon + '</span><span class="yp-name">' + cfg.name + '</span></div>';
+    tdSubj.style.borderLeft = '4px solid ' + cfg.colour;
+    tr.appendChild(tdSubj);
+    [1,2,3,4].forEach(term => {
+      const cellKey = key + '-' + term;
+      const data = yearPlanData[cellKey];
+      const td = document.createElement('td');
+      td.className = 'year-grid-cell';
+      if (data && data.unit) {
+        td.style.background = cfg.colour + '0D';
+        td.innerHTML = '<div class="cell-topic">' + data.unit + '</div><div class="cell-focus">' + (data.focus || '') + '</div>' + (data.notes ? '<div class="cell-focus" style="margin-top:2px;color:#666;">\ud83d\udcdd ' + data.notes + '</div>' : '') + '<span class="cell-status">' + (data.generated ? '\u2705' : '') + '</span><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromYearCell(\'' + key + '\',\'' + term + '\')">Generate</button>';
+      } else {
+        td.innerHTML = '<div class="cell-empty">+ Click to plan</div><button class="cell-gen-btn" onclick="event.stopPropagation();openYearCellEditor(\'' + key + '\',\'' + term + '\')">Set up</button>';
+      }
+      td.onclick = () => openYearCellEditor(key, term);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function openYearCellEditor(subjKey, term) {
+  const cfg = SUBJ_CFG[subjKey]; const units = UNITS[subjKey] || [];
+  const cellKey = subjKey + '-' + term; const existing = yearPlanData[cellKey] || {};
+  document.getElementById('ypModalTitle').textContent = cfg.icon + ' ' + cfg.name + ' \u2014 Term ' + term;
+  const unitSelect = document.getElementById('ypModalUnit');
+  unitSelect.innerHTML = '<option value="">Select a unit\u2026</option>';
+  units.forEach(u => { const opt = document.createElement('option'); opt.value = u.id; opt.textContent = u.name; if (existing.unitId === u.id) opt.selected = true; unitSelect.appendChild(opt); });
+  const populateFocuses = () => {
+    const focusSelect = document.getElementById('ypModalFocus');
+    focusSelect.innerHTML = '<option value="">Select a focus\u2026</option>';
+    const unit = units.find(u => u.id === unitSelect.value);
+    if (unit) { unit.focuses.forEach(f => { const opt = document.createElement('option'); opt.value = f.id; opt.textContent = f.name; if (existing.focusId === f.id) opt.selected = true; focusSelect.appendChild(opt); }); }
+  };
+  unitSelect.onchange = populateFocuses; populateFocuses();
+  document.getElementById('ypModalNotes').value = existing.notes || '';
+  document.getElementById('ypModalSaveBtn').onclick = () => {
+    const unitId = unitSelect.value; const unit = units.find(u => u.id === unitId);
+    const focusSelect = document.getElementById('ypModalFocus'); const focusId = focusSelect.value;
+    const focus = unit ? unit.focuses.find(f => f.id === focusId) : null;
+    const notes = document.getElementById('ypModalNotes').value.trim();
+    if (unitId && unit) { yearPlanData[cellKey] = { unitId, unit: unit.name, focusId: focusId || '', focus: focus ? focus.name : '', notes, generated: existing.generated || false }; }
+    else { delete yearPlanData[cellKey]; }
+    document.getElementById('ypCellModal').classList.remove('show'); renderYearGrid(); saveYearPlanToStorage();
+  };
+  document.getElementById('ypCellModal').classList.add('show');
+}
+
+function generateFromYearCell(subjKey, term) {
+  const cellKey = subjKey + '-' + term; const data = yearPlanData[cellKey];
+  if (!data || !data.unitId) { showToast('Set up a unit first.', 'error'); return; }
+  const cfg = SUBJ_CFG[subjKey]; const units = UNITS[subjKey] || [];
+  const unit = units.find(u => u.id === data.unitId);
+  const numWeeks = parseInt(document.getElementById('ypWeeksPerTerm').value) || 10;
+  state.subject = subjKey; state.subjectCfg = cfg; state.unit = data.unitId; state.unitData = unit;
+  state.focuses = unit ? unit.focuses : []; state.selectedFocuses = data.focusId ? [data.focusId] : (unit ? unit.focuses.map(f => f.id) : []);
+  state.yearLevel = state.ypYearLevel || 'Years 3-4'; state.duration = numWeeks;
+  yearPlanData[cellKey].generated = true; saveYearPlanToStorage(); generateAll();
+}
+
+function generateAllYearPlans() {
+  if (!currentProfile || (currentProfile.tier !== 'pro' && currentProfile.tier !== 'school')) { showToast('Year Planner generation is a Pro feature.', 'error'); return; }
+  const filledCells = Object.keys(yearPlanData).filter(k => yearPlanData[k] && yearPlanData[k].unitId);
+  if (filledCells.length === 0) { showToast('No subjects planned yet.', 'error'); return; }
+  const numWeeks = parseInt(document.getElementById('ypWeeksPerTerm').value) || 10;
+  const allLessons = [];
+  filledCells.forEach(cellKey => {
+    const parts = cellKey.split('-'); const term = parts[parts.length - 1]; const subjKey = parts.slice(0, -1).join('-');
+    const data = yearPlanData[cellKey]; const cfg = SUBJ_CFG[subjKey]; const units = UNITS[subjKey] || [];
+    const unit = units.find(u => u.id === data.unitId); if (!unit) return;
+    const focuses = data.focusId ? [data.focusId] : unit.focuses.map(f => f.id);
+    for (let w = 1; w <= numWeeks; w++) {
+      const focusId = focuses[(w - 1) % focuses.length];
+      const lesson = generateLesson(subjKey, data.unitId, focusId, w, numWeeks);
+      if (lesson) { allLessons.push({ week: w, title: lesson.title || cfg.name + ' Week ' + w, li: lesson.li, html: '',
+        data: { school: state.school || '', state: 'VIC', subject: cfg.name, year: state.ypYearLevel || 'Years 3-4',
+          term: 'Term ' + term, week: w, duration: numWeeks, title: lesson.title || cfg.name + ' Week ' + w,
+          li: lesson.li, sc: lesson.sc, equipment: lesson.equipment || '', context: lesson.context || '', logo: state.logo || '' } }); }
+    }
+    yearPlanData[cellKey].generated = true;
+  });
+  if (allLessons.length > 0) { state.lessons = allLessons; renderResults(); goPanel('results');
+    showToast('Generated ' + allLessons.length + ' lessons across ' + filledCells.length + ' subject-terms.', 'success'); }
+  saveYearPlanToStorage();
+}
+
+function saveYearPlanToStorage() { try { localStorage.setItem('lessonlab_yearplan', JSON.stringify({ yearLevel: state.ypYearLevel, data: yearPlanData })); } catch(e){} }
+function loadYearPlanFromStorage() { try { const s = JSON.parse(localStorage.getItem('lessonlab_yearplan')); if (s && s.data) { Object.assign(yearPlanData, s.data); if (s.yearLevel) state.ypYearLevel = s.yearLevel; } } catch(e){} }
+
+function saveYearPlanNamed() {
+  const name = prompt('Name for this year plan:'); if (!name) return;
+  try { const plans = JSON.parse(localStorage.getItem('lessonlab_yearplans_saved') || '[]');
+    plans.push({ name, date: new Date().toISOString(), yearLevel: state.ypYearLevel, data: { ...yearPlanData } });
+    localStorage.setItem('lessonlab_yearplans_saved', JSON.stringify(plans));
+    showToast('Saved "' + name + '".', 'success'); } catch(e) { showToast('Failed to save.', 'error'); }
+}
+
+function loadYearPlanNamed() {
+  try { const plans = JSON.parse(localStorage.getItem('lessonlab_yearplans_saved') || '[]');
+    if (!plans.length) { showToast('No saved year plans.', 'error'); return; }
+    const choice = prompt('Choose:\n' + plans.map((p,i) => (i+1) + '. ' + p.name).join('\n'));
+    const idx = parseInt(choice) - 1;
+    if (idx >= 0 && idx < plans.length) { Object.keys(yearPlanData).forEach(k => delete yearPlanData[k]);
+      Object.assign(yearPlanData, plans[idx].data); state.ypYearLevel = plans[idx].yearLevel || state.ypYearLevel;
+      renderYearGrid(); showToast('Loaded "' + plans[idx].name + '".', 'success'); }
+  } catch(e) { showToast('Failed to load.', 'error'); }
+}
+
+function printYearOverview() {
+  const subjects = Object.entries(SUBJ_CFG); const yl = state.ypYearLevel || 'Years 3-4';
+  let h = '<html><head><title>Year Plan</title><style>body{font-family:system-ui;padding:20px}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border:1px solid #ddd;padding:10px;font-size:12px}th{background:#1565C0;color:white;text-align:center}th:first-child{text-align:left}td:first-child{font-weight:600}</style></head><body>';
+  h += '<h1>Year Planner - ' + yl + '</h1><table><thead><tr><th>Subject</th><th>Term 1</th><th>Term 2</th><th>Term 3</th><th>Term 4</th></tr></thead><tbody>';
+  subjects.forEach(([key, cfg]) => { h += '<tr><td>' + cfg.icon + ' ' + cfg.name + '</td>';
+    for (let t = 1; t <= 4; t++) { const d = yearPlanData[key+'-'+t];
+      h += d && d.unit ? '<td style="border-left:3px solid '+cfg.colour+'">'+d.unit+(d.focus?'<br><em style="color:#888;font-size:11px">'+d.focus+'</em>':'')+'</td>' : '<td style="color:#ccc">-</td>'; }
+    h += '</tr>'; });
+  h += '</tbody></table></body></html>';
+  const w = window.open('','_blank'); w.document.write(h); w.document.close(); setTimeout(() => w.print(), 400);
+}
+
+function exportYearPlanCSV() {
+  const subjects = Object.entries(SUBJ_CFG);
+  let csv = 'Subject,Term 1 Unit,Term 1 Focus,Term 2 Unit,Term 2 Focus,Term 3 Unit,Term 3 Focus,Term 4 Unit,Term 4 Focus\n';
+  subjects.forEach(([key, cfg]) => { let row = '"' + cfg.name + '"';
+    for (let t = 1; t <= 4; t++) { const d = yearPlanData[key+'-'+t]; row += ',"'+(d?d.unit||'':'')+'",'+(d?'"'+(d.focus||'')+'"':'""'); }
+    csv += row + '\n'; });
+  const blob = new Blob([csv], {type:'text/csv'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'LessonLab_Year_Plan.csv'; a.click();
+  showToast('Exported as CSV.', 'success');
+}
+
+loadYearPlanFromStorage();
+
+// ============================================================================
 // EVENT LISTENERS
 // ============================================================================
 
@@ -5967,6 +6277,17 @@ document.getElementById('printTermOverviewBtn').onclick = printTermOverview;
 document.getElementById('printTermOverviewFromResultsBtn').onclick = printTermOverview;
 document.getElementById('backToSubjectsFromTerm').onclick = () => {
   goPanel('subjects');
+};
+
+// Year Planner event listeners
+document.getElementById('backToSubjectsFromYear').onclick = () => { goPanel('subjects'); };
+document.getElementById('ypGenerateAllBtn').onclick = generateAllYearPlans;
+document.getElementById('ypPrintOverviewBtn').onclick = printYearOverview;
+document.getElementById('ypExportBtn').onclick = exportYearPlanCSV;
+document.getElementById('ypSaveBtn').onclick = saveYearPlanNamed;
+document.getElementById('ypLoadBtn').onclick = loadYearPlanNamed;
+document.getElementById('ypCellModal').onclick = (e) => {
+  if (e.target === document.getElementById('ypCellModal')) { document.getElementById('ypCellModal').classList.remove('show'); }
 };
 
 // ============================================================================
