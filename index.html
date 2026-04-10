@@ -1219,7 +1219,7 @@
   ">Sign In</button>
 
   <!-- User Info Area (shown when logged in) -->
-  <div id="userArea" style="display: none; display: flex; align-items: center; gap: 0.75rem;">
+  <div id="userArea" style="display: none; align-items: center; gap: 0.75rem;">
     <!-- User Avatar -->
     <div id="userAvatar" style="
       width: 36px;
@@ -6297,7 +6297,8 @@ function renderYearGrid() {
       td.className = 'year-grid-cell';
       if (data && data.unit) {
         td.style.background = cfg.colour + '0D';
-        td.innerHTML = '<div class="cell-topic">' + data.unit + '</div><div class="cell-focus">' + (data.focus || '') + '</div>' + (data.notes ? '<div class="cell-focus" style="margin-top:2px;color:#666;">\ud83d\udcdd ' + data.notes + '</div>' : '') + '<span class="cell-status">' + (data.generated ? '\u2705' : '') + '</span><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromYearCell(\'' + key + '\',\'' + term + '\')">Generate</button>';
+        var _esc = function(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+        td.innerHTML = '<div class="cell-topic">' + _esc(data.unit) + '</div><div class="cell-focus">' + _esc(data.focus || '') + '</div>' + (data.notes ? '<div class="cell-focus" style="margin-top:2px;color:#666;">📝 ' + _esc(data.notes) + '</div>' : '') + '<span class="cell-status">' + (data.generated ? '✅' : '') + '</span><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromYearCell(\'' + key + '\',\'' + term + '\')">Generate</button>';
       } else {
         td.innerHTML = '<div class="cell-empty">+ Click to plan</div><button class="cell-gen-btn" onclick="event.stopPropagation();openYearCellEditor(\'' + key + '\',\'' + term + '\')">Set up</button>';
       }
@@ -6501,9 +6502,10 @@ function renderCycleGrid() {
       if (cellData && cellData.unitId) {
         const dot = cellData.generated ? '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + cfg.colour + ';margin-right:4px;vertical-align:middle;"></span>' : '';
         const overlapWarn = isOverlap ? '<div style="font-size:10px;color:#E65100;font-weight:600;margin-top:2px;">[!] Same as Cycle ' + otherKey + '</div>' : '';
-        const notesTxt = cellData.notes ? '<div style="font-size:10px;color:#aaa;margin-top:2px;">[Note] ' + cellData.notes + '</div>' : '';
-        const focusTxt = cellData.focus ? '<div style="font-size:11px;color:#888;margin-top:1px;">' + cellData.focus + '</div>' : '';
-        td.innerHTML = '<div class="cell-content"><div style="font-weight:600;font-size:12px;">' + dot + cellData.unit + '</div>' + focusTxt + notesTxt + overlapWarn + '</div>';
+        var _escCp = function(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+        const notesTxt = cellData.notes ? '<div style="font-size:10px;color:#aaa;margin-top:2px;">[Note] ' + _escCp(cellData.notes) + '</div>' : '';
+        const focusTxt = cellData.focus ? '<div style="font-size:11px;color:#888;margin-top:1px;">' + _escCp(cellData.focus) + '</div>' : '';
+        td.innerHTML = '<div class="cell-content"><div style="font-weight:600;font-size:12px;">' + dot + _escCp(cellData.unit) + '</div>' + focusTxt + notesTxt + overlapWarn + '</div>';
         if (cellData.generated) td.style.borderLeft = '3px solid ' + cfg.colour;
         const genBtn = document.createElement('button');
         genBtn.className = 'cell-gen-btn';
@@ -7600,6 +7602,7 @@ async function api(path, opts = {}) {
   if (token) headers['Authorization'] = 'Bearer ' + token;
   try {
     const r = await fetch(API_URL + path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
+    if (!r.ok) { const err = await r.json().catch(() => ({ error: 'HTTP ' + r.status })); return err; }
     return r.json();
   } catch (e) {
     console.error('API error:', e);
@@ -8343,25 +8346,9 @@ document.getElementById('accountSettingsBtn')?.addEventListener('click', () => {
   openAccountSettings();
 });
 
-// Subject card click - check tier access
-document.querySelectorAll('.subject-card').forEach(card => {
-  const originalClick = card.onclick;
-  card.addEventListener('click', function(e) {
-    const subject = (this.querySelector('.subject-name') ? this.querySelector('.subject-name').textContent.trim() : 'unknown');
-
-    if (!checkTierAccess(subject)) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      showUpgradePrompt(subject);
-      return false;
-    }
-
-    // If access granted and there was an original handler, call it
-    if (originalClick && typeof originalClick === 'function') {
-      return originalClick.call(this, e);
-    }
-  });
-});
+// Subject card tier gating is handled entirely by updateSubjectLocking()
+// which sets card.onclick to either showUpgradePrompt (locked) or the real handler.
+// No duplicate addEventListener needed here.
 
 // ============================================================================
 // LESSON GENERATION HOOK
