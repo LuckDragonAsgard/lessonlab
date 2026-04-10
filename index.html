@@ -6125,16 +6125,16 @@ function openYearCellEditor(subjKey, term) {
     const focusSelect = document.getElementById('ypModalFocus');
     focusSelect.innerHTML = '<option value="">Select a focus\u2026</option>';
     const unit = units.find(u => u.id === unitSelect.value);
-    if (unit) { unit.focuses.forEach(f => { const opt = document.createElement('option'); opt.value = f.id; opt.textContent = f.name; if (existing.focusId === f.id) opt.selected = true; focusSelect.appendChild(opt); }); }
+    if (unit) { unit.focuses.forEach(f => { const opt = document.createElement('option'); const fVal=(typeof f==='string')?f:(f.id||f.name||String(f)); opt.value=fVal; opt.textContent=(typeof f==='string')?f:(f.name||String(f)); if(existing.focusId===fVal) opt.selected=true; focusSelect.appendChild(opt); }); }
   };
   unitSelect.onchange = populateFocuses; populateFocuses();
   document.getElementById('ypModalNotes').value = existing.notes || '';
   document.getElementById('ypModalSaveBtn').onclick = () => {
     const unitId = unitSelect.value; const unit = units.find(u => u.id === unitId);
     const focusSelect = document.getElementById('ypModalFocus'); const focusId = focusSelect.value;
-    const focus = unit ? unit.focuses.find(f => f.id === focusId) : null;
+    const focus = focusId || null; // focuses are plain strings
     const notes = document.getElementById('ypModalNotes').value.trim();
-    if (unitId && unit) { yearPlanData[cellKey] = { unitId, unit: unit.name, focusId: focusId || '', focus: focus ? focus.name : '', notes, generated: existing.generated || false }; }
+    if (unitId && unit) { yearPlanData[cellKey] = { unitId, unit: unit.name, focusId: focusId || '', focus: focus || '', notes, generated: existing.generated || false }; }
     else { delete yearPlanData[cellKey]; }
     document.getElementById('ypCellModal').classList.remove('show'); renderYearGrid(); saveYearPlanToStorage();
   };
