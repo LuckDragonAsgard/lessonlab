@@ -3017,6 +3017,633 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
   const sk0 = sk(0), sk1 = sk(1), sk2 = sk(2);
 
   // ── PE ──────────────────────────────────────────────────────
+
+  // ── YEAR-LEVEL CONTENT OVERRIDES (all subjects) ──────────────────────────
+  // ── PE YEAR-LEVEL OVERRIDES ──
+const _peFoundation = {
+  invasion: [
+    {t:'Walking and Running', li:'develop basic locomotor skills with body awareness', sc:['I can walk in different directions','I can run without bumping others','I can stop when I hear the signal'], eq:'Open space, cones'},
+    {t:'Jumping and Hopping', li:'explore jumping and hopping movements', sc:['I can jump with two feet together','I can hop on one foot','I can land safely'], eq:'Mats, lines on ground'},
+    {t:'Skipping and Galloping', li:'practice skipping and galloping patterns', sc:['I can skip in a line','I can gallop around the space','I can control my speed'], eq:'Open space, music player'},
+    {t:'Rolling and Throwing Underarm', li:'develop throwing and rolling skills', sc:['I can roll a ball to a partner','I can throw a soft ball underarm','I can catch a rolling ball'], eq:'Soft balls, bean bags, targets'},
+    {t:'Catching and Receiving', li:'practice catching and receiving movements', sc:['I can catch a ball with two hands','I can track a moving object','I can receive a ball safely'], eq:'Soft balls, bean bags'},
+    {t:'Body Awareness and Space', li:'develop awareness of body and space', sc:['I can move my body in different ways','I can use the space without bumping others','I can follow directions'], eq:'Open space, music'},
+    {t:'Partner Games', li:'work cooperatively with a partner', sc:['I can pass to my partner','I can take turns','I can work together safely'], eq:'Soft balls, bean bags, cones'},
+    {t:'Cooperative Play', li:'engage in simple cooperative group activities', sc:['I can play alongside others','I can follow simple rules','I can celebrate successes'], eq:'Balls, cones, hoops'},
+    {t:'Movement to Music', li:'move expressively to music', sc:['I can move to the beat','I can change direction with the music','I can respond to fast and slow'], eq:'Music player, ribbons, scarves'},
+    {t:'Games and Fun', li:'apply movement skills in simple game play', sc:['I can participate in a simple game','I can follow game rules','I can have fun moving'], eq:'Balls, cones, open space'}
+  ],
+  'net-wall': [
+    {t:'Striking with Hands', li:'develop striking skills using hands', sc:['I can strike a ball gently','I can use open hand to hit','I can contact the ball'], eq:'Soft balls, lower net, wall'},
+    {t:'Striking with Implements', li:'explore striking with simple equipment', sc:['I can hold a paddle correctly','I can strike a stationary object','I can move to the ball'], eq:'Small paddles, foam balls, wall'},
+    {t:'Bouncing and Sending', li:'practice bouncing and sending skills', sc:['I can bounce a ball','I can send a ball over a line','I can bounce and catch'], eq:'Balls, low net, lines'},
+    {t:'Wall Games', li:'play simple wall-based activities', sc:['I can hit a ball at the wall','I can track the ball','I can take position'], eq:'Wall, soft balls, chalk'},
+    {t:'Partner Rallies', li:'maintain simple rallies with a partner', sc:['I can send a ball to my partner','I can receive a ball','I can keep the ball going'], eq:'Net, posts, soft balls'},
+    {t:'Court Awareness', li:'develop awareness of playing area', sc:['I can move in the space','I can stay in bounds','I can position myself'], eq:'Cones, lines, court'},
+    {t:'Catching Near the Net', li:'develop catching near the net', sc:['I can move to the ball','I can catch above the net','I can throw accurately'], eq:'Net, soft balls, cones'},
+    {t:'Simple Net Games', li:'play basic net game activities', sc:['I can send a ball over the net','I can wait my turn','I can play the game'], eq:'Net, posts, soft balls'},
+    {t:'Underarm Serve', li:'learn underarm serving action', sc:['I can hold the ball correctly','I can swing underarm','I can send it over'], eq:'Net, posts, balls'},
+    {t:'Modified Games', li:'apply skills in simple modified net game', sc:['I can play the game with a partner','I can follow the rules','I can score a point'], eq:'Net, posts, balls, scoreboard'}
+  ]
+};
+
+const _pe12 = {
+  invasion: [
+    {t:'Kicking Skills', li:'develop kicking techniques with accuracy', sc:['I can kick a stationary ball','I can aim at a target','I can control my kick'], eq:'Footballs, soccer balls, cones, targets'},
+    {t:'Passing to Partners', li:'pass accurately to teammates', sc:['I can pass to a stationary partner','I can pass while moving','I can receive a pass'], eq:'Balls, cones, bibs'},
+    {t:'Striking Skills', li:'practice striking with feet and hands', sc:['I can strike the ball with my foot','I can use correct technique','I can aim where I want'], eq:'Balls, cones, targets, wall'},
+    {t:'Dodging Movements', li:'develop dodging and evasion skills', sc:['I can dodge a moving object','I can change direction quickly','I can avoid others'], eq:'Balls, cones, open space'},
+    {t:'Simple Team Games', li:'participate in basic team game activities', sc:['I can work with my team','I can follow team rules','I can pass to teammates'], eq:'Balls, cones, bibs, goals'},
+    {t:'Spatial Awareness', li:'develop awareness of space and others', sc:['I can find empty space','I can move into space quickly','I can avoid collisions'], eq:'Cones, bibs, open space'},
+    {t:'Positional Play', li:'understand basic positions in games', sc:['I can stay in my area','I can support my team','I can move to help my team'], eq:'Cones, bibs, goals, field'},
+    {t:'Ball Control', li:'improve control of the ball', sc:['I can dribble with control','I can stop the ball','I can turn with the ball'], eq:'Footballs, cones, walls'},
+    {t:'Modified Games', li:'play modified team games', sc:['I can play the game with rules','I can pass and move','I can understand winning'], eq:'Balls, cones, bibs, goals'},
+    {t:'Teamwork and Safety', li:'work safely with others in games', sc:['I can play fairly','I can follow safety rules','I can encourage teammates'], eq:'Balls, cones, bibs, open space'}
+  ],
+  'net-wall': [
+    {t:'Racquet Grip and Stance', li:'develop correct grip and ready position', sc:['I can hold a racquet correctly','I can stand ready','I can move to the ball'], eq:'Racquets, balls, court'},
+    {t:'Forehand Stroke', li:'practice forehand striking technique', sc:['I can execute a forehand stroke','I can hit the ball over the net','I can aim at the court'], eq:'Racquets, balls, net, court'},
+    {t:'Backhand Introduction', li:'introduce backhand striking', sc:['I can attempt a backhand stroke','I can make contact with the ball','I can keep it in play'], eq:'Racquets, balls, net, court'},
+    {t:'Serving Underarm', li:'practice underarm serving', sc:['I can serve underarm','I can get it over the net','I can serve to a zone'], eq:'Net, posts, balls, service boxes'},
+    {t:'Wall Drills', li:'improve consistency through wall practice', sc:['I can hit a ball at the wall repeatedly','I can maintain a rally','I can focus on technique'], eq:'Wall, racquets, balls, lines'},
+    {t:'Partner Rallies', li:'maintain longer rallies with partners', sc:['I can rally with a partner','I can hit back and forth','I can keep play going'], eq:'Net, racquets, balls, court'},
+    {t:'Court Movement', li:'develop footwork and court positioning', sc:['I can move to the ball quickly','I can recover position','I can anticipate shots'], eq:'Court, cones, racquets, balls'},
+    {t:'Simple Scoring', li:'understand game scoring and play', sc:['I can understand points','I can keep score','I can play points'], eq:'Net, racquets, balls, court, scoreboard'},
+    {t:'Competitive Play', li:'play modified competitive games', sc:['I can play against an opponent','I can use my skills','I can try to win'], eq:'Net, posts, racquets, balls'},
+    {t:'Fair Play and Sportsmanship', li:'demonstrate fairness and respect in games', sc:['I can follow rules fairly','I can respect my opponent','I can handle winning and losing'], eq:'Court, equipment, sportsmanship focus'}
+  ]
+};
+
+const _pe56 = {
+  invasion: [
+    {t:'Tactical Positioning', li:'apply tactical awareness to positional play', sc:['I can identify optimal positioning','I can anticipate opposition movement','I can support teammates strategically'], eq:'Field/court, cones, balls, bibs'},
+    {t:'Attacking Strategies', li:'develop and execute attacking combinations', sc:['I can execute planned attacking moves','I can create space for teammates','I can vary attacking approaches'], eq:'Goals, balls, cones, field, pinnies'},
+    {t:'Defensive Strategies', li:'demonstrate effective defensive tactics', sc:['I can mark effectively','I can pressure opponents','I can provide defensive cover'], eq:'Field, cones, balls, bibs, video'},
+    {t:'Game Reading', li:'read and respond to game situations', sc:['I can anticipate play development','I can make tactical decisions','I can adapt to opponents'], eq:'Field, ball, tactical whiteboard'},
+    {t:'Leadership in Play', li:'demonstrate leadership roles during games', sc:['I can organise teammates','I can communicate strategy','I can motivate the team'], eq:'Field, cones, balls, captain bibs'},
+    {t:'Set Plays and Patterns', li:'execute rehearsed set plays', sc:['I can execute planned moves','I can time passes accurately','I can finish effectively'], eq:'Field, balls, cones, goals'},
+    {t:'Positional Specialisation', li:'develop skills specific to positions', sc:['I can play my position effectively','I can understand positional responsibilities','I can link with others in formation'], eq:'Field, goals, balls, cones'},
+    {t:'Complex Fitness Demands', li:'meet physical demands of competitive play', sc:['I can sustain intense effort','I can recover between efforts','I can maintain performance'], eq:'Field, timing equipment, fitness focus'},
+    {t:'Peer Coaching', li:'coach and support team members', sc:['I can provide constructive feedback','I can demonstrate techniques','I can encourage improvement'], eq:'Field, demonstration space, equipment'},
+    {t:'Tournament Play', li:'compete in structured tournament games', sc:['I can apply all skills competitively','I can handle tournament pressure','I can reflect on performance'], eq:'Field, goals, balls, scoreboard, video'}
+  ],
+  'net-wall': [
+    {t:'Advanced Racquet Techniques', li:'refine and extend striking techniques', sc:['I can execute topspin and slice','I can vary shot types strategically','I can place shots precisely'], eq:'Court, racquets, balls, targets'},
+    {t:'Serve Development', li:'develop varied and effective serves', sc:['I can execute overarm serve','I can vary serve speed and direction','I can use serve strategically'], eq:'Net, posts, balls, service boxes, radar gun'},
+    {t:'Court Positioning Strategy', li:'apply court positioning to game strategy', sc:['I can position for advantage','I can move to net for volley','I can cover the court effectively'], eq:'Court, cones, video, racquets, balls'},
+    {t:'Volley Techniques', li:'develop net play and volley skills', sc:['I can execute effective volleys','I can volley at different heights','I can finish at net'], eq:'Net, racquets, balls, court, cones'},
+    {t:'Baseline Rally Tactics', li:'employ tactical baseline play', sc:['I can construct points from baseline','I can move opponent around court','I can transition to net'], eq:'Court, racquets, balls, video analysis'},
+    {t:'Game Tactics and Strategy', li:'develop comprehensive game strategy', sc:['I can identify opponent weaknesses','I can execute tactical game plans','I can adapt tactics during play'], eq:'Court, tactics board, video, scorebook'},
+    {t:'Competitive Match Play', li:'compete in realistic match formats', sc:['I can play complete matches','I can manage match pressure','I can analyse my performance'], eq:'Court, racquets, balls, scoreboard, video'},
+    {t:'Doubles Strategies', li:'play effectively in doubles format', sc:['I can coordinate with partner','I can use net play in doubles','I can communicate effectively'], eq:'Court, net, racquets, balls, bibs'},
+    {t:'Sports-Specific Fitness', li:'develop sport-specific conditioning', sc:['I can move explosively on court','I can sustain rallies physically','I can recover between points'], eq:'Court, fitness equipment, timing devices'},
+    {t:'Tournament Preparation', li:'prepare for and compete in tournaments', sc:['I can handle tournament conditions','I can maintain performance under pressure','I can reflect and improve'], eq:'Tournament venue, full equipment, video'}
+  ]
+};
+
+const peYearMap = {'Foundation': _peFoundation, 'Years 1-2': _pe12, 'Years 5-6': _pe56};
+
+// ── SCIENCE YEAR-LEVEL OVERRIDES ──
+const _sciFoundation = {
+  biological: [
+    {t:'Living Things Around Us', li:'observe and identify living things in the environment', sc:['I can find living things outside','I can name some animals and plants','I can describe what I see'], eq:'Magnifying glasses, collection containers, observation sheets'},
+    {t:'What Plants Need', li:'explore what plants need to grow', sc:['I can water a plant','I can see plants need light','I can observe plant growth'], eq:'Potted plants, water containers, windows'},
+    {t:'Animals and Their Homes', li:'identify animals and where they live', sc:['I can name different animals','I can say where animals live','I can draw what I observe'], eq:'Picture cards, outdoor space, collection containers'},
+    {t:'Body Parts', li:'identify and name main body parts', sc:['I can point to my body parts','I can name head, arms, legs','I can describe what parts do'], eq:'Mirror, picture diagrams, body outline'},
+    {t:'Senses and Observation', li:'use senses to explore the environment', sc:['I can see different things','I can hear different sounds','I can describe what I sense'], eq:'Natural materials, sound makers, sensory items'},
+    {t:'Seeds and Growth', li:'observe seeds and sprouting', sc:['I can plant a seed','I can watch it grow','I can measure growth'], eq:'Seeds, soil, pots, water, rulers'},
+    {t:'Baby Animals', li:'learn about young animals and growth', sc:['I can name baby animals','I can say how they grow','I can compare sizes'], eq:'Picture cards, books, life cycle diagrams'},
+    {t:'Minibeasts and Insects', li:'observe small creatures carefully', sc:['I can find insects carefully','I can observe their features','I can return them safely'], eq:'Magnifying glasses, containers, identification guides'},
+    {t:'Habitats Exploration', li:'explore different habitats and inhabitants', sc:['I can find animals in different places','I can describe habitats','I can explain why things live there'], eq:'Outdoor space, containers, identification charts'},
+    {t:'Life Cycles', li:'recognize simple life cycles', sc:['I can describe how things grow','I can sequence pictures of growth','I can tell a life cycle story'], eq:'Picture cards, life cycle models, observation journals'}
+  ],
+  chemical: [
+    {t:'Materials Around Us', li:'identify and sort materials by properties', sc:['I can name different materials','I can sort materials into groups','I can feel different textures'], eq:'Collection of materials, containers, sorting trays'},
+    {t:'Sorting by Properties', li:'sort objects by observable features', sc:['I can sort by colour','I can sort by texture','I can sort by size'], eq:'Objects, baskets, sorting mats, labels'},
+    {t:'Hard and Soft', li:'explore hard and soft materials', sc:['I can find hard objects','I can find soft objects','I can compare them'], eq:'Objects, natural materials, texture boards'},
+    {t:'Hot and Cold', li:'experience different temperatures', sc:['I can feel warm things','I can feel cold things','I can describe temperatures'], eq:'Ice, warm water, thermometers, containers'},
+    {t:'Mixing and Stirring', li:'mix materials and observe changes', sc:['I can mix paint','I can stir ingredients','I can see what happens'], eq:'Paint, bowls, spoons, sand, water'},
+    {t:'Sand and Water', li:'explore sand and water through play', sc:['I can pour sand','I can mix sand and water','I can observe changes'], eq:'Sand, water trough, containers, spoons, funnels'},
+    {t:'Wet and Dry', li:'explore materials becoming wet and dry', sc:['I can make materials wet','I can watch them dry','I can feel wet and dry'], eq:'Paper, water, cloth, drying space'},
+    {t:'Floating and Sinking', li:'test which materials float or sink', sc:['I can put objects in water','I can predict what will float','I can explain what happened'], eq:'Water trough, objects (cork, rocks, foil, wood), containers'},
+    {t:'Transparent and Opaque', li:'explore clear and not clear materials', sc:['I can see through some materials','I can hold up to light','I can sort clear and cloudy'], eq:'Clear and opaque containers, clear wrap, tissue, windows'},
+    {t:'Changes Reversible', li:'observe reversible changes in materials', sc:['I can mix and unmix','I can watch materials change back','I can describe reversible changes'], eq:'Salt/sand/water, paint palettes, ice, containers, heat source'}
+  ],
+  physical: [
+    {t:'Push and Pull', li:'explore pushing and pulling forces', sc:['I can push objects','I can pull objects','I can make things move'], eq:'Furniture, balls, carts, ropes, open space'},
+    {t:'Movement and Speed', li:'observe things moving at different speeds', sc:['I can move fast','I can move slowly','I can see fast and slow things'], eq:'Open space, rolling toys, balls, timers'},
+    {t:'Gravity and Falling', li:'observe how things fall down', sc:['I can drop objects','I can see them fall down','I can predict what happens'], eq:'Various objects, soft mats, balls, feathers'},
+    {t:'Ramps and Rolling', li:'explore objects rolling down ramps', sc:['I can roll a ball down','I can make ramps steep','I can compare speeds'], eq:'Ramps, balls, blocks, rolling toys, angle measurer'},
+    {t:'Stopping and Starting', li:'explore how to make things move and stop', sc:['I can make toys start','I can make them stop','I can control movement'], eq:'Toys, push/pull toys, open space, brakes'},
+    {t:'Direction Changes', li:'change direction of moving objects', sc:['I can push something sideways','I can make it go another way','I can steer a moving object'], eq:'Balls, carts, ropes, open space, targets'},
+    {t:'Light and Dark', li:'explore light and shadows', sc:['I can see light','I can see shadows','I can make shadows'], eq:'Torch, screen, objects, dark area, white sheet'},
+    {t:'Making Sounds', li:'explore how to make different sounds', sc:['I can make loud sounds','I can make soft sounds','I can make musical sounds'], eq:'Instruments, objects, shakers, drums, bells'},
+    {t:'Vibration and Sound', li:'feel vibrations that make sounds', sc:['I can feel vibrations','I can see things vibrate','I can make sounds vibrate'], eq:'Drums, tuning forks, strings, guitar, surface to vibrate'},
+    {t:'Energy and Movement', li:'recognize energy makes things happen', sc:['I can use energy to move things','I can see what energy does','I can feel energy'], eq:'Balls, ropes, my body, open space, various objects'}
+  ],
+  earth_space: [
+    {t:'Day and Night', li:'observe the cycle of day and night', sc:['I can see it gets dark','I can see it gets light','I can notice changes'], eq:'Window, calendar, pictures, globe'},
+    {t:'Weather Patterns', li:'observe daily weather changes', sc:['I can feel if it\'s windy','I can see if it\'s rainy','I can describe the weather'], eq:'Window, weather chart, rain gauge, thermometer'},
+    {t:'Sun and Shade', li:'explore the sun and its effects', sc:['I can feel the sun\'s warmth','I can see shadows from sun','I can find shady places'], eq:'Open space, sun chart, thermometer, chalk'},
+    {t:'Seasonal Changes', li:'notice changes through the seasons', sc:['I can see plants change','I can see animals change','I can feel temperature changes'], eq:'Outdoor observation space, seasonal pictures, nature diary'},
+    {t:'Rain and Water', li:'observe where water comes from', sc:['I can feel rain','I can collect rainwater','I can see water evaporate'], eq:'Rain gauge, containers, water collection, sun'},
+    {t:'Wind and Air', li:'observe wind and air movement', sc:['I can feel wind','I can see wind move things','I can make wind'], eq:'Wind socks, pinwheels, bubbles, open space'},
+    {t:'Sky Observations', li:'observe the sky and its changes', sc:['I can watch clouds','I can see the moon','I can look for stars'], eq:'Outdoor observation space, binoculars, star chart'},
+    {t:'The Ground', li:'explore soil and ground materials', sc:['I can feel soil','I can dig in soil','I can see what\'s in soil'], eq:'Soil samples, digging tools, containers, magnifying glass'},
+    {t:'Water Sources', li:'identify water in the environment', sc:['I can find water nearby','I can say where water is','I can describe water'], eq:'Natural water sources, containers, pictures'},
+    {t:'Environmental Changes', li:'observe changes in the natural environment', sc:['I can see seasons change','I can notice animal changes','I can track growth'], eq:'Outdoor space, photo journal, observation book, camera'}
+  ]
+};
+
+const _sci12 = {
+  biological: [
+    {t:'Living Things Classification', li:'group living things into categories', sc:['I can sort animals into groups','I can name different animal groups','I can say what makes them similar'], eq:'Picture cards, animal models, classification charts'},
+    {t:'Plant Needs and Growth', li:'describe what plants need to survive', sc:['I can name things plants need','I can grow a plant successfully','I can record its growth'], eq:'Seeds, soil, pots, water, light, ruler, observation journal'},
+    {t:'Animal Needs', li:'describe what animals need to live', sc:['I can list animal needs','I can care for a pet or classroom animal','I can explain why animals need things'], eq:'Animal care items, water bowls, food, shelter materials'},
+    {t:'Life Cycles of Animals', li:'sequence and describe animal life stages', sc:['I can order life cycle pictures','I can describe each stage','I can explain how animals grow'], eq:'Life cycle cards, pictures, models, life cycle diagrams'},
+    {t:'Life Cycles of Plants', li:'observe and record plant life cycles', sc:['I can sequence plant stages','I can explain germination to seeds','I can draw a plant life cycle'], eq:'Seeds, soil, pots, pictures, observation journal, pressed flowers'},
+    {t:'Habitats and Adaptation', li:'identify how animals are suited to habitats', sc:['I can name different habitats','I can match animals to habitats','I can explain why they live there'], eq:'Habitat pictures, animals models, classification sheets'},
+    {t:'Food Chains', li:'understand basic food chains', sc:['I can draw a food chain','I can identify producers and consumers','I can explain energy flow'], eq:'Food chain cards, pictures, poster paper, markers'},
+    {t:'Minibeasts and Habitats', li:'investigate small creatures and their homes', sc:['I can find and identify minibeasts','I can describe their habitats','I can return them safely'], eq:'Collection containers, magnifying glasses, identification guides, habitat areas'},
+    {t:'Body Parts and Functions', li:'identify animal and plant body parts and their functions', sc:['I can name key body parts','I can explain what parts do','I can compare different animals'], eq:'Body part diagrams, skeleton models, pictures, mirrors'},
+    {t:'Biodiversity in Locality', li:'identify biodiversity in local environment', sc:['I can find different living things','I can record them','I can describe our local biodiversity'], eq:'Field guide, camera, observation journal, collection containers'}
+  ],
+  chemical: [
+    {t:'Everyday Materials', li:'identify and describe properties of materials', sc:['I can name different materials','I can describe how they feel','I can sort by properties'], eq:'Material samples, sorting containers, texture boards, property labels'},
+    {t:'Grouping Materials', li:'group materials by shared properties', sc:['I can group by colour','I can group by texture','I can explain my sorting'], eq:'Objects, sorting mats, labels, containers'},
+    {t:'Changes When Heated', li:'observe materials change when heated', sc:['I can heat materials safely','I can see them change','I can predict what happens'], eq:'Heat source, safe materials (chocolate, ice, butter), thermometer, containers'},
+    {t:'Changes When Cooled', li:'observe materials change when cooled', sc:['I can cool materials','I can observe changes','I can compare cooling rates'], eq:'Freezer, ice, thermometer, materials, containers'},
+    {t:'Mixing Materials', li:'mix materials and observe results', sc:['I can mix different things','I can describe what happens','I can predict mixing results'], eq:'Water, paint, sand, salt, mixing bowls, spoons, containers'},
+    {t:'Reversible Changes', li:'identify changes that can be undone', sc:['I can make reversible changes','I can reverse them back','I can explain reversible changes'], eq:'Ice, water, paint, sand, salt, containers, heat source'},
+    {t:'Irreversible Changes', li:'identify changes that cannot be undone', sc:['I can observe irreversible changes','I can explain they can\'t go back','I can compare reversible and irreversible'], eq:'Cooking ingredients, paper, materials to burn, heat source'},
+    {t:'Dissolving and Solutions', li:'explore dissolving and making solutions', sc:['I can dissolve materials in water','I can observe solutions','I can predict what dissolves'], eq:'Water, sugar, salt, sand, containers, spoons, filter paper'},
+    {t:'States of Matter', li:'identify and describe solids, liquids, gases', sc:['I can identify states of matter','I can describe solid, liquid, gas','I can observe state changes'], eq:'Solid objects, water, steam, ice, containers, thermometer'},
+    {t:'Simple Separation', li:'separate mixed materials using simple methods', sc:['I can filter mixtures','I can separate materials','I can explain separation methods'], eq:'Filters, funnels, sieve, containers, mixed materials, sand/gravel'}
+  ],
+  physical: [
+    {t:'Forces and Movement', li:'recognize forces cause movement changes', sc:['I can apply forces to objects','I can see how forces work','I can predict force effects'], eq:'Balls, ramps, carts, blocks, open space, force meter'},
+    {t:'Push and Pull Forces', li:'distinguish between pushing and pulling', sc:['I can identify push forces','I can identify pull forces','I can compare their effects'], eq:'Objects, ropes, open space, force diagrams'},
+    {t:'Friction', li:'explore friction and its effects', sc:['I can observe friction','I can feel friction','I can explain what friction does'], eq:'Different surfaces, balls, blocks, sliders, ramps'},
+    {t:'Speed and Movement', li:'describe objects moving at different speeds', sc:['I can measure speed','I can compare fast and slow','I can change an object\'s speed'], eq:'Stopwatch, measuring tape, rolling objects, ramps, timer'},
+    {t:'Direction and Position', li:'describe position and direction of movement', sc:['I can use position words','I can describe direction changes','I can predict direction'], eq:'Objects, maps, compass, directional words, space'},
+    {t:'Simple Machines', li:'identify simple machines in everyday use', sc:['I can name simple machines','I can describe what they do','I can find them around school'], eq:'Real tools, lever examples, ramp, pulley, wheels'},
+    {t:'Light Sources', li:'identify things that give off light', sc:['I can name light sources','I can compare brightness','I can explain how light works'], eq:'Torch, candle (supervised), glow sticks, sun, light sources chart'},
+    {t:'Shadows', li:'explore shadows and how they form', sc:['I can make shadows','I can change shadow size','I can explain shadow formation'], eq:'Light source, objects, screen, white surface'},
+    {t:'Sound Production', li:'explore how sounds are made', sc:['I can make different sounds','I can identify sound sources','I can describe sound properties'], eq:'Instruments, objects, voice, materials that vibrate'},
+    {t:'Sound and Vibration', li:'recognize vibration creates sound', sc:['I can feel vibrations','I can see vibration patterns','I can connect vibration to sound'], eq:'Drums, tuning forks, string instruments, rice on drum'}
+  ],
+  earth_space: [
+    {t:'Weather and Temperature', li:'observe and record weather patterns', sc:['I can measure temperature','I can describe weather','I can record data daily'], eq:'Thermometer, rain gauge, wind vane, weather chart, daily observation journal'},
+    {t:'Seasonal Changes', li:'observe and describe seasonal changes', sc:['I can identify seasonal changes','I can explain what causes seasons','I can record seasonal differences'], eq:'Outdoor observation space, seasonal pictures, photo journal, calendar'},
+    {t:'The Water Cycle', li:'observe the water cycle in nature', sc:['I can see evaporation','I can see condensation','I can explain water cycle steps'], eq:'Water, containers, sun, ice, mirror, water cycle diagram'},
+    {t:'Day and Night Cycle', li:'understand Earth\'s rotation causes day/night', sc:['I can explain day and night','I can observe patterns','I can relate to Earth\'s rotation'], eq:'Globe, torch, diagram, calendar, observation journal'},
+    {t:'The Moon and Stars', li:'observe the moon and stars', sc:['I can describe the moon','I can find constellations','I can observe changes'], eq:'Star chart, binoculars, observation journal, night sky pictures'},
+    {t:'Sunrise and Sunset', li:'observe and record sun position changes', sc:['I can watch sunrise/sunset','I can describe colours','I can record positions'], eq:'Window space, observation journal, camera, sun tracker'},
+    {t:'Soil and Earth', li:'investigate soil composition and properties', sc:['I can examine soil layers','I can identify soil types','I can explain soil importance'], eq:'Soil samples, containers, magnifying glass, gardening tools, sieve'},
+    {t:'Rocks and Minerals', li:'observe and identify rocks and minerals', sc:['I can sort rocks','I can describe rock properties','I can classify rocks'], eq:'Rock samples, magnifying glass, hardness test, classification chart'},
+    {t:'Natural Resources', li:'identify natural resources we use', sc:['I can name natural resources','I can describe their uses','I can explain their importance'], eq:'Resource pictures, real examples, environment survey, posters'},
+    {t:'Caring for Environment', li:'understand how to protect the environment', sc:['I can identify environmental issues','I can suggest improvements','I can take environmental action'], eq:'Recycling materials, gardening tools, observation journal, action plan'}
+  ]
+};
+
+const _sci56 = {
+  biological: [
+    {t:'Classification Systems', li:'use classification systems to organize living things', sc:['I can classify organisms into major groups','I can use dichotomous keys','I can explain classification systems'], eq:'Classification keys, organism pictures, specimen samples, magnifying glasses'},
+    {t:'Vertebrates and Invertebrates', li:'distinguish between vertebrates and invertebrates', sc:['I can identify vertebrate characteristics','I can identify invertebrate characteristics','I can classify animals'], eq:'Animal models, skeleton diagrams, picture cards, classification chart'},
+    {t:'Plant Structure and Function', li:'identify plant organs and their functions', sc:['I can label plant parts','I can explain root, stem, leaf functions','I can dissect flowers'], eq:'Specimens, dissecting kit, diagrams, hand lens, labels'},
+    {t:'Photosynthesis Basics', li:'understand how plants make food', sc:['I can explain photosynthesis simply','I can identify requirements','I can observe plant growth'], eq:'Green plants, light, containers, measurement tools, diagrams'},
+    {t:'Ecosystems and Habitats', li:'analyze ecosystems and their components', sc:['I can identify biotic and abiotic factors','I can explain ecosystem relationships','I can describe different ecosystems'], eq:'Field guides, observation journals, camera, habitat pictures, field equipment'},
+    {t:'Food Webs and Energy', li:'construct food webs and trace energy flow', sc:['I can create food webs','I can identify producers/consumers/decomposers','I can explain energy transfer'], eq:'Food web cards, poster materials, markers, diagrams, pictures'},
+    {t:'Life Cycles and Reproduction', li:'describe reproduction and life cycles', sc:['I can compare animal life cycles','I can describe plant reproduction','I can trace organism development'], eq:'Life cycle specimens, pictures, diagrams, seeds, eggs, observation tools'},
+    {t:'Adaptation and Evolution', li:'recognize how organisms adapt to environments', sc:['I can identify adaptations','I can explain camouflage and mimicry','I can discuss adaptation advantages'], eq:'Pictures of adapted organisms, binoculars, field guide, specimens'},
+    {t:'Microorganisms', li:'understand role of microorganisms', sc:['I can explain what microorganisms are','I can describe decomposition','I can observe growth'], eq:'Microscope, slides, cultures, petri dishes, hand lens'},
+    {t:'Biodiversity and Conservation', li:'understand biodiversity importance and threats', sc:['I can assess local biodiversity','I can identify conservation issues','I can suggest protection strategies'], eq:'Field survey equipment, camera, data collection sheets, conservation information'}
+  ],
+  chemical: [
+    {t:'Properties of Matter', li:'analyze physical and chemical properties', sc:['I can identify physical properties','I can distinguish physical from chemical','I can predict property changes'], eq:'Material samples, testing equipment, thermometer, force meter, observation journal'},
+    {t:'Atoms and Elements', li:'introduce atoms and basic elements', sc:['I can explain atoms simply','I can identify common elements','I can use periodic table basics'], eq:'Atomic models, periodic table, element cards, videos, diagrams'},
+    {t:'Compounds and Mixtures', li:'distinguish compounds from mixtures', sc:['I can define compounds and mixtures','I can give examples','I can compare their properties'], eq:'Samples of compounds and mixtures, separation equipment, diagrams'},
+    {t:'Chemical Reactions', li:'observe and explain chemical reactions', sc:['I can identify signs of reactions','I can explain reactants and products','I can predict reaction outcomes'], eq:'Safe chemicals, containers, thermometer, safety equipment, observation journal'},
+    {t:'Combustion and Burning', li:'understand combustion reactions safely', sc:['I can explain combustion basics','I can identify combustion examples','I can understand fire safety'], eq:'Candles, heat source, fire blanket, safety goggles, demonstration materials'},
+    {t:'Acids and Bases', li:'identify and test acids and bases', sc:['I can test pH of substances','I can identify acids and bases','I can explain neutralization'], eq:'pH paper, indicator solutions, acids/bases samples, containers, safety equipment'},
+    {t:'Solubility and Solutions', li:'investigate solubility factors', sc:['I can predict solubility','I can explain dissolving factors','I can create saturated solutions'], eq:'Water, solutes, thermometer, stirrers, containers, mass balance'},
+    {t:'States of Matter and Change', li:'understand states of matter and transitions', sc:['I can explain solid, liquid, gas','I can describe state changes','I can apply at molecular level'], eq:'Materials in different states, heat source, containers, thermometer, diagrams'},
+    {t:'Separation Techniques', li:'use methods to separate mixtures', sc:['I can separate by filtering','I can separate by evaporation','I can choose appropriate methods'], eq:'Filters, funnels, sieves, evaporating dishes, bunsen burner, separating funnel'},
+    {t:'Materials and Sustainability', li:'evaluate material use and sustainability', sc:['I can identify sustainable materials','I can assess material environmental impact','I can suggest alternatives'], eq:'Material samples, research sources, sustainability checklist, sample alternatives'}
+  ],
+  physical: [
+    {t:'Speed, Distance, Time', li:'calculate and analyze speed and motion', sc:['I can calculate speed','I can measure distance and time','I can graph motion data'], eq:'Stopwatch, measuring tape, motion sensors, graphing tools, objects for motion'},
+    {t:'Forces and Acceleration', li:'explain forces and their effects', sc:['I can identify force types','I can explain acceleration','I can predict force outcomes'], eq:'Force meters, objects, ramps, motion sensors, diagrams'},
+    {t:'Gravity and Weight', li:'understand gravity and mass versus weight', sc:['I can explain gravity','I can distinguish mass and weight','I can calculate weight'], eq:'Mass balance, objects of different mass, spring scale, Earth model'},
+    {t:'Simple Machines and Efficiency', li:'analyze simple machines and mechanical advantage', sc:['I can identify simple machine types','I can calculate mechanical advantage','I can explain energy efficiency'], eq:'Lever examples, pulleys, inclined planes, mass balance, measurement tools'},
+    {t:'Electricity and Circuits', li:'construct circuits and understand electricity', sc:['I can build series and parallel circuits','I can explain current flow','I can test conductivity'], eq:'Batteries, bulbs, wire, switches, circuit components, multimeter, testing materials'},
+    {t:'Electromagnetism', li:'explore magnetic and electric forces', sc:['I can explain electromagnetism','I can create electromagnets','I can observe magnetic fields'], eq:'Magnets, electromagnet materials, iron filings, paper, compass, current source'},
+    {t:'Light Refraction and Reflection', li:'investigate light behavior', sc:['I can explain reflection','I can observe refraction','I can predict light path'], eq:'Mirrors, lenses, prisms, light source, objects, containers with water'},
+    {t:'Sound Waves and Properties', sc:['I can measure sound speed','I can identify frequency and pitch','I can explain sound characteristics'], li:'understand sound as a wave', eq:'Tuning forks, measuring tape, oscilloscope/app, sound sources, strings'},
+    {t:'Energy Transformation', li:'trace energy changes in systems', sc:['I can identify energy types','I can trace transformations','I can explain energy conservation'], eq:'Various energy sources, materials, observation tools, diagrams, calculations'},
+    {t:'Renewable and Non-Renewable Energy', li:'assess energy sources and sustainability', sc:['I can classify energy sources','I can compare environmental impact','I can evaluate energy efficiency'], eq:'Energy information, renewable/non-renewable samples, solar cells, wind models'}
+  ],
+  earth_space: [
+    {t:'Rocks and the Rock Cycle', li:'understand rock formation and cycling', sc:['I can classify rock types','I can explain the rock cycle','I can observe rock characteristics'], eq:'Rock samples, magnifying glass, classification chart, diagrams, hammer'},
+    {t:'Earth\'s Structure', li:'describe Earth\'s layers and composition', sc:['I can identify Earth\'s layers','I can explain layer characteristics','I can model Earth\'s structure'], eq:'Earth model, diagrams, density materials, cross-section pictures'},
+    {t:'Plate Tectonics Basics', li:'understand plate movement and effects', sc:['I can identify tectonic plates','I can explain plate movement','I can describe resulting features'], eq:'Globe with plates marked, plate models, earthquake/volcano information, diagrams'},
+    {t:'Weathering and Erosion', li:'investigate weathering and erosion processes', sc:['I can identify weathering types','I can observe erosion effects','I can explain landscape changes'], eq:'Rocks, water, soil samples, containers, field observation equipment'},
+    {t:'Soil Formation', li:'understand soil development and composition', sc:['I can analyze soil profiles','I can identify soil components','I can explain formation factors'], eq:'Soil samples, magnifying glass, sieve, humus, sand, stones, observation tools'},
+    {t:'Water Cycle Detailed', li:'analyze water cycle comprehensively', sc:['I can explain all cycle stages','I can measure precipitation','I can calculate evaporation'], eq:'Rain gauge, containers, thermometer, water cycle model, measurement tools'},
+    {t:'Weather Systems', li:'understand weather patterns and prediction', sc:['I can identify weather systems','I can read weather maps','I can predict weather'], eq:'Weather maps, barometer, weather station, forecast data, weather symbols'},
+    {t:'The Solar System', li:'investigate planets and solar system formation', sc:['I can describe each planet','I can explain orbital mechanics','I can sequence planets'], eq:'Planet models, diagrams, solar system scale model, planetarium access, videos'},
+    {t:'Stars and Galaxies', li:'understand stars and stellar properties', sc:['I can classify stars','I can explain star life cycles','I can identify constellations'], eq:'Star charts, telescope/binoculars, planetarium access, observation journal, pictures'},
+    {t:'Earth and Space Interactions', li:'analyze relationships between Earth and space', sc:['I can explain tides','I can understand lunar effects','I can describe Earth\'s position'], eq:'Models, diagrams, observation equipment, tide charts, calculations'}
+  ]
+};
+
+const sciYearMap = {'Foundation': _sciFoundation, 'Years 1-2': _sci12, 'Years 5-6': _sci56};
+
+// ── VISUAL ART YEAR-LEVEL OVERRIDES ──
+const _artFoundation = {
+  painting: [
+    {t:'Colour Exploration', li:'explore colours and mixing through play', sc:['I can name red, blue and yellow','I can mix colours with paint','I can make new colours'], eq:'Primary paint, brushes, paper, water containers, aprons'},
+    {t:'Finger Painting', li:'create marks and designs with fingers', sc:['I can spread paint with my fingers','I can make patterns','I can mix colours on paper'], eq:'Finger paint, large paper, water, aprons, drying space'},
+    {t:'Sponge Painting', li:'explore sponge printing techniques', sc:['I can dip a sponge in paint','I can print patterns','I can create designs'], eq:'Natural sponges, paint, paper, containers, water, aprons'},
+    {t:'Brush Control', li:'develop basic brush handling skills', sc:['I can hold a brush','I can make marks with a brush','I can paint shapes'], eq:'Brushes (various sizes), paint, paper, water, aprons'},
+    {t:'Paint Mixing', li:'mix primary colours to create secondary colours', sc:['I can mix red and blue','I can make purple','I can name new colours'], eq:'Primary paint, containers, mixing palette, brushes, paper'},
+    {t:'Colour Names', li:'learn and identify basic colour names', sc:['I can say colour names','I can find colours in the room','I can point to colours'], eq:'Colour chart, paint samples, objects, colour books'},
+    {t:'Large Scale Painting', li:'paint on large surfaces freely', sc:['I can paint a big picture','I can use different colours','I can paint what I want'], eq:'Large paper/canvas, paint, brushes, easels, aprons, drying space'},
+    {t:'Texture in Paint', li:'create texture through painting', sc:['I can make rough marks','I can paint thin and thick','I can feel texture'], eq:'Paint, brushes, paper, palette knives, objects for texture'},
+    {t:'Seasonal Colours', li:'explore colours of different seasons', sc:['I can name spring colours','I can paint seasonal pictures','I can show colour changes'], eq:'Paint, paper, seasonal pictures, brushes, inspiration images'},
+    {t:'Painting Stories', li:'paint to express ideas and feelings', sc:['I can paint what I like','I can paint my ideas','I can talk about my painting'], eq:'Paint, paper, brushes, inspiration prompts, easels'}
+  ],
+  drawing: [
+    {t:'Mark Making', li:'explore different ways to make marks', sc:['I can draw lines','I can make dots and dashes','I can make different marks'], eq:'Pencils, crayons, markers, paper, various drawing tools'},
+    {t:'Line Types', li:'identify and create different line types', sc:['I can draw straight lines','I can draw curved lines','I can draw zigzag lines'], eq:'Pencils, rulers, paper, line type examples'},
+    {t:'Simple Shapes', li:'draw basic geometric shapes', sc:['I can draw circles','I can draw squares','I can draw triangles'], eq:'Pencils, paper, shape stencils, circle templates'},
+    {t:'Drawing Objects', li:'draw simple everyday objects', sc:['I can draw simple objects','I can draw from observation','I can repeat my drawing'], eq:'Objects to draw, paper, pencils, observation focus'},
+    {t:'Colour with Pencils', li:'explore colour using coloured pencils and crayons', sc:['I can colour neatly','I can use one colour','I can mix colours'], eq:'Coloured pencils, crayons, paper, pencil sharpener'},
+    {t:'Self-Portraits', li:'draw simple self-portraits', sc:['I can draw my face','I can draw eyes and mouth','I can draw myself'], eq:'Mirrors, paper, pencils, crayons, self-portrait examples'},
+    {t:'Drawings from Nature', li:'draw natural objects observed outdoors', sc:['I can draw leaves','I can draw flowers','I can draw from observation'], eq:'Natural objects, sketch paper, pencils, magnifying glass'},
+    {t:'Pattern Making', li:'create patterns and repeating designs', sc:['I can make a pattern','I can repeat designs','I can plan a pattern'], eq:'Paper, pencils, rulers, pattern stencils, design paper'},
+    {t:'Texture in Drawing', li:'create texture using drawing techniques', sc:['I can draw rough texture','I can draw smooth texture','I can shade areas'], eq:'Pencils (HB, 2B), paper, texture examples, shading tools'},
+    {t:'Drawing with Purpose', li:'draw to communicate ideas and feelings', sc:['I can draw my feelings','I can draw stories','I can explain my drawing'], eq:'Paper, pencils, crayons, motivation prompts, drawing journal'}
+  ]
+};
+
+const _art12 = {
+  painting: [
+    {t:'Colour Mixing', li:'mix secondary colours from primary colours', sc:['I can create orange','I can create green','I can create purple'], eq:'Primary and secondary paint, palettes, brushes, mixing paper'},
+    {t:'Tints and Shades', li:'create lighter and darker versions of colours', sc:['I can make a colour lighter','I can make a colour darker','I can create a colour range'], eq:'Paint, white, black, palettes, brushes, paper'},
+    {t:'Artist Study', li:'learn from a famous painter\'s work', sc:['I can name a painter','I can describe their style','I can paint like an artist'], eq:'Artist images, artist biography, paint, paper, brushes, inspiration'},
+    {t:'Composition Basics', li:'arrange elements on the canvas', sc:['I can place objects thoughtfully','I can use the whole paper','I can balance my composition'], eq:'Paper, paint, brushes, composition guides, still life objects'},
+    {t:'Watercolour Painting', li:'explore watercolour techniques', sc:['I can use watercolours','I can blend wet paint','I can control water'], eq:'Watercolours, brushes, water containers, watercolour paper, sponges'},
+    {t:'Acrylic Painting', li:'learn acrylic painting properties', sc:['I can use acrylic paint','I can layer colours','I can paint quickly'], eq:'Acrylic paint, brushes, canvas or paper, water, palette'},
+    {t:'Brushwork Styles', li:'develop different brushwork techniques', sc:['I can paint with thin lines','I can paint with thick strokes','I can control my brush'], eq:'Various brushes, paint, paper, brushwork examples'},
+    {t:'Emotional Colour', li:'use colour to express emotion', sc:['I can choose happy colours','I can choose sad colours','I can paint my feelings'], eq:'Paint, paper, brushes, emotion colours reference, prompts'},
+    {t:'Pattern and Texture', li:'create patterns and texture in paintings', sc:['I can paint patterns','I can create texture','I can combine both'], eq:'Paint, brushes, textured materials, paper, stencils'},
+    {t:'Painting Outdoors', li:'paint from observation outdoors', sc:['I can observe nature','I can paint quickly','I can capture colours'], eq:'Portable paint set, paper, brushes, watercolour kit, outdoor location'}
+  ],
+  drawing: [
+    {t:'Observational Drawing', li:'draw objects accurately from observation', sc:['I can look carefully','I can draw proportions','I can create realistic drawings'], eq:'Objects to draw, sketch paper, pencils, erasers'},
+    {t:'Contour Drawing', li:'draw outlines of objects', sc:['I can follow edges carefully','I can draw contours','I can observe shapes'], eq:'Objects, pencils, paper, contour drawing examples'},
+    {t:'Value and Shading', li:'understand light and dark in drawing', sc:['I can identify light and dark areas','I can shade gradually','I can create depth'], eq:'Pencils (HB to 6B), paper, shading examples, objects with light'},
+    {t:'Perspective Introduction', li:'introduce basic perspective', sc:['I can draw horizon lines','I can create depth','I can understand perspective basics'], eq:'Paper, rulers, pencils, perspective diagrams, scene drawings'},
+    {t:'Portraiture', li:'draw realistic faces and features', sc:['I can draw eyes accurately','I can draw facial proportions','I can create portraits'], eq:'Pencils, portrait paper, mirrors, portrait references, erasers'},
+    {t:'Still Life Drawing', li:'draw arranged objects with relationships', sc:['I can arrange objects','I can draw multiple items','I can show relationships'], eq:'Objects, paper, pencils, still life arrangement, lighting'},
+    {t:'Natural Forms', li:'draw plants and natural objects', sc:['I can draw leaves','I can draw plants','I can observe details'], eq:'Plants, leaves, paper, pencils, magnifying glass, natural objects'},
+    {t:'Figure Drawing', li:'draw human figures in different poses', sc:['I can draw basic figures','I can show movement','I can draw different poses'], eq:'Figure drawing models/references, paper, pencils, proportion guides'},
+    {t:'Urban Sketching', li:'sketch buildings and environments', sc:['I can sketch buildings','I can draw perspectives','I can capture scenes'], eq:'Sketch paper, pencils, urban locations, viewfinders, sketchbook'},
+    {t:'Mixed Media Drawing', li:'combine drawing materials', sc:['I can mix pencils and markers','I can layer materials','I can experiment'], eq:'Pencils, markers, coloured pencils, paper, mixed media paper'}
+  ]
+};
+
+const _art56 = {
+  painting: [
+    {t:'Colour Theory', li:'understand colour theory principles', sc:['I can explain warm and cool colours','I can identify complementary pairs','I can apply colour theory'], eq:'Colour wheel, paint, colour theory charts, mixing materials'},
+    {t:'Complementary Colours', li:'use complementary colour relationships', sc:['I can identify complementary pairs','I can use opposites effectively','I can create colour harmony'], eq:'Colour wheel, paint, paper, reference images, mixing palette'},
+    {t:'Complex Composition', li:'compose paintings with multiple elements', sc:['I can apply composition rules','I can balance complex scenes','I can guide viewer attention'], eq:'Paper, paint, composition guides, reference images, planning sketches'},
+    {t:'Artist Analysis', li:'deeply analyze established painters\' techniques', sc:['I can identify artist techniques','I can describe their style development','I can critique artistically'], eq:'Artist images, artist biographies, analysis prompts, colour samples'},
+    {t:'Personal Style Development', li:'develop a recognizable painting style', sc:['I can experiment with techniques','I can develop signature style','I can maintain consistency'], eq:'Paint, paper, brushes, inspiration sources, style exploration'},
+    {t:'Atmospheric Perspective', li:'create depth through colour and tone', sc:['I can show distant objects lighter','I can create atmospheric effect','I can paint with depth'], eq:'Paint, reference landscapes, brushes, atmosphere examples'},
+    {t:'Impasto and Texture', li:'build texture through paint application', sc:['I can apply paint thickly','I can create raised texture','I can use impasto expressively'], eq:'Acrylic or oil paint, palette knives, canvas, textured materials'},
+    {t:'Abstraction and Expression', li:'explore abstract painting approaches', sc:['I can paint abstractly','I can express emotion non-representationally','I can experiment boldly'], eq:'Paint, paper/canvas, brushes, abstract references, experimental materials'},
+    {t:'Narrative Painting', li:'tell stories through visual composition', sc:['I can develop visual narrative','I can create visual sequence','I can express meaning'], eq:'Paper, paint, narrative references, planning materials'},
+    {t:'Exhibition Ready Work', li:'prepare polished artwork for display', sc:['I can refine technical skills','I can create finished artwork','I can present professionally'], eq:'Paint, quality paper/canvas, presentation materials, framing options'}
+  ],
+  drawing: [
+    {t:'Advanced Perspective', li:'master multi-point perspective techniques', sc:['I can use one-point perspective','I can use two-point perspective','I can create complex spatial drawings'], eq:'Paper, rulers, perspective grids, reference images, technical pencils'},
+    {t:'Tonal Mastery', li:'control value through sophisticated shading', sc:['I can create smooth gradations','I can establish focal points through tone','I can balance light and shadow'], eq:'Pencils (2H to 8B), blending stumps, erasers, toned paper'},
+    {t:'Anatomical Drawing', li:'draw human and animal anatomy accurately', sc:['I can draw accurate proportions','I can understand skeletal structure','I can show muscular form'], eq:'Anatomy references, pencils, paper, bone/muscle diagrams, figure models'},
+    {t:'Rapid Gesture Drawing', li:'capture movement and essence quickly', sc:['I can draw flowing lines','I can capture movement','I can work expressively'], eq:'Pencils, sketch paper, figure models/references, timer'},
+    {t:'Extended Portraiture', li:'create detailed portraits with character', sc:['I can capture likeness','I can convey personality','I can render fine details'], eq:'Pencils, portrait paper, portrait references, mirrors, high-quality erasers'},
+    {t:'Landscape and Environment', li:'create detailed environmental drawings', sc:['I can use perspective effectively','I can add atmospheric detail','I can create convincing environments'], eq:'Paper, pencils, landscape references, outdoor sketching kit'},
+    {t:'Conceptual Sketching', li:'use drawing to develop visual ideas', sc:['I can sketch multiple concepts','I can develop ideas visually','I can refine through iteration'], eq:'Sketchbook, pencils, markers, idea prompts, brainstorming space'},
+    {t:'Expressive Mark Making', li:'use mark-making for emotional expression', sc:['I can vary mark types expressively','I can create mood through marks','I can use technique symbolically'], eq:'Various drawing tools, papers, expressive references, experimental materials'},
+    {t:'Digital Drawing', li:'create drawings using digital tools', sc:['I can use drawing software','I can create digital art','I can understand digital techniques'], eq:'Tablet/computer, drawing software (Procreate/Adobe), stylus'},
+    {t:'Portfolio Development', li:'create a cohesive body of work', sc:['I can select best work','I can show range and growth','I can present professionally'], eq:'Portfolio format, all previous work, presentation materials, documentation'}
+  ]
+};
+
+const artYearMap = {'Foundation': _artFoundation, 'Years 1-2': _art12, 'Years 5-6': _art56};
+
+// ── MUSIC YEAR-LEVEL OVERRIDES ──
+const _musFoundation = {
+  rhythm: [
+    {t:'Steady Beat', li:'develop sense of steady beat', sc:['I can clap a beat','I can follow the beat','I can keep time'], eq:'Drum, teacher voice, beat markers, body percussion'},
+    {t:'Beat Variations', li:'explore fast and slow beats', sc:['I can move to fast beat','I can move to slow beat','I can change speed'], eq:'Drum, music player, songs, visual beat markers'},
+    {t:'Body Percussion', li:'make sounds with body', sc:['I can clap','I can stamp','I can pat'], eq:'My body, mirror, percussion patterns, rhythm chants'},
+    {t:'Loud and Soft', li:'explore volume in music', sc:['I can sing loud','I can sing soft','I can change volume'], eq:'Voice, instruments, volume control, songs'},
+    {t:'High and Low Pitch', li:'identify pitch direction', sc:['I can sing high','I can sing low','I can hear pitch changes'], eq:'Voice, xylophone, bells, songs, hand movements'},
+    {t:'Simple Call and Response', li:'participate in call and response songs', sc:['I can respond to calls','I can match patterns','I can echo songs'], eq:'Voice, simple songs, echo patterns, chants'},
+    {t:'Movement to Music', li:'move expressively to music', sc:['I can move to music','I can change movements','I can follow the music'], eq:'Music player, songs, open space, scarves, ribbons'},
+    {t:'Rhythm Patterns', li:'identify and repeat simple patterns', sc:['I can hear patterns','I can repeat patterns','I can clap rhythms'], eq:'Drum, rhythm sticks, simple patterns, percussion'},
+    {t:'Listening to Music', li:'develop listening skills', sc:['I can sit and listen','I can describe sounds','I can move to music'], eq:'Music player, songs, listening journal, instruments'},
+    {t:'Musical Exploration', li:'explore sounds and instruments', sc:['I can find sounds','I can make music','I can explore instruments'], eq:'Classroom instruments, percussion, objects, exploration space'}
+  ]
+};
+
+const _mus12 = {
+  rhythm: [
+    {t:'Steady Beat and Pulse', li:'maintain steady beat in group', sc:['I can keep a steady beat','I can stay with a group','I can follow a conductor'], eq:'Drum, conductor, group space, beat markers'},
+    {t:'Ta and Ti-ti Rhythm', li:'identify and perform basic rhythm patterns', sc:['I can clap ta beats','I can clap ti-ti beats','I can combine them'], eq:'Rhythm cards, drum, rhythm notation, body percussion'},
+    {t:'2-Beat Patterns', li:'create and perform 2-beat rhythms', sc:['I can clap 2-beat patterns','I can keep 2-beat time','I can play patterns'], eq:'Rhythm instruments, notation cards, clapping patterns, music'},
+    {t:'4-Beat Patterns', li:'work with 4-beat rhythm patterns', sc:['I can count to 4','I can play 4-beat patterns','I can conduct 4-beats'], eq:'Conductor\'s baton, musical time, notation, rhythm patterns'},
+    {t:'Dynamics: Forte and Piano', li:'understand loud and soft in music', sc:['I can play forte','I can play piano','I can change dynamics'], eq:'Instruments, music with dynamics, volume control, notation'},
+    {t:'Introduction to Notation', li:'recognize basic rhythm notation', sc:['I can read crotchets','I can read quavers','I can follow notation'], eq:'Rhythm notation cards, notation examples, reading materials'},
+    {t:'Pitched Instruments', li:'play simple melodies on pitched instruments', sc:['I can play notes on glockenspiel','I can play simple songs','I can play melodies'], eq:'Glockenspiel, xylophone, bell bars, mallets, simple notation'},
+    {t:'Melodic Contour', li:'recognize and play rising and falling melodies', sc:['I can hear melody shape','I can show melody with hand','I can play melodies'], eq:'Voice, pitched instruments, songs, hand movements'},
+    {t:'Simple Songs', li:'learn and perform simple songs', sc:['I can sing a song','I can remember words','I can sing in tune'], eq:'Songs, sheet music, accompaniment, lyrics'},
+    {t:'Ensemble Playing', li:'play together in a group', sc:['I can play with others','I can listen to the group','I can stay together'], eq:'Instruments, conductor, ensemble space, sheet music'}
+  ]
+};
+
+const _mus56 = {
+  rhythm: [
+    {t:'Time Signatures 3/4', li:'understand and conduct in 3/4 time', sc:['I can hear 3/4 pattern','I can conduct 3-beat pattern','I can count in 3/4'], eq:'Music in 3/4, conductor\'s baton, rhythm notation, examples'},
+    {t:'Time Signatures 4/4', li:'understand and conduct in 4/4 time', sc:['I can hear 4/4 pattern','I can conduct 4-beat pattern','I can play in 4/4'], eq:'Music in 4/4, conductor\'s baton, rhythm notation, examples'},
+    {t:'Semi-Quavers', li:'identify and perform semi-quaver rhythms', sc:['I can recognize semi-quavers','I can count semi-quavers','I can play semi-quaver patterns'], eq:'Rhythm notation, instruments, rhythm patterns, counting exercises'},
+    {t:'Syncopation', li:'understand and perform syncopated rhythms', sc:['I can identify syncopation','I can play syncopated patterns','I can hear syncopation'], eq:'Syncopated music examples, rhythm instruments, notation, recordings'},
+    {t:'Complex Rhythms', li:'perform complex multi-layered rhythms', sc:['I can play complex patterns','I can maintain rhythm amid others','I can count complex time'], eq:'Rhythm notation, percussion instruments, recordings, practice materials'},
+    {t:'Notation Mastery', li:'read and write advanced notation', sc:['I can read complex notation','I can write rhythms','I can interpret symbols'], eq:'Staff paper, notation examples, music software, reference materials'},
+    {t:'Multi-Part Composition', li:'compose and arrange in multiple parts', sc:['I can write multiple parts','I can arrange for ensemble','I can score effectively'], eq:'Staff paper, notation software, instruments, composition space'},
+    {t:'Harmony Basics', li:'understand and perform harmonic concepts', sc:['I can hear harmony','I can sing in harmony','I can identify chord changes'], eq:'Harmony examples, voice parts, harmonic instruments, recordings'},
+    {t:'Formal Performance Practice', li:'prepare professional performances', sc:['I can rehearse effectively','I can perform with confidence','I can interpret musically'], eq:'Sheet music, rehearsal space, recording equipment, performance venue'},
+    {t:'Ensemble Leadership', li:'conduct or lead ensemble performances', sc:['I can conduct a group','I can indicate tempo','I can guide interpretation'], eq:'Conductor\'s baton, ensemble, sheet music, performance space'}
+  ]
+};
+
+const musYearMap = {'Foundation': _musFoundation, 'Years 1-2': _mus12, 'Years 5-6': _mus56};
+
+// ── DRAMA YEAR-LEVEL OVERRIDES ──
+const _dramaFoundation = {
+  improvisation: [
+    {t:'Pretend Play', li:'engage in imaginative pretend play', sc:['I can pretend','I can make believe','I can play a character'], eq:'Dress-up clothes, props, story prompts'},
+    {t:'Animal Movement', li:'explore movement through animals', sc:['I can move like animals','I can make animal sounds','I can show movement'], eq:'Open space, music, animal pictures, mime space'},
+    {t:'Voice Exploration', li:'explore voice variations', sc:['I can speak loudly','I can speak softly','I can change my voice'], eq:'Voice, mirror, feedback space'},
+    {t:'Simple Role-play', li:'act in simple scenarios', sc:['I can play a role','I can speak as a character','I can respond in role'], eq:'Simple props, dress-up items, scene areas, prompts'},
+    {t:'Freeze Frame', li:'hold still in dramatic pose', sc:['I can freeze','I can hold a pose','I can show emotion'], eq:'Music, space, drama mats'},
+    {t:'Emotion Exploration', li:'express different emotions', sc:['I can show happy','I can show sad','I can show feelings'], eq:'Face expressions, emotion cards, mirror'},
+    {t:'Story Acting', li:'act out simple stories', sc:['I can act a story','I can remember sequence','I can show actions'], eq:'Story books, props, space'},
+    {t:'Partner Scenes', li:'create scenes with a partner', sc:['I can work with a partner','I can take turns','I can create a scene'], eq:'Props, costume pieces, scene space'},
+    {t:'Fast and Slow', li:'vary speed of movement and speech', sc:['I can move fast','I can move slow','I can speak at different speeds'], eq:'Music with tempo, open space, prompts'},
+    {t:'Imaginative Play', li:'develop imaginative scenarios', sc:['I can create a story','I can use my imagination','I can develop ideas'], eq:'Props, costumes, creative prompts, props collection'}
+  ]
+};
+
+const _drama12 = {
+  improvisation: [
+    {t:'Character and Intention', li:'create character with clear intention', sc:['I can play a character','I can show what I want','I can maintain character'], eq:'Character cards, motivation prompts, props'},
+    {t:'Setting Creation', li:'establish and describe a setting', sc:['I can create a place','I can describe where we are','I can build an environment'], eq:'Props, furniture, lighting, imagination prompts'},
+    {t:'Voice Modulation', li:'vary voice for character and emotion', sc:['I can change my voice','I can show emotion through voice','I can speak expressively'], eq:'Character voice cards, mirror, recordings'},
+    {t:'Movement Games', li:'use movement in drama activities', sc:['I can move expressively','I can use the space','I can show character through movement'], eq:'Movement prompts, drama space, music'},
+    {t:'Story Drama', li:'create drama based on stories', sc:['I can act a story','I can develop plot','I can resolve conflict'], eq:'Story books, props, character cards, conflict prompts'},
+    {t:'Freeze Frames with Emotion', li:'create frozen scenes showing emotion', sc:['I can freeze with emotion','I can show feeling in pose','I can explain emotion'], eq:'Emotion prompts, drama mats, space, image building'},
+    {t:'Simple Scripts', li:'perform scripted drama', sc:['I can read a script','I can learn lines','I can perform with others'], eq:'Simple scripts, character sheets, rehearsal space'},
+    {t:'Dialogue Creation', li:'create and speak dialogue', sc:['I can create conversation','I can improvise dialogue','I can respond in role'], eq:'Dialogue prompts, script paper, conversation starters'},
+    {t:'Collaborative Scenes', li:'create scenes working as a team', sc:['I can work with others','I can share ideas','I can build a scene together'], eq:'Scene prompts, props, feedback space'},
+    {t:'Audience and Performance', li:'perform for an audience', sc:['I can perform in front of people','I can remember my role','I can speak clearly'], eq:'Performance space, audience, props, simple staging'}
+  ]
+};
+
+const _drama56 = {
+  improvisation: [
+    {t:'Stanislavski: Given Circumstances', li:'apply given circumstances to character', sc:['I can identify circumstances','I can use them in performance','I can deepen character'], eq:'Character analysis sheets, scenario cards, performance space'},
+    {t:'Stanislavski: Objective', li:'identify and pursue character objectives', sc:['I can identify what character wants','I can pursue the objective','I can create conflict'], eq:'Objective worksheets, scene cards, script excerpts'},
+    {t:'Stanislavski: Action', li:'perform intentional character actions', sc:['I can identify actions','I can perform with purpose','I can motivate behaviour'], eq:'Script analysis materials, action vocabulary, performance space'},
+    {t:'Subtext and Meaning', li:'understand and perform subtext', sc:['I can identify subtext','I can act beneath the words','I can show hidden meaning'], eq:'Subtext analysis sheets, scripts, coaching support'},
+    {t:'Staging and Proxemics', li:'understand space and positioning in drama', sc:['I can position myself purposefully','I can use distance meaningfully','I can block scenes'], eq:'Stage space, blocking diagrams, position markers'},
+    {t:'Devised Theatre', li:'create original theatre from stimulus', sc:['I can develop original content','I can use stimulus creatively','I can structure presentation'], eq:'Stimulus materials, script paper, creative space, props'},
+    {t:'Script Analysis', li:'analyze scripts for character and meaning', sc:['I can analyze a script','I can find character motivation','I can understand themes'], eq:'Scripts, analysis worksheets, annotation tools'},
+    {t:'Directing Peer Scenes', li:'direct others in dramatic scenes', sc:['I can give direction','I can help others improve','I can see the bigger picture'], eq:'Scene scripts, blocking diagrams, directing notes, performance space'},
+    {t:'Character Development', li:'build detailed character backgrounds', sc:['I can create character history','I can develop consistency','I can justify choices'], eq:'Character biography templates, relationship maps, backstory prompts'},
+    {t:'Ensemble and Collaboration', li:'collaborate effectively in ensemble theatre', sc:['I can contribute to group vision','I can listen and respond','I can build collectively'], eq:'Ensemble scripts, collaborative prompts, performance space, feedback'}
+  ]
+};
+
+const dramaYearMap = {'Foundation': _dramaFoundation, 'Years 1-2': _drama12, 'Years 5-6': _drama56};
+
+// ── DIGITAL TECH YEAR-LEVEL OVERRIDES ──
+const _dtFoundation = {
+  digital_systems: [
+    {t:'Safe Computer Use', li:'learn safe computer operation basics', sc:['I can use a mouse','I can use a keyboard','I can turn off a computer safely'], eq:'Computers, mice, keyboards, mouse pads'},
+    {t:'Device Exploration', li:'explore different digital devices', sc:['I can name devices','I can explain what devices do','I can use devices safely'], eq:'Laptop, tablet, mouse, keyboard, monitor'},
+    {t:'Basic Navigation', li:'navigate menus and icons', sc:['I can click on icons','I can open programs','I can navigate screens'], eq:'Computer, mouse, monitor, icons'},
+    {t:'Taking Photos', li:'take photos using digital devices', sc:['I can use a camera','I can take a photo','I can find my photos'], eq:'Tablet, digital camera, simple photography app'},
+    {t:'Digital Citizenship', li:'understand basic digital safety', sc:['I can stay safe online','I can understand privacy','I can follow rules'], eq:'Safety posters, permission letters, parental guidance'},
+    {t:'Digital Technology Around Us', li:'recognize digital technology in daily life', sc:['I can name digital technology','I can explain what it does','I can identify devices'], eq:'Images of technology, real devices, technology examples'},
+    {t:'Typing Skills', li:'develop basic keyboard and typing skills', sc:['I can find letters on keyboard','I can type my name','I can use the keyboard'], eq:'Keyboard, computer, typing practice software'},
+    {t:'Simple Programs', li:'use simple programs and applications', sc:['I can open a program','I can click buttons','I can navigate software'], eq:'Kid-friendly software, computer, mouse'},
+    {t:'Saving and Opening', li:'save and retrieve digital work', sc:['I can save a file','I can open a file','I can find my work'], eq:'Computer, simple software, file management'},
+    {t:'Screen Time Awareness', li:'understand healthy digital habits', sc:['I can use technology responsibly','I can take breaks','I can balance activity'], eq:'Timer, break reminders, activity alternatives'}
+  ],
+  data_info: [
+    {t:'Collecting Data', li:'gather information through simple activities', sc:['I can collect information','I can organize it','I can sort it'], eq:'Tally sheets, objects, categories, recording tools'},
+    {t:'Sorting and Organizing', li:'organize data into categories', sc:['I can sort things','I can put in groups','I can organize'], eq:'Objects, sort mats, baskets, category labels'},
+    {t:'Simple Tallying', li:'count and tally information', sc:['I can make tally marks','I can count tallies','I can record data'], eq:'Tally paper, pencils, data charts, objects'},
+    {t:'Representing Data', li:'show data visually', sc:['I can make a simple graph','I can show information','I can represent data'], eq:'Grid paper, blocks, counters, graph templates'},
+    {t:'Answering Questions', li:'use data to answer simple questions', sc:['I can look at data','I can answer questions','I can find information'], eq:'Data sets, question cards, recorded information'},
+    {t:'Digital Information', li:'find information using digital tools', sc:['I can search online safely','I can find information','I can ask adults'], eq:'Computer, safe search engine, teacher supervision'},
+    {t:'Digital Books', li:'access and read digital books', sc:['I can open a digital book','I can navigate pages','I can read online'], eq:'Tablet/computer, e-reading app, digital library access'},
+    {t:'Images and Information', li:'use images to communicate', sc:['I can find pictures','I can use images','I can describe them'], eq:'Image search, pictures, digital library'},
+    {t:'Recording Information', li:'record information digitally', sc:['I can type information','I can save it','I can find it'], eq:'Computer, typing program, document software'},
+    {t:'Privacy and Sharing', li:'understand what to share digitally', sc:['I can keep information private','I can ask before sharing','I can understand boundaries'], eq:'Privacy guidelines, permission slips, digital citizenship lesson'}
+  ],
+  creating_solutions: [
+    {t:'Problem Solving', li:'identify and describe simple problems', sc:['I can name a problem','I can think of solutions','I can try ideas'], eq:'Problem cards, thinking space, solution prompts'},
+    {t:'Following Instructions', li:'follow step-by-step directions', sc:['I can follow steps','I can listen carefully','I can complete tasks'], eq:'Instruction cards, simple activities, step-by-step guides'},
+    {t:'Building with Technology', li:'use technology to create things', sc:['I can create something','I can use technology','I can show my work'], eq:'Tablets, creative apps, digital art tools, design software'},
+    {t:'Digital Art and Design', li:'create artwork using digital tools', sc:['I can draw digitally','I can use colors','I can save my art'], eq:'Tablet, drawing app, stylus, digital art software'},
+    {t:'Recording Media', li:'record simple videos or audio', sc:['I can record my voice','I can record video','I can play it back'], eq:'Tablet, recording app, microphone, video app'},
+    {t:'Presenting Ideas', li:'share digital creations', sc:['I can show my work','I can explain it','I can present digitally'], eq:'Digital file, projector, screen, presentation space'},
+    {t:'Debugging Simple Tasks', li:'fix simple problems in activities', sc:['I can spot mistakes','I can fix them','I can try again'], eq:'Problem activities, solution cards, think-aloud practice'},
+    {t:'Collaborative Creation', li:'create with others using technology', sc:['I can work with others','I can share ideas','I can create together'], eq:'Shared device, collaboration app, turn-taking system'},
+    {t:'Basic Coding Concepts', li:'understand sequencing and directions', sc:['I can follow a sequence','I can give instructions','I can think step-by-step'], eq:'Sequence cards, unplugged coding activities, step mats'},
+    {t:'Reflection on Digital Work', li:'think about and improve digital creations', sc:['I can look at my work','I can say what\'s good','I can improve it'], eq:'Portfolio space, reflection sheets, peer feedback cards'}
+  ]
+};
+
+const _dt12 = {
+  digital_systems: [
+    {t:'Hardware and Software', li:'understand components of digital systems', sc:['I can name hardware parts','I can name software','I can explain what they do'], eq:'Computers, components diagram, software examples'},
+    {t:'Internet Basics', li:'understand the internet and its uses', sc:['I can describe the internet','I can access websites safely','I can understand how it works'], eq:'Computer, safe websites, internet diagram, teacher supervision'},
+    {t:'Digital Devices', li:'explore different types of digital devices', sc:['I can name various devices','I can explain their purposes','I can use them appropriately'], eq:'Various devices, device photos, demonstration materials'},
+    {t:'Online Safety', li:'practice safe online behaviour', sc:['I can identify safe practices','I can protect information','I can stay safe online'], eq:'Safety checklist, permission form, trusted adult contact list'},
+    {t:'Passwords and Security', li:'understand importance of passwords', sc:['I can create strong passwords','I can keep passwords safe','I can understand privacy'], eq:'Password examples, security guidelines, practice cards'},
+    {t:'Online Etiquette', li:'practice respectful digital communication', sc:['I can communicate respectfully','I can follow rules online','I can be kind'], eq:'Online communication examples, rules poster, reflection prompts'},
+    {t:'Saving and File Management', li:'organize digital files effectively', sc:['I can save files','I can organize folders','I can find saved work'], eq:'Computer, file explorer, folder structure, naming conventions'},
+    {t:'Backup and Security', li:'understand data preservation', sc:['I can save backups','I can understand why','I can protect my work'], eq:'Storage devices, backup software, cloud service access'},
+    {t:'Email Basics', li:'use email safely and appropriately', sc:['I can write an email','I can send it safely','I can follow rules'], eq:'Email account (teacher monitored), email template, safe practice'},
+    {t:'Digital Citizenship', li:'understand rights and responsibilities online', sc:['I can identify digital rights','I can understand responsibilities','I can act respectfully'], eq:'Digital citizenship curriculum, case study cards, discussion prompts'}
+  ],
+  data_info: [
+    {t:'Data Collection Methods', li:'collect data using different methods', sc:['I can design data collection','I can collect accurately','I can record data'], eq:'Survey templates, tally sheets, observation forms'},
+    {t:'Organizing Data', li:'organize data in tables and lists', sc:['I can create a table','I can sort data','I can organize logically'], eq:'Spreadsheet software, table template, data sets'},
+    {t:'Representing Data Visually', li:'create graphs from data', sc:['I can choose a graph type','I can create it','I can label it correctly'], eq:'Graphing software, graph paper, template options'},
+    {t:'Reading Data', li:'interpret data from graphs and tables', sc:['I can read graphs','I can find information','I can answer questions'], eq:'Various graphs, data sets, question cards'},
+    {t:'Data Analysis', li:'analyze data to find patterns', sc:['I can identify patterns','I can make conclusions','I can explain results'], eq:'Data sets, analysis tools, discussion prompts'},
+    {t:'Sorting and Filtering', li:'sort and filter data on computer', sc:['I can sort data','I can filter results','I can find information'], eq:'Spreadsheet software, sample data, sorting tools'},
+    {t:'Digital Databases', li:'use simple databases to store information', sc:['I can enter data','I can search','I can retrieve information'], eq:'Database software, sample database, practice data'},
+    {t:'Real-World Data', li:'find and use real data sources', sc:['I can find data online','I can analyze it','I can make connections'], eq:'Data websites, search skills, analysis tools'},
+    {t:'Data Representation Choices', li:'choose appropriate visualization methods', sc:['I can choose graph type','I can justify choice','I can present data'], eq:'Various graph types, data samples, presentation space'},
+    {t:'Communicating Findings', li:'present data findings clearly', sc:['I can present data','I can explain meaning','I can answer questions'], eq:'Presentation software, visual aids, practice audience'}
+  ],
+  creating_solutions: [
+    {t:'Algorithms Unplugged', li:'understand sequences and algorithms without computers', sc:['I can follow algorithms','I can create sequences','I can think logically'], eq:'Instruction cards, movement activities, puzzle cards'},
+    {t:'Scratch Jr Introduction', li:'begin visual programming basics', sc:['I can open Scratch Jr','I can use blocks','I can create simple programs'], eq:'Tablet/computer, Scratch Jr app, tutorial videos'},
+    {t:'Block Programming', li:'program using visual blocks', sc:['I can use motion blocks','I can add sounds','I can create animations'], eq:'Scratch Jr or similar, code blocks, tutorials'},
+    {t:'Sequencing Events', li:'understand order of operations', sc:['I can sequence events','I can understand timing','I can debug order'], eq:'Event cards, programming examples, sequence diagrams'},
+    {t:'Conditional Logic', li:'introduce if/then thinking', sc:['I can identify conditions','I can predict outcomes','I can test logic'], eq:'Condition cards, flow diagrams, conditional blocks'},
+    {t:'Loops and Repetition', li:'use loops to repeat actions', sc:['I can create loops','I can repeat actions','I can control repetition'], eq:'Loop blocks, programming examples, practice problems'},
+    {t:'Problem Solving Process', li:'apply structured problem-solving steps', sc:['I can identify problems','I can brainstorm solutions','I can test and refine'], eq:'Problem-solving worksheet, design template, testing checklist'},
+    {t:'Creating Simple Programs', li:'create functioning programs', sc:['I can plan my program','I can build it','I can test it'], eq:'Programming environment, template projects, debugging tools'},
+    {t:'Collaborative Programming', li:'work together on programs', sc:['I can share code','I can give feedback','I can build together'], eq:'Shared access tools, code examples, collaborative platform'},
+    {t:'Showcasing Digital Solutions', li:'present finished digital projects', sc:['I can demonstrate my program','I can explain it','I can reflect'], eq:'Presentation space, demo device, reflection prompts'}
+  ]
+};
+
+const _dt56 = {
+  digital_systems: [
+    {t:'Networks and Connectivity', li:'understand how networks function', sc:['I can explain network basics','I can understand data transmission','I can identify network types'], eq:'Network diagram, internet infrastructure info, visualization tools'},
+    {t:'Cloud Computing', li:'understand cloud services and storage', sc:['I can use cloud storage','I can explain cloud benefits','I can understand security'], eq:'Cloud service access, demonstration, data storage concept'},
+    {t:'Cybersecurity Basics', li:'understand protection of digital systems', sc:['I can identify threats','I can implement security','I can protect data'], eq:'Security scenarios, password manager demo, firewall explanation'},
+    {t:'Operating Systems', li:'understand OS functions and differences', sc:['I can explain what an OS does','I can identify different systems','I can use multiple systems'], eq:'Different OS examples, system settings demo, comparison chart'},
+    {t:'Hardware Components', li:'understand hardware specifications and performance', sc:['I can explain components','I can understand specs','I can make informed choices'], eq:'Hardware samples/images, specification sheets, comparison tools'},
+    {t:'Troubleshooting Issues', li:'diagnose and solve common technical problems', sc:['I can identify issues','I can apply solutions','I can seek help appropriately'], eq:'Troubleshooting guide, common problem scenarios, help resources'},
+    {t:'Digital Footprint', li:'understand personal digital presence', sc:['I can explain digital footprint','I can manage my presence','I can think about implications'], eq:'Digital footprint tracking tools, privacy settings demo, case studies'},
+    {t:'Emerging Technologies', li:'explore new digital developments', sc:['I can identify emerging tech','I can understand implications','I can evaluate impact'], eq:'Technology news sources, examples, discussion prompts'},
+    {t:'Ethical Technology Use', li:'make ethical choices in technology', sc:['I can identify ethical issues','I can make right choices','I can explain reasoning'], eq:'Case study scenarios, ethical frameworks, reflection prompts'},
+    {t:'Technology Planning', li:'plan digital tool selection and use', sc:['I can select tools strategically','I can justify choices','I can evaluate effectiveness'], eq:'Tool comparison templates, rubrics, planning documents'}
+  ],
+  data_info: [
+    {t:'Advanced Spreadsheets', li:'use spreadsheet functions and formulas', sc:['I can create formulas','I can calculate data','I can analyze complex data'], eq:'Spreadsheet software, sample data, formula examples'},
+    {t:'Database Design', li:'design relational databases', sc:['I can identify data relationships','I can design tables','I can create relationships'], eq:'Database software, relational diagram, design template'},
+    {t:'Database Queries', li:'query databases to retrieve data', sc:['I can write queries','I can filter results','I can extract information'], eq:'Database with data, query language, practice exercises'},
+    {t:'Data Visualization', li:'create sophisticated data representations', sc:['I can choose effective visuals','I can create interactive displays','I can tell stories with data'], eq:'Data visualization software, diverse data sets, design principles'},
+    {t:'Statistical Analysis', li:'analyze data statistically', sc:['I can calculate statistics','I can interpret results','I can identify trends'], eq:'Statistical software, sample data sets, calculation tools'},
+    {t:'Data Ethics', li:'understand ethical data handling', sc:['I can identify ethical concerns','I can handle data responsibly','I can protect privacy'], eq:'Data ethics case studies, privacy policies, consent forms'},
+    {t:'Open Data', li:'access and use publicly available data', sc:['I can find open data','I can use it appropriately','I can cite sources'], eq:'Open data repositories, attribution guidelines, real datasets'},
+    {t:'Data Literacy', li:'critically evaluate data and sources', sc:['I can assess data quality','I can identify bias','I can evaluate sources'], eq:'Data examples, source analysis worksheet, critical evaluation tools'},
+    {t:'Big Data Concepts', li:'understand large-scale data concepts', sc:['I can explain big data','I can understand processing','I can discuss implications'], eq:'Big data examples, processing tools demo, case studies'},
+    {t:'Data-Driven Decision Making', li:'use data to make informed decisions', sc:['I can analyze for decisions','I can support with evidence','I can evaluate outcomes'], eq:'Decision scenarios, analysis tools, evaluation framework'}
+  ],
+  creating_solutions: [
+    {t:'Python Fundamentals', li:'learn Python programming basics', sc:['I can write Python code','I can use variables','I can control flow'], eq:'Python IDE, tutorial resources, beginner code examples'},
+    {t:'Python Variables and Data Types', li:'work with variables and data types', sc:['I can create variables','I can understand types','I can manipulate data'], eq:'Python environment, data type examples, practice exercises'},
+    {t:'Python Loops', li:'use loops to repeat code efficiently', sc:['I can write for loops','I can write while loops','I can control iteration'], eq:'Python IDE, loop examples, practice problems'},
+    {t:'Python Conditionals', li:'make decisions in code', sc:['I can use if statements','I can use conditions','I can handle multiple paths'], eq:'Python environment, conditional examples, logic exercises'},
+    {t:'Python Functions', li:'create reusable code with functions', sc:['I can define functions','I can call functions','I can use parameters'], eq:'Python IDE, function examples, refactoring exercises'},
+    {t:'Object-Oriented Programming Intro', li:'introduce OOP principles', sc:['I can understand objects','I can create classes','I can use methods'], eq:'Python OOP examples, visual explanations, practice code'},
+    {t:'Web Development Basics', li:'introduce web technologies', sc:['I can write HTML','I can use CSS','I can understand web basics'], eq:'Code editor, HTML/CSS templates, web examples'},
+    {t:'APIs and Integration', li:'use APIs to connect programs', sc:['I can understand APIs','I can make requests','I can integrate services'], eq:'API documentation, example integrations, practice keys'},
+    {t:'Version Control', li:'manage code versions and collaboration', sc:['I can use Git','I can track changes','I can collaborate'], eq:'Git/GitHub setup, repository examples, collaboration workflow'},
+    {t:'Professional Project Development', li:'develop complete digital solutions professionally', sc:['I can plan complex projects','I can implement thoroughly','I can document professionally'], eq:'Project planning template, version control, documentation standards'}
+  ]
+};
+
+const dtYearMap = {'Foundation': _dtFoundation, 'Years 1-2': _dt12, 'Years 5-6': _dt56};
+
+// ── FRENCH YEAR-LEVEL OVERRIDES ──
+const _frFoundation = {
+  greetings: [
+    {t:'Bonjour and Au Revoir', li:'learn and use basic greetings', sc:['I can say bonjour','I can say au revoir','I can greet others'], eq:'Greeting cards, visual aids, mirror, peer practice'},
+    {t:'Morning and Afternoon Greetings', li:'distinguish greetings by time of day', sc:['I can say good morning','I can say good afternoon','I can greet appropriately'], eq:'Time chart, greeting variations, practice sentences'},
+    {t:'Classroom Greetings', li:'use greetings in classroom context', sc:['I can greet the teacher','I can greet classmates','I can respond to greetings'], eq:'Role cards, classroom setup, greeting practice'},
+    {t:'Meeting People', li:'greet and meet French speakers', sc:['I can greet someone new','I can introduce myself','I can shake hands'], eq:'Name cards, introduction frames, meeting scenarios'},
+    {t:'Responding to Greetings', li:'respond appropriately to greetings', sc:['I can respond to bonjour','I can say how I am','I can ask how others are'], eq:'Greeting response cards, How are you frame, dialogue practice'},
+    {t:'Good Night Greetings', li:'learn evening and night greetings', sc:['I can say good night','I can say goodbye','I can use appropriate greetings'], eq:'Time-based greeting chart, evening scenario cards'},
+    {t:'Formal and Informal', li:'understand greeting formality levels', sc:['I can greet formally','I can greet informally','I can choose appropriately'], eq:'Formality chart, different context cards, example sentences'},
+    {t:'Greeting Songs', li:'learn greetings through songs', sc:['I can sing greeting songs','I can remember words','I can move with song'], eq:'Greeting song recording, lyrics sheet, movement cards'},
+    {t:'Greetings with Gestures', li:'use appropriate physical greetings', sc:['I can wave when saying goodbye','I can use hand signals','I can show respect'], eq:'Gesture pictures, practice mirror, demonstration'},
+    {t:'Goodbye Variations', li:'say goodbye in different ways', sc:['I can say au revoir','I can say à bientôt','I can say adieu appropriately'], eq:'Goodbye phrase cards, context examples, written options'}
+  ],
+  food: [
+    {t:'Food Names', li:'learn names of basic foods', sc:['I can name vegetables','I can name fruits','I can name other foods'], eq:'Food pictures, real food samples, flash cards'},
+    {t:'I Like and I Do Not Like', li:'express food preferences', sc:['I can say I like','I can say I do not like','I can express preference'], eq:'Preference sentence frames, food cards, drawings'},
+    {t:'Food Vocabulary', li:'learn food-related vocabulary', sc:['I can name foods','I can count food items','I can describe colours'], eq:'Food posters, vocabulary list, picture cards'},
+    {t:'Colours of Food', li:'describe colours of foods', sc:['I can say food colours','I can match colours','I can describe foods'], eq:'Food pictures with colour, colour cards, descriptions'},
+    {t:'Breakfast Foods', li:'learn breakfast vocabulary', sc:['I can name breakfast foods','I can say what I eat','I can describe meals'], eq:'Breakfast pictures, meal time cards, vocabulary chart'},
+    {t:'Fruits and Vegetables', li:'identify and name produce', sc:['I can name fruits','I can name vegetables','I can describe them'], eq:'Real produce, pictures, vocabulary cards, sorting activity'},
+    {t:'Food Preferences in Class', li:'discuss food likes and dislikes', sc:['I can tell my preference','I can ask others','I can listen and respond'], eq:'Preference cards, question frames, dialogue practice'},
+    {t:'Please and Thank You', li:'use manners with food', sc:['I can say please','I can say thank you','I can use polite words'], eq:'Manners cards, role play scenarios, practice frames'},
+    {t:'Food Songs', li:'learn food-related songs', sc:['I can sing food songs','I can remember words','I can perform'], eq:'Food song recording, lyrics, performance space'},
+    {t:'My Favourite Food', li:'talk about favourite foods', sc:['I can say my favourite','I can describe it','I can ask others'], eq:'Food pictures, favourite frame, discussion prompts'}
+  ]
+};
+
+const _fr12 = {
+  greetings: [
+    {t:'Bonjour, Bonsoir, Bonne Nuit', li:'use greetings correctly by time of day', sc:['I can use bonjour correctly','I can use bonsoir','I can use bonne nuit appropriately'], eq:'Time of day chart, greeting scenarios, dialogue practice'},
+    {t:'Ça Va Introduction', li:'ask how someone is', sc:['I can ask ça va','I can understand responses','I can respond to questions'], eq:'Response cards, dialogue frames, classroom practice'},
+    {t:'Je M\'appelle', li:'introduce myself with name', sc:['I can say my name','I can ask someone\'s name','I can remember names'], eq:'Name cards, introduction frame, interview activity'},
+    {t:'Enchanté/Enchantée', li:'use pleased to meet phrase', sc:['I can say pleased to meet you','I can respond','I can use appropriately'], eq:'Meeting scenario cards, formal introduction frame'},
+    {t:'À Bientôt and À Demain', li:'say see you soon and see you tomorrow', sc:['I can say à bientôt','I can say à demain','I can use appropriately'], eq:'Time context cards, goodbye variations chart'},
+    {t:'Classroom Greetings', li:'use French in classroom setting', sc:['I can greet teacher','I can greet classmates','I can respond in class'], eq:'Classroom scenario, greeting routine, daily practice'},
+    {t:'Telephone Greetings', li:'greet someone on the phone', sc:['I can answer the phone','I can greet on phone','I can say goodbye'], eq:'Telephone roleplay cards, phone frame, dialogue script'},
+    {t:'Family Greetings', li:'greet family members appropriately', sc:['I can greet family','I can use family words','I can show affection'], eq:'Family vocabulary, greeting variations, roleplay scenarios'},
+    {t:'Greeting Dialogues', li:'create and perform greetings conversations', sc:['I can create dialogue','I can perform with partner','I can remember lines'], eq:'Dialogue frames, script template, performance space'},
+    {t:'Cultural Greetings', li:'understand French greetings customs', sc:['I can explain greetings','I can compare cultures','I can greet appropriately'], eq:'Cultural comparison poster, greeting traditions, discussion prompts'}
+  ],
+  food: [
+    {t:'Food Categories', li:'organize foods into categories', sc:['I can categorize foods','I can identify types','I can explain groups'], eq:'Food sorting chart, category cards, sample foods'},
+    {t:'Fruit Names', li:'learn and name fruits', sc:['I can name fruits','I can describe them','I can count them'], eq:'Fruit pictures/samples, fruit poster, vocabulary list'},
+    {t:'Vegetable Names', li:'learn and name vegetables', sc:['I can name vegetables','I can describe them','I can compare'], eq:'Vegetable pictures/samples, poster, sorting activity'},
+    {t:'Meals and Times', li:'understand French meal structure', sc:['I can name meals','I can say meal times','I can describe meals'], eq:'Meal time chart, typical French meal examples, schedule'},
+    {t:'Food Preferences', li:'express and discuss food likes', sc:['I can say I like','I can say I prefer','I can explain preference'], eq:'Preference cards, food pictures, discussion prompts'},
+    {t:'Restaurant French', li:'use basic restaurant vocabulary', sc:['I can order food','I can say please/thank you','I can politely ask'], eq:'Menu example, ordering phrases, restaurant roleplay'},
+    {t:'Food Descriptions', li:'describe foods with adjectives', sc:['I can describe colour','I can describe taste','I can describe texture'], eq:'Descriptive word cards, food pictures, description practice'},
+    {t:'Cooking Vocabulary', li:'learn basic cooking terms', sc:['I can name cooking verbs','I can understand instructions','I can follow steps'], eq:'Cooking action cards, recipe example, vocabulary chart'},
+    {t:'Food and Culture', li:'explore French food traditions', sc:['I can name French foods','I can explain customs','I can compare cultures'], eq:'French food pictures, cultural information, comparison chart'},
+    {t:'My Food Day', li:'describe what I eat daily', sc:['I can talk about my meals','I can describe preferences','I can explain choices'], eq:'Daily meal frame, preference chart, sharing activity'}
+  ]
+};
+
+const _fr56 = {
+  greetings: [
+    {t:'Formal Greetings and Vous', li:'use formal vous form appropriately', sc:['I can use vous correctly','I can understand formality','I can greet formally'], eq:'Formal vs informal chart, context examples, dialogue practice'},
+    {t:'Je Suis and State Descriptions', li:'describe myself with state phrases', sc:['I can say how I am','I can describe feelings','I can use adjectives'], eq:'Feeling vocabulary, state description frames, dialogue examples'},
+    {t:'Asking and Answering Ça Va', li:'engage in ça va exchanges', sc:['I can ask ça va','I can give detailed response','I can ask back'], eq:'Extended response options, conversation practice, dialogue'},
+    {t:'Meeting Formally', li:'introduce yourself formally', sc:['I can introduce myself formally','I can extend handshake','I can engage in formal chat'], eq:'Formal introduction frames, business context, roleplay scenarios'},
+    {t:'Casual vs Formal Register', li:'adjust language by context', sc:['I can use tu appropriately','I can use vous appropriately','I can change register'], eq:'Register comparison chart, context cards, practice dialogues'},
+    {t:'Telephone and Digital Greetings', li:'greet in phone and online contexts', sc:['I can answer professionally','I can greet by text','I can use digital etiquette'], eq:'Phone roleplay, text message examples, digital scenarios'},
+    {t:'Professional Greetings', li:'greet in work and formal situations', sc:['I can greet professionally','I can exchange cards','I can maintain formality'], eq:'Business scenario cards, professional phrases, roleplay context'},
+    {t:'Greeting Customs Comparison', li:'compare French and Australian greeting customs', sc:['I can identify differences','I can explain customs','I can adapt appropriately'], eq:'Custom comparison chart, cultural analysis worksheet, discussion'},
+    {t:'Extended Greeting Conversations', li:'sustain greeting conversations', sc:['I can ask follow-up questions','I can engage deeply','I can maintain conversation'], eq:'Question stems, extended dialogue example, conversation cards'},
+    {t:'Regional Greeting Variations', li:'understand regional differences', sc:['I can identify variations','I can understand context','I can adapt'], eq:'Regional examples, map of variations, dialect information'}
+  ],
+  food: [
+    {t:'Passé Composé with Avoir', li:'describe past food experiences with avoir verbs', sc:['I can use passé composé','I can discuss meals eaten','I can form avoir + past participle'], eq:'Passé composé formation chart, avoir verbs list, practice sentences'},
+    {t:'Passé Composé with Être', li:'describe past food experiences with être verbs', sc:['I can form être + past participle','I can use with food verbs','I can discuss past meals'], eq:'Être verb chart, past participles, dialogue practice'},
+    {t:'Restaurant Dialogues', li:'conduct extended restaurant conversations', sc:['I can order complex meals','I can ask questions','I can discuss food'], eq:'Full menu, ordering frames, complaint/compliment phrases'},
+    {t:'Food Shopping French', li:'discuss shopping for food', sc:['I can name quantities','I can ask for items','I can discuss prices'], eq:'Shopping vocabulary, market scenario, price discussion'},
+    {t:'Opinion Phrases', li:'express food opinions using opinion structures', sc:['I can use je pense que','I can use à mon avis','I can form opinions'], eq:'Opinion phrase frames, food adjectives, discussion sentences'},
+    {t:'Cooking Instructions', li:'understand and follow French recipes', sc:['I can read recipe instructions','I can understand cooking verbs','I can follow steps'], eq:'Authentic recipe, instruction verbs list, step-by-step guide'},
+    {t:'French Regional Foods', li:'explore regional French cuisine', sc:['I can name regional dishes','I can describe origins','I can compare regions'], eq:'Regional food photos, cultural background, map of regions'},
+    {t:'Allergies and Dietary Requirements', li:'communicate food restrictions', sc:['I can state allergies','I can explain dietary needs','I can ask appropriately'], eq:'Allergy vocabulary, polite request frames, communication phrases'},
+    {t:'Reading Authentic Texts', li:'read authentic French food texts', sc:['I can read menus','I can read recipes','I can understand advertisements'], eq:'Real menus, authentic recipes, food advertisements'},
+    {t:'French Food Culture Analysis', li:'analyze French food traditions and values', sc:['I can describe food culture','I can compare with Australian','I can reflect on differences'], eq:'Cultural analysis worksheet, comparison chart, discussion prompts'}
+  ]
+};
+
+const frYearMap = {'Foundation': _frFoundation, 'Years 1-2': _fr12, 'Years 5-6': _fr56};
+  // ── END YEAR-LEVEL OVERRIDES ──────────────────────────────────────────────
+
   if (subj === 'pe') {
     const peWeeks = {
       invasion: [
@@ -3045,6 +3672,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
       ],
     };
     // Get week-specific data or generate from pattern
+    Object.assign(peWeeks, peYearMap[yl] || {});
     const weekArr = peWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3055,8 +3683,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Building on prior lessons.`,
         differentiation: {
-          support: 'Reduce playing area, use larger or softer balls, allow extra time on the ball. Pair with a buddy. Modify rules for accessibility.',
-          extension: 'Add defensive pressure, introduce positional roles, create mini-coaching opportunities. Challenge students to demonstrate creativity and leadership.'
+          support: yl === 'Foundation' ? 'Use large foam/soft balls, focus on participation not competition, partner activities, no score. Encourage movement exploration.' : yl === 'Years 1-2' ? 'Simplify rules, use modified equipment (larger/softer balls), pair with buddy, short game times, verbal demonstrations.' : yl === 'Years 5-6' ? 'Scaffold tactical concepts with diagrams, reduce physical intensity where needed, assign supportive peer roles.' : 'Reduce playing area, use larger or softer balls, allow extra time on the ball. Pair with a buddy. Modify rules for accessibility.',
+          extension: yl === 'Foundation' ? 'Introduce challenge roles (e.g. who can travel in 3 different ways?), extend cooperative tasks.' : yl === 'Years 1-2' ? 'Introduce defensive pressure, positional awareness, lead small group warm-up.' : yl === 'Years 5-6' ? 'Peer coaching roles, design team strategy, lead warm-up and debrief, introduce advanced sport-specific rules.' : 'Add defensive pressure, introduce positional roles, create mini-coaching opportunities. Challenge students to demonstrate creativity and leadership.'
         },
         grouping: { whole: 'Warm-up and rules explanation', pairs: 'Passing drills', small: 'Teams of 4-5 for game play', individual: 'Reflection journal' }
       };
@@ -3087,8 +3715,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
       equipment: `Balls, cones, bibs, whistle${phase === 'apply' ? ', goals, scoreboard' : ''}`,
       context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Focus skill: ${sk0}.`,
       differentiation: {
-        support: 'Reduce playing area, simplify rules, use modified equipment, allow extra time, pair with buddies. Provide visual demonstrations and verbal cues.',
-        extension: 'Introduce complex strategies, rotate roles, add competitive pressure, challenge with game variations, create coaching opportunities.'
+        support: yl === 'Foundation' ? 'Use large foam/soft balls, focus on participation not competition, partner activities, no score. Encourage movement exploration.' : yl === 'Years 1-2' ? 'Simplify rules, use modified equipment (larger/softer balls), pair with buddy, short game times, verbal demonstrations.' : yl === 'Years 5-6' ? 'Scaffold tactical concepts with diagrams, reduce physical intensity where needed, assign supportive peer roles.' : 'Reduce playing area, simplify rules, use modified equipment, allow extra time, pair with buddies. Provide visual demonstrations and verbal cues.',
+        extension: yl === 'Foundation' ? 'Introduce challenge roles (e.g. who can travel in 3 different ways?), extend cooperative tasks.' : yl === 'Years 1-2' ? 'Introduce defensive pressure, positional awareness, lead small group warm-up.' : yl === 'Years 5-6' ? 'Peer coaching roles, design team strategy, lead warm-up and debrief, introduce advanced sport-specific rules.' : 'Introduce complex strategies, rotate roles, add competitive pressure, challenge with game variations, create coaching opportunities.'
       },
       grouping: { whole: 'Warm-up and rules explanation', pairs: 'Passing drills', small: 'Teams of 4-5 for game play', individual: 'Reflection journal' }
     };
@@ -3122,6 +3750,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         {t:`${F}: Skills Showcase`, li:`demonstrate our strongest ${f} skills in a final activity`, sc:['I can choose my best work to display','I can explain my artistic choices','I can celebrate classmates\u2019 achievements'], eq:'All artworks, display materials, certificates'},
       ],
     };
+    Object.assign(artWeeks, artYearMap[yl] || {});
     const weekArr = artWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3132,8 +3761,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
         differentiation: {
-          support: 'Provide step-by-step visual instructions, pre-drawn templates, simplified materials, shorter work time. Pair with a buddy. Offer colour wheels and reference images.',
-          extension: 'Challenge with mixed media, complex compositions, peer mentoring roles. Create opportunities for independent experimentation and self-reflection.'
+          support: yl === 'Foundation' ? 'Offer sensory materials, pre-drawn outlines, finger painting, guided mark-making. Focus on process over product.' : yl === 'Years 1-2' ? 'Provide step-by-step visual instructions, colour wheel reference, pre-mixed colours, teacher demonstration before each step.' : yl === 'Years 5-6' ? 'Provide artist exemplars, scaffold critique language, allow alternative media, reduce required detail.' : 'Provide step-by-step visual instructions, pre-drawn templates, simplified materials, shorter work time. Pair with a buddy. Offer colour wheels and reference images.',
+          extension: yl === 'Foundation' ? 'Try multiple materials in one artwork, name colours mixed, describe what they made.' : yl === 'Years 1-2' ? 'Add a second medium, introduce simple composition rules (rule of thirds), try small artist study.' : yl === 'Years 5-6' ? 'Research artist's full body of work, develop sustained personal series, critique using formal analysis framework.' : 'Challenge with mixed media, complex compositions, peer mentoring roles. Create opportunities for independent experimentation and self-reflection.'
         },
         grouping: { whole: 'Demonstration and artist study', pairs: 'Peer critique partners', small: 'Shared materials tables of 4', individual: 'Studio creation time' }
       };
@@ -3167,8 +3796,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
       equipment: `${F} materials, sketchbooks, pencils, smocks`,
       context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase). Victorian Curriculum 2.0 Visual Arts.`,
       differentiation: {
-        support: 'Provide step-by-step visual instructions, pre-drawn templates, simplified materials, shorter work time. Pair with a buddy. Offer colour wheels and reference images.',
-        extension: 'Challenge with mixed media, complex compositions, peer mentoring roles. Create opportunities for independent experimentation and self-reflection.',
+        support: yl === 'Foundation' ? 'Offer sensory materials, pre-drawn outlines, finger painting, guided mark-making. Focus on process over product.' : yl === 'Years 1-2' ? 'Provide step-by-step visual instructions, colour wheel reference, pre-mixed colours, teacher demonstration before each step.' : yl === 'Years 5-6' ? 'Provide artist exemplars, scaffold critique language, allow alternative media, reduce required detail.' : 'Provide step-by-step visual instructions, pre-drawn templates, simplified materials, shorter work time. Pair with a buddy. Offer colour wheels and reference images.',
+        extension: yl === 'Foundation' ? 'Try multiple materials in one artwork, name colours mixed, describe what they made.' : yl === 'Years 1-2' ? 'Add a second medium, introduce simple composition rules (rule of thirds), try small artist study.' : yl === 'Years 5-6' ? 'Research artist's full body of work, develop sustained personal series, critique using formal analysis framework.' : 'Challenge with mixed media, complex compositions, peer mentoring roles. Create opportunities for independent experimentation and self-reflection.',
       },
       grouping: { whole: 'Demonstration and artist study', pairs: 'Peer critique partners', small: 'Shared materials tables of 4', individual: 'Studio creation time' }
     };
@@ -3201,6 +3830,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         {t:`Food Unit Celebration`, li:`celebrate our French food learning with a class activity`, sc:['I can use food vocabulary confidently','I can have a food conversation in French','I can reflect on what I learned'], eq:'Certificates, reflection sheets, optional food tasting'},
       ],
     };
+    Object.assign(frWeeks, frYearMap[yl] || {});
     const weekArr = frWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3211,8 +3841,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
         differentiation: {
-          support: 'Use pictures and visual supports for vocabulary. Allow use of word banks. Provide sentence frames. Practice pronunciation in small groups. Pair with bilingual buddies.',
-          extension: 'Encourage complex sentences, conversations with nuance. Challenge to teach peers. Extend into reading and writing. Create cultural connections.'
+          support: yl === 'Foundation' ? 'Use songs, repetition and TPR (Total Physical Response). Focus on listening before speaking. Use lots of pictures and realia. No written French expected.' : yl === 'Years 1-2' ? 'Provide picture dictionaries, sentence frames, word mats. Allow miming. Pair with confident speaker. Focus on key phrases.' : yl === 'Years 5-6' ? 'Scaffold with verb conjugation charts, translation tools. Break complex sentences into chunks. Allow dictionary use.' : 'Use pictures and visual supports for vocabulary. Allow use of word banks. Provide sentence frames. Practice pronunciation in small groups. Pair with bilingual buddies.',
+          extension: yl === 'Foundation' ? 'Learn extra vocabulary, lead call-and-response, try counting higher or naming more colours.' : yl === 'Years 1-2' ? 'Write simple French sentences, research a French-speaking country, create a mini French book.' : yl === 'Years 5-6' ? 'Read authentic French texts, write extended paragraphs, research French literature or film, lead class conversation.' : 'Encourage complex sentences, conversations with nuance. Challenge to teach peers. Extend into reading and writing. Create cultural connections.'
         },
         grouping: { whole: 'Pronunciation and vocabulary', pairs: 'Dialogue practice', small: 'Role-play groups of 3-4', individual: 'Writing practice' }
       };
@@ -3229,8 +3859,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
       equipment: 'Flashcards, mini whiteboards, markers, visual aids',
       context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
       differentiation: {
-        support: 'Use pictures and visual supports for vocabulary. Allow use of word banks. Provide sentence frames. Practice pronunciation in small groups. Pair with bilingual buddies.',
-        extension: 'Encourage complex sentences, conversations with nuance. Challenge to teach peers. Extend into reading and writing. Create cultural connections.'
+        support: yl === 'Foundation' ? 'Use songs, repetition and TPR (Total Physical Response). Focus on listening before speaking. Use lots of pictures and realia. No written French expected.' : yl === 'Years 1-2' ? 'Provide picture dictionaries, sentence frames, word mats. Allow miming. Pair with confident speaker. Focus on key phrases.' : yl === 'Years 5-6' ? 'Scaffold with verb conjugation charts, translation tools. Break complex sentences into chunks. Allow dictionary use.' : 'Use pictures and visual supports for vocabulary. Allow use of word banks. Provide sentence frames. Practice pronunciation in small groups. Pair with bilingual buddies.',
+        extension: yl === 'Foundation' ? 'Learn extra vocabulary, lead call-and-response, try counting higher or naming more colours.' : yl === 'Years 1-2' ? 'Write simple French sentences, research a French-speaking country, create a mini French book.' : yl === 'Years 5-6' ? 'Read authentic French texts, write extended paragraphs, research French literature or film, lead class conversation.' : 'Encourage complex sentences, conversations with nuance. Challenge to teach peers. Extend into reading and writing. Create cultural connections.'
       }
     };
   }
@@ -3258,6 +3888,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         {t:`Earth and Space: Present Our Learning`, li:`share what we have learned about Earth and space`, sc:['I can explain an Earth or space concept','I can present findings to an audience','I can reflect on what I learned'], eq:'Poster/digital presentation materials, models'}
       ]
     };
+    Object.assign(sciWeeks, sciYearMap[yl] || {});
     const weekArr = sciWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3268,8 +3899,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} \u2014 ${F} unit (${phase} phase).`,
         differentiation: {
-          support: 'Use visual aids and graphic organisers. Provide word banks for science vocabulary. Pair with a science buddy. Offer sentence starters for recording observations. Allow extra time for hands-on exploration.',
-          extension: 'Design independent investigations. Research additional science concepts. Create detailed scientific diagrams. Present findings using scientific language and conventions.'
+          support: yl === 'Foundation' ? 'Focus on hands-on exploration only. Use pictures for recording. No formal writing — drawing and oral responses are enough. Use predictable materials.' : yl === 'Years 1-2' ? 'Use graphic organisers with picture prompts. Provide word banks. Allow oral recordings. Buddy pairs for observations. Sentence frames for reporting.' : yl === 'Years 5-6' ? 'Scaffold with labelled diagrams, structured investigation planners, worked examples. Reduce writing demands for key concepts.' : 'Use visual aids and graphic organisers. Provide word banks for science vocabulary. Pair with a science buddy. Offer sentence starters for recording observations. Allow extra time for hands-on exploration.',
+          extension: yl === 'Foundation' ? 'Identify more living things, try to classify in a new way, ask their own question about what they observed.' : yl === 'Years 1-2' ? 'Design a simple investigation, add more detail to observations, research an animal or plant independently.' : yl === 'Years 5-6' ? 'Design full controlled experiments, analyse variables, write up in formal scientific report format, peer review investigations.' : 'Design independent investigations. Research additional science concepts. Create detailed scientific diagrams. Present findings using scientific language and conventions.'
         }
       };
     }
@@ -3293,6 +3924,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         {t:`Digital Solutions: Share and Reflect`, li:`present and evaluate digital solutions`, sc:['I can demonstrate my digital solution','I can explain how my solution solves the problem','I can suggest improvements'], eq:'Coding devices, presentation setup, peer feedback sheets'}
       ]
     };
+    Object.assign(dtWeeks, dtYearMap[yl] || {});
     const weekArr = dtWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3303,8 +3935,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} \u2014 ${F} unit (${phase} phase).`,
         differentiation: {
-          support: 'Use structured activities with clear step-by-step instructions. Provide visual guides and worked examples. Allow buddy work with confident peers. Offer simplified coding tasks with pre-built templates.',
-          extension: 'Challenge with open-ended problems requiring multi-step solutions. Encourage debugging and optimisation. Introduce additional coding concepts. Lead peer teaching sessions.'
+          support: yl === 'Foundation' ? 'Pre-load activities on devices. Use large-button interfaces. Focus on mouse/touch skills before content. Pair with confident peer. Allow physical/unplugged alternatives.' : yl === 'Years 1-2' ? 'Use Scratch Jr with pre-built sprites. Unplugged algorithm activities first. Provide printed step-by-step guides. Allow extra practice time.' : yl === 'Years 5-6' ? 'Provide pseudocode scaffolds, worked examples. Allow use of reference sheets. Break Python tasks into small steps. Pair with peer mentor.' : 'Use structured activities with clear step-by-step instructions. Provide visual guides and worked examples. Allow buddy work with confident peers. Offer simplified coding tasks with pre-built templates.',
+          extension: yl === 'Foundation' ? 'Explore additional device features, create a short digital story, extend data collection.' : yl === 'Years 1-2' ? 'Add extra commands to algorithm, create a longer Scratch Jr sequence, collect and graph more complex data.' : yl === 'Years 5-6' ? 'Add additional Python features (file I/O, OOP basics), optimise algorithms, research cybersecurity case study independently.' : 'Challenge with open-ended problems requiring multi-step solutions. Encourage debugging and optimisation. Introduce additional coding concepts. Lead peer teaching sessions.'
         }
       };
     }
@@ -3326,6 +3958,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         {t:`Rhythm Unit Reflection`, li:`reflect on rhythm skills developed across the unit`, sc:['I can name 3 rhythm concepts I learned','I can perform a rhythm from notation','I can identify rhythm in everyday music'], eq:'Reflection sheets, audio examples, rhythm cards'},
       ],
     };
+    Object.assign(musWeeks, musYearMap[yl] || {});
     const weekArr = musWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3336,8 +3969,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
         differentiation: {
-          support: 'Use larger/easier-to-grip instruments. Provide rhythm patterns with visual symbols. Allow extra practice time. Pair with confident musicians. Use call-and-response activities.',
-          extension: 'Challenge with complex rhythms, off-beat patterns, multi-part compositions. Encourage improvisation and peer teaching. Introduce notation complexity.'
+          support: yl === 'Foundation' ? 'Focus on body percussion before instruments. Use movement to feel the beat. Simplify to clap/stop only. Use songs with repetitive patterns.' : yl === 'Years 1-2' ? 'Use larger instruments, provide visual rhythm symbols (not formal notation). Extra echo-clapping practice. Partner support.' : yl === 'Years 5-6' ? 'Provide notation with symbols and sound. Allow use of a reference sheet for time signatures. Partner rhythm reading before solo.' : 'Use larger/easier-to-grip instruments. Provide rhythm patterns with visual symbols. Allow extra practice time. Pair with confident musicians. Use call-and-response activities.',
+          extension: yl === 'Foundation' ? 'Create their own 2-beat body percussion pattern, invent a movement sequence.' : yl === 'Years 1-2' ? 'Read and compose 4-beat notation, add dynamics, try a pitched instrument independently.' : yl === 'Years 5-6' ? 'Compose a multi-part piece, incorporate syncopation, notate in Sibelius/Flat.io, lead ensemble as conductor.' : 'Challenge with complex rhythms, off-beat patterns, multi-part compositions. Encourage improvisation and peer teaching. Introduce notation complexity.'
         },
         grouping: { whole: 'Listening and call-response', pairs: 'Rhythm echo partners', small: 'Ensemble groups of 4-5', individual: 'Composition reflection' }
       };
@@ -3353,8 +3986,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
       equipment: 'Classroom instruments, audio playback, rhythm/notation cards',
       context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
       differentiation: {
-        support: 'Use larger/easier-to-grip instruments. Provide rhythm patterns with visual symbols. Allow extra practice time. Pair with confident musicians. Use call-and-response activities.',
-        extension: 'Challenge with complex rhythms, off-beat patterns, multi-part compositions. Encourage improvisation and peer teaching. Introduce notation complexity.'
+        support: yl === 'Foundation' ? 'Focus on body percussion before instruments. Use movement to feel the beat. Simplify to clap/stop only. Use songs with repetitive patterns.' : yl === 'Years 1-2' ? 'Use larger instruments, provide visual rhythm symbols (not formal notation). Extra echo-clapping practice. Partner support.' : yl === 'Years 5-6' ? 'Provide notation with symbols and sound. Allow use of a reference sheet for time signatures. Partner rhythm reading before solo.' : 'Use larger/easier-to-grip instruments. Provide rhythm patterns with visual symbols. Allow extra practice time. Pair with confident musicians. Use call-and-response activities.',
+        extension: yl === 'Foundation' ? 'Create their own 2-beat body percussion pattern, invent a movement sequence.' : yl === 'Years 1-2' ? 'Read and compose 4-beat notation, add dynamics, try a pitched instrument independently.' : yl === 'Years 5-6' ? 'Compose a multi-part piece, incorporate syncopation, notate in Sibelius/Flat.io, lead ensemble as conductor.' : 'Challenge with complex rhythms, off-beat patterns, multi-part compositions. Encourage improvisation and peer teaching. Introduce notation complexity.'
       }
     };
   }
@@ -3375,6 +4008,7 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         {t:`Drama Reflection & Goal Setting`, li:`reflect on improvisation skills and set goals for future drama`, sc:['I can name 3 improv skills I developed','I can give constructive feedback','I can set a drama goal for next term'], eq:'Reflection worksheets, video of performances (optional)'},
       ],
     };
+    Object.assign(dramaWeeks, dramaYearMap[yl] || {});
     const weekArr = dramaWeeks[unit];
     if (weekArr && weekArr[w-1]) {
       const wd = weekArr[w-1];
@@ -3385,8 +4019,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
         equipment: wd.eq,
         context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
         differentiation: {
-          support: 'Use structured activities with clear instructions. Provide sentence starters for character development. Allow buddy work with confident students. Provide character cards with descriptions.',
-          extension: 'Challenge with multi-character scenes, layered emotions, abstract concepts. Encourage improvisation without scripts. Create peer directing opportunities.'
+          support: yl === 'Foundation' ? 'Use familiar scenarios (animals, family, school). Lead with teacher-in-role. Keep activities short. Use movement before voice. Allow observation before joining.' : yl === 'Years 1-2' ? 'Provide character cards with descriptions. Use structured scenarios. Short scenes only (30 seconds). Buddy pairs. Give sentence starters.' : yl === 'Years 5-6' ? 'Provide character motivation cards. Scaffold with given circumstances framework. Allow script reading before improvisation.' : 'Use structured activities with clear instructions. Provide sentence starters for character development. Allow buddy work with confident students. Provide character cards with descriptions.',
+          extension: yl === 'Foundation' ? 'Lead a group in pretend play, invent a new character, add a problem to the story.' : yl === 'Years 1-2' ? 'Create an extra character, write a scene script, direct their group in a short performance.' : yl === 'Years 5-6' ? 'Direct peer scenes using staging vocabulary, write a multi-scene script, analyse professional performance using Stanislavski principles.' : 'Challenge with multi-character scenes, layered emotions, abstract concepts. Encourage improvisation without scripts. Create peer directing opportunities.'
         },
         grouping: { whole: 'Warm-up and discussion', pairs: 'Partner scenes', small: 'Performance groups of 3-5', individual: 'Reflection and journaling' }
       };
@@ -3402,8 +4036,8 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
       equipment: 'Open space, props, prompt cards',
       context: `Week ${w} of ${totalWeeks} — ${F} unit (${phase} phase).`,
       differentiation: {
-        support: 'Use structured activities with clear instructions. Provide sentence starters for character development. Allow buddy work with confident students. Provide character cards with descriptions.',
-        extension: 'Challenge with multi-character scenes, layered emotions, abstract concepts. Encourage improvisation without scripts. Create peer directing opportunities.'
+        support: yl === 'Foundation' ? 'Use familiar scenarios (animals, family, school). Lead with teacher-in-role. Keep activities short. Use movement before voice. Allow observation before joining.' : yl === 'Years 1-2' ? 'Provide character cards with descriptions. Use structured scenarios. Short scenes only (30 seconds). Buddy pairs. Give sentence starters.' : yl === 'Years 5-6' ? 'Provide character motivation cards. Scaffold with given circumstances framework. Allow script reading before improvisation.' : 'Use structured activities with clear instructions. Provide sentence starters for character development. Allow buddy work with confident students. Provide character cards with descriptions.',
+        extension: yl === 'Foundation' ? 'Lead a group in pretend play, invent a new character, add a problem to the story.' : yl === 'Years 1-2' ? 'Create an extra character, write a scene script, direct their group in a short performance.' : yl === 'Years 5-6' ? 'Direct peer scenes using staging vocabulary, write a multi-scene script, analyse professional performance using Stanislavski principles.' : 'Challenge with multi-character scenes, layered emotions, abstract concepts. Encourage improvisation without scripts. Create peer directing opportunities.'
       }
     };
   }
