@@ -9059,7 +9059,24 @@ let currentProfile = null;
 let authStateInitialized = false;
 
 // Initialize auth when script loads
-initAuth();
+initAuth().then(() => {
+  // Handle ?plan=pro or ?plan=school from landing page pricing buttons
+  const urlPlan = new URLSearchParams(window.location.search).get('plan');
+  if (urlPlan === 'pro' || urlPlan === 'school') {
+    // Clean URL without reloading
+    history.replaceState({}, '', window.location.pathname);
+    // Small delay to let UI settle, then trigger checkout or signup
+    setTimeout(() => {
+      if (currentUser) {
+        startCheckout(urlPlan);
+      } else {
+        // Show auth modal then checkout after sign in
+        showAuthModal('signin');
+        showToast('Sign in first, then we\'ll take you straight to checkout.', 'info');
+      }
+    }, 400);
+  }
+});
 
 /**
  * Initialize auth: check existing session token, update UI
