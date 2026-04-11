@@ -10029,22 +10029,21 @@ async function handleSignOut() {
  * Handle forgot password
  */
 async function handleForgotPassword(email) {
+  const forgotError = document.getElementById('forgotError');
+  const forgotSuccess = document.getElementById('forgotSuccess');
+  if (forgotError) forgotError.innerHTML = '';
+  if (forgotSuccess) forgotSuccess.innerHTML = '';
   try {
-    const forgotError = document.getElementById('forgotError');
-    const forgotSuccess = document.getElementById('forgotSuccess');
-
-    if (forgotError) forgotError.innerHTML = '';
-    if (forgotSuccess) forgotSuccess.innerHTML = '';
-
-    // Password reset via email not yet available — show instructions
-    const successMsg = `<div class="auth-success">Please contact support to reset your password for ${email}.</div>`;
-    if (forgotSuccess) forgotSuccess.innerHTML = successMsg;
+    const res = await fetch(API_BASE + '/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    // Always show success (server never reveals if email exists)
+    if (forgotSuccess) forgotSuccess.innerHTML = '<div class="auth-success">If that email is registered, a reset link has been sent. Check your inbox (and spam folder).</div>';
     return true;
   } catch (error) {
-    const forgotError = document.getElementById('forgotError');
-    const errorMsg = `<div class="auth-error">${error.message || 'An error occurred'}</div>`;
-    if (forgotError) forgotError.innerHTML = errorMsg;
-    console.error('Forgot password error:', error);
+    if (forgotError) forgotError.innerHTML = '<div class="auth-error">Network error. Please try again.</div>';
     return false;
   }
 }
@@ -10525,12 +10524,16 @@ async function showMyLessonsModal() {
   content.innerHTML = lessons.map(function(l) {
     var date = l.updated_at ? new Date(l.updated_at).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'}) : '';
     var meta = [l.subject, l.year_level ? 'Year ' + l.year_level : '', l.term ? 'Term ' + l.term : ''].filter(Boolean).join(' · ');
-    return '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;">' +
+    var escapedId = l.id.replace(/'/g, "\\'");
+    return '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;">' +
       '<div style="flex:1;min-width:0;">' +
         '<div style="font-weight:600;color:#111827;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (l.title || 'Untitled Lesson') + '</div>' +
         '<div style="font-size:0.8rem;color:#6b7280;margin-top:2px;">' + meta + (date ? (meta ? ' &mdash; ' : '') + 'Saved ' + date : '') + '</div>' +
       '</div>' +
-      '<button onclick="deleteSavedLesson(\'' + l.id + '\', this)" style="flex-shrink:0;padding:6px 12px;background:#fee2e2;color:#991b1b;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;">Delete</button>' +
+      '<div style="display:flex;gap:6px;flex-shrink:0;">' +
+        '<button onclick="loadSavedLesson(\'' + escapedId + '\')" style="padding:6px 12px;background:#dbeafe;color:#1d4ed8;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;">View</button>' +
+        '<button onclick="deleteSavedLesson(\'' + escapedId + '\', this)" style="padding:6px 12px;background:#fee2e2;color:#991b1b;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;font-weight:600;">Delete</button>' +
+      '</div>' +
     '</div>';
   }).join('');
 }
@@ -10545,6 +10548,36 @@ async function deleteSavedLesson(id, btn) {
   } else {
     btn.disabled = false;
     btn.textContent = 'Delete';
+  }
+}
+
+async function loadSavedLesson(id) {
+  try {
+    var data = await api('/lessons/' + id);
+    if (!data || !data.lesson_data) { showToast('Could not load lesson data.', 'error'); return; }
+    var ld = data.lesson_data;
+    // Close the modal
+    var modal = document.getElementById('myLessonsModal');
+    if (modal) modal.remove();
+    // Apply lesson to the current view — populate the lesson fields
+    if (typeof displayLesson === 'function' && ld) {
+      displayLesson(ld);
+      showToast('Lesson loaded: ' + (data.title || 'Untitled'), 'success');
+    } else {
+      // Fallback: show the lesson data in a simple popup
+      var popup = document.createElement('div');
+      popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:5000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;';
+      popup.innerHTML = '<div style="background:white;border-radius:12px;max-width:760px;width:100%;padding:28px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">' +
+        '<h3 style="margin:0;font-size:1.1rem;font-weight:700;">' + (data.title || 'Lesson') + '</h3>' +
+        '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#6b7280;">&times;</button></div>' +
+        '<pre style="white-space:pre-wrap;word-break:break-word;font-size:0.8rem;color:#374151;background:#f9fafb;padding:16px;border-radius:8px;max-height:60vh;overflow-y:auto;">' +
+        JSON.stringify(ld, null, 2) + '</pre></div>';
+      popup.addEventListener('click', function(e){ if(e.target===popup) popup.remove(); });
+      document.body.appendChild(popup);
+    }
+  } catch(e) {
+    showToast('Failed to load lesson.', 'error');
   }
 }
 
@@ -10722,7 +10755,82 @@ async function saveAccountSettings() {
     const modal = document.getElementById('pricingModal');
     if (modal && e.target === modal) closePricingModal();
   });
+
+  // Handle password reset token in URL (?reset_token=...)
+  const resetToken = params.get('reset_token');
+  if (resetToken) {
+    history.replaceState({}, document.title, location.pathname);
+    showResetPasswordModal(resetToken);
+  }
 })();
+
+function showResetPasswordModal(token) {
+  var existing = document.getElementById('resetPwModal');
+  if (existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'resetPwModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:5500;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:white;border-radius:14px;width:100%;max-width:400px;padding:32px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+      <h2 style="margin:0 0 6px;font-size:1.3rem;font-weight:700;color:#111827;">Choose a new password</h2>
+      <p style="margin:0 0 20px;font-size:0.875rem;color:#6b7280;">Enter a new password for your account. Must be at least 6 characters.</p>
+      <div id="resetPwError" style="margin-bottom:10px;"></div>
+      <div id="resetPwSuccess" style="margin-bottom:10px;"></div>
+      <input type="password" id="resetPwInput" placeholder="New password" autocomplete="new-password"
+        style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:0.95rem;margin-bottom:12px;outline:none;">
+      <input type="password" id="resetPwConfirm" placeholder="Confirm password" autocomplete="new-password"
+        style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:0.95rem;margin-bottom:18px;outline:none;">
+      <button id="resetPwSubmit" onclick="submitResetPassword('${token}')"
+        style="width:100%;padding:11px;background:#2563eb;color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer;">
+        Set New Password
+      </button>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+async function submitResetPassword(token) {
+  var pw = document.getElementById('resetPwInput').value;
+  var confirm = document.getElementById('resetPwConfirm').value;
+  var errEl = document.getElementById('resetPwError');
+  var successEl = document.getElementById('resetPwSuccess');
+  var btn = document.getElementById('resetPwSubmit');
+  if (errEl) errEl.innerHTML = '';
+  if (successEl) successEl.innerHTML = '';
+  if (!pw || pw.length < 6) {
+    if (errEl) errEl.innerHTML = '<div class="auth-error">Password must be at least 6 characters.</div>';
+    return;
+  }
+  if (pw !== confirm) {
+    if (errEl) errEl.innerHTML = '<div class="auth-error">Passwords do not match.</div>';
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    var res = await fetch(API_BASE + '/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, new_password: pw })
+    });
+    var data = await res.json();
+    if (!res.ok) {
+      if (errEl) errEl.innerHTML = '<div class="auth-error">' + (data.error || 'Reset failed. The link may have expired.') + '</div>';
+      if (btn) { btn.disabled = false; btn.textContent = 'Set New Password'; }
+      return;
+    }
+    if (successEl) successEl.innerHTML = '<div class="auth-success">Password updated! Signing you in…</div>';
+    if (btn) btn.style.display = 'none';
+    setTimeout(function() {
+      var modal = document.getElementById('resetPwModal');
+      if (modal) modal.remove();
+      document.getElementById('authModal').classList.add('show');
+      switchAuthTab('signin');
+      showToast('Password updated — please sign in.', 'success');
+    }, 1800);
+  } catch(e) {
+    if (errEl) errEl.innerHTML = '<div class="auth-error">Network error. Please try again.</div>';
+    if (btn) { btn.disabled = false; btn.textContent = 'Set New Password'; }
+  }
+}
 </script>
 <div id="adminPanelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:5000;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;">
   <div style="background:white;border-radius:16px;width:100%;max-width:900px;padding:32px;">
