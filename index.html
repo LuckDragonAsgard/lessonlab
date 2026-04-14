@@ -4952,7 +4952,7 @@ const frYearMap = {'Foundation': _frFoundation, 'Years 1-2': _fr12, 'Years 5-6':
   return {
     title: `${F}: Week ${w}`,
     li: `develop skills and understanding in ${f}`,
-    sc: ['I can participate actively\nI can demonstrate developing skills\nI can reflect on my learning'],
+    sc: 'I can participate actively\nI can demonstrate developing skills\nI can reflect on my learning',
     equipment: 'Standard classroom equipment',
     context: `Week ${w} of ${totalWeeks}.`,
     differentiation: {
@@ -4998,7 +4998,7 @@ function buildHTML(d, cfg, cds) {
   const scaff = (typeof SCAFFOLDS !== 'undefined' && SCAFFOLDS[subjKey]) ? SCAFFOLDS[subjKey] : {};
   const c = (typeof schoolBranding !== 'undefined' && schoolBranding.primaryColour) ? schoolBranding.primaryColour : cfg.colour;
   const ac = (typeof schoolBranding !== 'undefined' && schoolBranding.secondaryColour) ? schoolBranding.secondaryColour : (cfg.accent || c);
-  const sc = d.sc.split('\n').filter(s => s.trim());
+  const sc = (Array.isArray(d.sc) ? d.sc.join('\n') : (d.sc || '')).split('\n').filter(s => s.trim());
   const cdTxt = cds.map(x => `<b>${x.code}</b> · ${x.desc}`).join('<br>');
   const logo = d.logo ? `<img src="${d.logo}" style="width:125px;display:block;">` : '';
   const P = cfg.phases, T = cfg.times;
@@ -5462,7 +5462,10 @@ function initBuildWorker() {
     };
     _buildWorker.onerror = function(err) {
       console.warn('Build worker error:', err);
+      var pending = Object.assign({}, _buildCallbacks);
+      _buildCallbacks = {};
       _buildWorker = null;
+      Object.values(pending).forEach(function(cb) { cb(null); });
     };
   } catch(e) {
     console.warn('Worker init failed, sync fallback:', e);
@@ -5484,7 +5487,7 @@ function buildHTMLAsync(d, cfg, cds) {
       if (_buildCallbacks[id]) {
         console.warn('Worker timeout, sync fallback');
         delete _buildCallbacks[id];
-        resolve(buildHTML(d, cfg, cds));
+        try { resolve(buildHTML(d, cfg, cds)); } catch(e) { console.error('buildHTML sync fallback error:', e); resolve(''); }
       }
     }, 10000);
   });
@@ -6408,7 +6411,7 @@ function _docxCell(text, width, fill, bold, textColor, fontSize) {
 
 function _docxBuildPhasesTable(phases, times, d) {
   var col1 = 2160, col2 = 1080, col3 = 6840; // total = 10080
-  var sc = d.sc.split('\n').filter(function(s){ return s.trim(); });
+  var sc = (Array.isArray(d.sc) ? d.sc.join('\n') : (d.sc || '')).split('\n').filter(function(s){ return s.trim(); });
   var activities = [
     'Settle students. Introduce the learning intention: "' + d.li + '". Quick warm-up activity.',
     'Explicit teaching. Demonstrate the key concept. Teaching points: ' + sc.slice(0, 3).join(' | '),
@@ -6503,7 +6506,7 @@ function _docxBuildDocument(lessons, cfg) {
 
   lessons.forEach(function(lesson, idx) {
     var d = lesson.data;
-    var sc = d.sc.split('\n').filter(function(s){ return s.trim(); });
+    var sc = (Array.isArray(d.sc) ? d.sc.join('\n') : (d.sc || '')).split('\n').filter(function(s){ return s.trim(); });
     var diff = d.differentiation || {};
 
     if (idx > 0) {
@@ -6725,7 +6728,7 @@ function _docxBuildTemplateDocument(lessons, cfg, tmpl) {
 
   lessons.forEach(function(lesson, idx) {
     var d = lesson.data;
-    var sc = d.sc.split('\n').filter(function(s){return s.trim();});
+    var sc = (Array.isArray(d.sc) ? d.sc.join('\n') : (d.sc || '')).split('\n').filter(function(s){return s.trim();});
 
     if (idx > 0) parts.push('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
 
