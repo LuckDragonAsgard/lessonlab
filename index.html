@@ -6255,6 +6255,7 @@ function displayResults() {
               <button class="btn btn-sec" onclick="previewLesson(${lesson.globalIdx})">Preview</button>
               <button class="btn btn-sec" onclick="editLesson(${lesson.globalIdx})">Edit</button>
               <button class="btn btn-sec" onclick="downloadOne(${lesson.globalIdx})">Download</button>
+              <button class="btn btn-sec" onclick="generateLessonSlide(${lesson.globalIdx})" style="font-size:11px;" title="Generate a PowerPoint slide for this lesson">📊 Slides</button>
               <button class="btn btn-sec" onclick="saveLessonToCloud(${lesson.globalIdx}, this)" style="font-size:11px;">💾 Save</button>
               <button class="btn btn-sec" onclick="openTimer(${lesson.globalIdx})" style="font-size:11px;">Timer</button>
               <button class="btn btn-sec" onclick="printStudentTracker(${lesson.globalIdx})" style="font-size:11px;">Tracker</button>
@@ -6311,6 +6312,7 @@ function displayResults() {
             <button class="btn btn-sec" onclick="previewLesson(${lesson.globalIdx})">Preview</button>
             <button class="btn btn-sec" onclick="editLesson(${lesson.globalIdx})">Edit</button>
             <button class="btn btn-sec" onclick="downloadOne(${lesson.globalIdx})">Download</button>
+            <button class="btn btn-sec" onclick="generateLessonSlide(${lesson.globalIdx})" style="font-size:11px;" title="Generate a PowerPoint slide for this lesson">📊 Slides</button>
             <button class="btn btn-sec" onclick="openTimer(${lesson.globalIdx})" style="font-size:11px;">Timer</button>
             <button class="btn btn-sec" onclick="printStudentTracker(${lesson.globalIdx})" style="font-size:11px;">Tracker</button>
             <button class="btn btn-sec" onclick="generateRubric(${lesson.globalIdx})" style="font-size:11px;">Rubric</button>
@@ -9399,6 +9401,119 @@ async function generateLessonSlideshow() {
   } finally {
     btn.disabled = false;
     btn.textContent = '📊 Generate Slides';
+  }
+}
+
+// ============================================================================
+// SINGLE LESSON SLIDE GENERATOR
+// ============================================================================
+
+async function generateLessonSlide(idx) {
+  if (!isPaidUser()) { openPricingModal(); return; }
+  const lesson = state.lessons[idx];
+  if (!lesson) return;
+  const d = lesson.data || {};
+
+  try {
+    // Load PptxGenJS if needed
+    await new Promise((resolve, reject) => {
+      if (window.PptxGenJS) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js';
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Failed to load PptxGenJS'));
+      document.head.appendChild(s);
+    });
+
+    const subjKey = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === d.subject) || 'pe';
+    const cfg = SUBJ_CFG[subjKey] || {};
+    const colour = (cfg.colour || '#1565C0').replace('#', '');
+    const phases = cfg.phases || ['Introduction','Teaching','Practice','Application','Reflection'];
+    const times = cfg.times || ['5 min','10 min','15 min','15 min','5 min'];
+    const sc = (d.sc || '').split('\n').filter(s => s.trim()).slice(0, 5);
+    const school = (state && state.school) || (currentProfile && currentProfile.school_name) || 'School';
+
+    const PHASE_COLORS = [['EFF6FF','1E40AF'],['F0FDF4','166534'],['FFF7ED','92400E'],['FDF4FF','6B21A8'],['FEF2F2','991B1B']];
+
+    const pres = new PptxGenJS();
+    pres.layout = 'LAYOUT_16x9';
+
+    // ── SLIDE 1: Title / LI / SC ─────────────────────────────────────────
+    const s1 = pres.addSlide();
+    s1.background = { color: 'FFFFFF' };
+
+    // Header bar
+    s1.addShape('rect', { x:0, y:0, w:10, h:0.8, fill:{color:colour}, line:{color:colour} });
+    s1.addText(`${cfg.icon || '📋'}  ${d.title || 'Lesson'}`, {
+      x:0.3, y:0, w:8, h:0.8,
+      fontSize:20, fontFace:'Calibri', color:'FFFFFF', bold:true, valign:'middle'
+    });
+    s1.addText(`Year ${d.year || ''} · ${d.subject || ''}`, {
+      x:8, y:0, w:1.9, h:0.8,
+      fontSize:11, fontFace:'Calibri', color:'FFFFFF', align:'right', valign:'middle'
+    });
+
+    // Learning Intention
+    s1.addText('📚  Learning Intention', { x:0.3, y:0.95, w:9.4, h:0.3, fontSize:11, fontFace:'Calibri', color:'6B7280', bold:true });
+    s1.addShape('rect', { x:0.3, y:1.26, w:9.4, h:0.8, fill:{color:'EFF6FF'}, line:{color:'BFDBFE', pt:0.8} });
+    s1.addText('Students will ' + (d.li || ''), {
+      x:0.45, y:1.3, w:9.1, h:0.72,
+      fontSize:13, fontFace:'Calibri', color:'1E40AF', italic:true, valign:'middle'
+    });
+
+    // Success Criteria
+    s1.addText('✅  Success Criteria', { x:0.3, y:2.2, w:9.4, h:0.3, fontSize:11, fontFace:'Calibri', color:'6B7280', bold:true });
+    const scBoxH = Math.min(sc.length * 0.52 + 0.2, 2.4);
+    s1.addShape('rect', { x:0.3, y:2.52, w:9.4, h:scBoxH, fill:{color:'F9FAFB'}, line:{color:'E5E7EB', pt:0.8} });
+    if (sc.length) {
+      s1.addText(
+        sc.map((item, i) => ({ text: item.replace(/^[-•*]\s*/,'').trim(), options: { bullet:true, breakLine: i < sc.length-1, fontSize:12, fontFace:'Calibri', color:'111827', paraSpaceAfter:6 } })),
+        { x:0.48, y:2.58, w:9.1, h:scBoxH - 0.15 }
+      );
+    }
+
+    // Footer
+    s1.addShape('rect', { x:0, y:5.42, w:10, h:0.21, fill:{color:'F9FAFB'}, line:{color:'E5E7EB', pt:0.5} });
+    s1.addText(`LessonLab · ${school} · ${d.subject || ''} · Year ${d.year || ''} · Week ${lesson.week || ''}`, {
+      x:0.3, y:5.43, w:9.4, h:0.19, fontSize:8, fontFace:'Calibri', color:'9CA3AF', align:'right'
+    });
+
+    // ── SLIDE 2: Lesson Phases ───────────────────────────────────────────
+    const s2 = pres.addSlide();
+    s2.background = { color: 'FFFFFF' };
+
+    s2.addShape('rect', { x:0, y:0, w:10, h:0.65, fill:{color:colour}, line:{color:colour} });
+    s2.addText('Lesson at a Glance', { x:0.3, y:0, w:9.4, h:0.65, fontSize:18, fontFace:'Calibri', color:'FFFFFF', bold:true, valign:'middle' });
+
+    const phaseH = 0.84, phaseGap = 0.06;
+    phases.slice(0,5).forEach((phase, i) => {
+      const py = 0.78 + i * (phaseH + phaseGap);
+      const [bg, fg] = PHASE_COLORS[i];
+      s2.addShape('rect', { x:0.3, y:py, w:9.4, h:phaseH, fill:{color:bg}, line:{color:'E5E7EB', pt:0.8} });
+      s2.addShape('rect', { x:0.3, y:py, w:0.08, h:phaseH, fill:{color:colour}, line:{color:colour} });
+      s2.addText(phase, { x:0.52, y:py+0.06, w:2.5, h:0.36, fontSize:12, fontFace:'Calibri', color:fg, bold:true });
+      s2.addText(times[i] || '', { x:0.52, y:py+0.44, w:2.5, h:0.3, fontSize:10, fontFace:'Calibri', color:'9CA3AF' });
+      // Equipment hint for first phase only
+      if (i === 0 && d.equipment) {
+        s2.addText('📦 ' + d.equipment.split('·')[0].trim(), {
+          x:3.2, y:py+0.06, w:6.3, h:0.72,
+          fontSize:10, fontFace:'Calibri', color:'374151', valign:'middle'
+        });
+      }
+    });
+
+    s2.addShape('rect', { x:0, y:5.42, w:10, h:0.21, fill:{color:'F9FAFB'}, line:{color:'E5E7EB', pt:0.5} });
+    s2.addText(`LessonLab · ${school} · ${d.subject || ''} · Year ${d.year || ''} · Week ${lesson.week || ''}`, {
+      x:0.3, y:5.43, w:9.4, h:0.19, fontSize:8, fontFace:'Calibri', color:'9CA3AF', align:'right'
+    });
+
+    const safeTitle = (d.title || 'Lesson').replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/ /g,'_');
+    await pres.writeFile({ fileName: `LessonLab_Week${lesson.week || ''}_${safeTitle}.pptx` });
+    showToast('📊 Slides downloaded!', 'success');
+
+  } catch(e) {
+    console.error('Lesson slide error:', e);
+    showToast('Could not generate slides: ' + e.message, 'error');
   }
 }
 
