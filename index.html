@@ -6969,8 +6969,8 @@ function saveEdit() {
   d.equipment = document.getElementById('editEquipment').value;
 
   // Regenerate HTML
-  const subjKey = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === d.subject);
-  const cfg = SUBJ_CFG[subjKey];
+  const subjKey = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === d.subject) || Object.keys(SUBJ_CFG).find(k => k === d.subjectKey);
+  const cfg = SUBJ_CFG[subjKey] || { phases: ['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'], times: ['5 min','10 min','15 min','15 min','5 min'], colour: '#374151', accent: '#6B7280', icon: '📋', name: d.subject || 'Lesson' };
   const cds = (CD[subjKey] && CD[subjKey][d.year]) ? CD[subjKey][d.year] : [];
 
   lesson.html = buildHTML(d, cfg, cds);
@@ -10848,17 +10848,23 @@ function showSubjectUpgradeModal(subjKey, displayName) {
   _pendingSubjectCheckout = subjKey;
   const mySubjects = getUserSubjects();
   const isFirst = mySubjects.length === 0;
-  const price = isFirst ? '$12' : '$5';
-  const priceNote = isFirst ? 'First subject · more subjects $5/mo each' : 'Additional subject · first subject $12/mo';
+  const annual = _pricingInterval === 'year';
+  const price = annual
+    ? (isFirst ? '$99' : '$45')
+    : (isFirst ? '$12' : '$5');
+  const unit = annual ? '/yr' : '/mo';
+  const priceNote = annual
+    ? (isFirst ? 'Annual · unlimited saves · Full Units included' : 'Annual · additional subject')
+    : (isFirst ? 'Monthly · 20 saves/month · more subjects $5/mo' : 'Monthly · additional subject · first subject $12/mo');
   const cfg = (typeof SUBJ_CFG !== 'undefined') ? Object.entries(SUBJ_CFG).find(([k]) => k === subjKey) : null;
   const icon = cfg ? cfg[1].icon : '📖';
   document.getElementById('subjectUpgradeIcon').textContent = icon;
   document.getElementById('subjectUpgradeTitle').textContent = `Unlock ${displayName}`;
   document.getElementById('subjectUpgradeDesc').textContent = `Full lesson generation, saving, and planning for ${displayName}.`;
-  document.getElementById('subjectUpgradePrice').innerHTML = `${price}<span style="font-size:1rem;font-weight:500;color:#888;">/mo</span>`;
+  document.getElementById('subjectUpgradePrice').innerHTML = `${price}<span style="font-size:1rem;font-weight:500;color:#888;">${unit}</span>`;
   document.getElementById('subjectUpgradePriceNote').textContent = priceNote;
   const btn = document.getElementById('subjectUpgradeBtn');
-  if (btn) { btn.textContent = `Get ${displayName} — ${price}/mo`; btn.disabled = false; }
+  if (btn) { btn.textContent = `Get ${displayName} — ${price}${unit}`; btn.disabled = false; }
   document.getElementById('subjectUpgradeModal').style.display = 'flex';
 }
 
