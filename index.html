@@ -9238,8 +9238,9 @@ async function generateLessonSlideshow() {
     ];
 
     const subjects = [...new Set(state.lessons.map(l => l.data.subject).filter(Boolean))];
-    // School logo (base64 data URL from logoData / first lesson)
-    const logoSrc = (state.lessons[0] && state.lessons[0].data && state.lessons[0].data.logo) || logoData || null;
+    // School logo — only use if it's a real PNG/JPG (PptxGenJS doesn't support SVG)
+    const rawLogo = (state.lessons[0] && state.lessons[0].data && state.lessons[0].data.logo) || logoData || null;
+    const logoSrc = (rawLogo && (rawLogo.startsWith('data:image/png') || rawLogo.startsWith('data:image/jpeg') || rawLogo.startsWith('data:image/jpg'))) ? rawLogo : null;
 
     // ── COVER SLIDE ─────────────────────────────────────────────────────
     const cover = pres.addSlide();
