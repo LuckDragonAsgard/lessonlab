@@ -1792,31 +1792,19 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   <!-- LANDING: SUBJECTS -->
   <div id="subjectsPanel" class="panel active">
 
-    <!-- HERO -->
-    <div class="ll-hero" style="background:linear-gradient(135deg,#08112b 0%,#0f1e42 60%,#08112b 100%);padding:44px 24px 36px;text-align:center;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-80px;right:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(59,110,248,0.12) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-      <div style="position:absolute;bottom:-80px;left:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(107,147,250,0.08) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-      <div style="position:relative;z-index:1;">
-        <div style="display:inline-flex;align-items:center;gap:7px;font-size:0.68rem;font-weight:700;letter-spacing:0.1em;color:#6b93fa;text-transform:uppercase;margin-bottom:16px;background:rgba(59,110,248,0.15);border:1px solid rgba(59,110,248,0.3);padding:5px 14px;border-radius:100px;">
-          <span style="width:5px;height:5px;border-radius:50%;background:#6b93fa;display:inline-block;box-shadow:0 0 5px #6b93fa;"></span>
-          Victorian Curriculum 2.0 · F–6
+    <!-- CREDENTIAL BAR — replaces hero. No sales pitch inside the app. -->
+    <div style="background:#0f172a;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 6px #22c55e;"></span>
+          <span style="font-size:0.75rem;font-weight:700;color:#e2e8f0;letter-spacing:0.04em;">Victorian Curriculum 2.0</span>
         </div>
-        <div class="ll-hero-title" style="font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;color:white;margin-bottom:12px;line-height:1.1;letter-spacing:-0.03em;">Stop spending your<br><span style="color:#6b93fa;">Sundays planning.</span></div>
-        <div class="ll-hero-sub" style="font-size:1rem;color:rgba(255,255,255,0.6);max-width:440px;margin:0 auto 24px;line-height:1.6;">Pick a subject, pick a unit. Get a complete lesson — ready to teach, print, or share.</div>
-        <div style="margin-bottom:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <button onclick="selectSubject('pe', SUBJ_CFG['pe'])" style="background:#3b6ef8;color:white;font-size:0.95rem;font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(59,110,248,0.45);transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(59,110,248,0.55)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(59,110,248,0.45)'">Try free — no card needed →</button>
-          <button onclick="document.getElementById('subjectsGrid').scrollIntoView({behavior:'smooth'})" style="background:transparent;color:rgba(255,255,255,0.7);font-size:0.9rem;font-weight:500;padding:13px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);cursor:pointer;transition:color .15s,border-color .15s;" onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.7)';this.style.borderColor='rgba(255,255,255,0.2)'">Browse subjects ↓</button>
-        </div>
-        <div class="ll-stats" style="display:flex;justify-content:center;align-items:center;gap:28px;flex-wrap:wrap;">
-          <div style="text-align:center;"><div class="ll-stat-num" style="font-size:1.8rem;font-weight:900;color:white;line-height:1;letter-spacing:-0.04em;">931</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Lessons</div></div>
-          <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
-          <div style="text-align:center;"><div class="ll-stat-num" style="font-size:1.8rem;font-weight:900;color:white;line-height:1;letter-spacing:-0.04em;">9</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Subjects</div></div>
-          <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
-          <div style="text-align:center;"><div class="ll-stat-num" style="font-size:1.8rem;font-weight:900;color:white;line-height:1;letter-spacing:-0.04em;">F–6</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Year Levels</div></div>
-          <div style="width:1px;height:28px;background:rgba(255,255,255,0.12);"></div>
-          <div style="text-align:center;"><div class="ll-stat-num" style="font-size:1.8rem;font-weight:900;color:white;line-height:1;letter-spacing:-0.04em;">&lt;60s</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Full lesson</div></div>
-        </div>
+        <span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">·</span>
+        <span style="font-size:0.75rem;font-weight:700;color:#e2e8f0;letter-spacing:0.04em;">VTLM 2.0</span>
+        <span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">·</span>
+        <span style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Foundation – Year 6 · 9 subjects · 931 lessons</span>
       </div>
+      <div style="font-size:0.72rem;color:rgba(255,255,255,0.35);">Aligned to VCAA achievement standards</div>
     </div>
 
     <!-- FEATURE STRIP -->
@@ -10446,20 +10434,13 @@ function updateSubjectLocking() {
         lockOverlay.className = 'subject-lock-icon';
         lockOverlay.style.cssText = `
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(0, 0, 0, 0.4);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: inherit;
+          bottom: 8px;
+          right: 8px;
           pointer-events: auto;
           z-index: 100;
           cursor: pointer;
         `;
-        lockOverlay.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+        lockOverlay.innerHTML = '<span style="background:#3b6ef8;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:0.03em;box-shadow:0 2px 6px rgba(59,110,248,0.4);">Unlock →</span>';
 
         // Make card position relative if not already
         if (getComputedStyle(card).position === 'static') {
@@ -10478,8 +10459,8 @@ function updateSubjectLocking() {
         });
       }
 
-      // Prevent clicking if locked
-      card.style.cursor = 'not-allowed';
+      // Clicking locked card opens upgrade modal
+      card.style.cursor = 'pointer';
       card.onclick = (e) => {
         e.preventDefault();
         e.stopImmediatePropagation();
