@@ -1726,11 +1726,6 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     </select>
   </div>
   <div class="form-group">
-    <label>Custom Logo (Base64 JPEG)</label>
-    <input type="file" id="logoUpload" accept="image/jpeg">
-  </div>
-
-  <div class="form-group">
     <label>School Primary Colour</label>
     <div style="display:flex;gap:8px;align-items:center;">
       <input type="color" id="schoolColour" value="#1565C0" style="width:40px;height:32px;padding:2px;cursor:pointer;">
@@ -9977,8 +9972,7 @@ document.getElementById('resetSettingsBtn').onclick = () => {
   document.getElementById('curriculumPreview').textContent = 'No curriculum uploaded';
   document.getElementById('templateUpload').value = '';
   document.getElementById('curriculumUpload').value = '';
-  document.getElementById('logoUpload').value = '';
-
+  
   localStorage.removeItem('lessonlab_settings');
   alert('Settings reset to defaults.');
 };
@@ -10003,7 +9997,6 @@ document.getElementById('resetSettingsBtn').onclick = () => {
     }
     if (saved.logo) {
       logoData = saved.logo;
-      setHeaderLogo(saved.logo);
     }
     if (saved.template) {
       document.getElementById('templateStatus').textContent = '📄 Previously loaded: ' + saved.template.name;
@@ -10060,32 +10053,7 @@ document.getElementById('schoolTerm').onchange = (e) => {
 document.getElementById('scopeWeeks').onchange = updateSummary;
 document.getElementById('startingWeek').onchange = updateSummary;
 
-function setHeaderLogo(src) {
-  const el = document.getElementById('headerLogo');
-  if (!el || !src) return;
-  if (el.tagName && el.tagName.toLowerCase() === 'svg') {
-    const img = document.createElement('img');
-    img.className = el.className;
-    img.id = 'headerLogo';
-    img.src = src;
-    img.style.cssText = 'width:42px;height:42px;border-radius:6px;object-fit:contain;';
-    el.parentNode.replaceChild(img, el);
-  } else {
-    el.src = src;
-  }
-}
 
-document.getElementById('logoUpload').onchange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      logoData = event.target.result;
-      setHeaderLogo(logoData);
-    };
-    reader.readAsDataURL(file);
-  }
-};
 
 document.getElementById('previewModal').onclick = (e) => {
   if (e.target === document.getElementById('previewModal')) {
