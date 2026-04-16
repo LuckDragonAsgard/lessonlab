@@ -1692,13 +1692,13 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
 
 
 <div class="settings-panel" id="settingsPanel">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);grid-column:1/-1;">
     <strong style="font-size:1.05rem;">School Settings</strong>
     <button onclick="document.getElementById('settingsPanel').classList.remove('show')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;line-height:1;" title="Close">&times;</button>
   </div>
   <div class="form-group">
     <label>School Name</label>
-    <input type="text" id="schoolName" value="Williamstown Primary School">
+    <input type="text" id="schoolName" value="" placeholder="e.g. Williamstown Primary School">
   </div>
   <div class="form-group">
     <label>State</label>
@@ -1741,7 +1741,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   </div>
   <div class="form-group">
     <label>Header / Footer Text</label>
-    <input type="text" id="schoolFooter" value="" placeholder="e.g. Williamstown Primary School — Confidential">
+    <input type="text" id="schoolFooter" value="" placeholder="e.g. [Your School] — Confidential">
   </div>
 
   <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);">
@@ -1851,45 +1851,63 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     <div id="landingStats" style="margin:12px 0 20px;text-align:center;color:#9ca3af;font-size:12px;"></div>
 
     <!-- LESSON PREVIEW -->
-    <div style="margin:0 16px 20px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-      <div style="background:#1565C0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="color:white;font-size:0.8rem;font-weight:700;">📄 Sample lesson — PE · Foundation · Week 3</div>
-        <div style="font-size:0.7rem;color:rgba(255,255,255,0.65);">What you get</div>
+    <div style="margin:0 16px 20px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+      <div style="background:linear-gradient(135deg,#1565C0,#1976d2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="color:white;font-size:0.82rem;font-weight:700;">📄 Sample lesson — Health &amp; PE · Year 3/4 · Week 5</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:0.7rem;margin-top:2px;">Sending &amp; Receiving — Chest Pass Fundamentals</div>
+        </div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.12);padding:3px 8px;border-radius:20px;">What you get</div>
       </div>
       <div style="padding:16px;background:white;">
-        <div style="margin-bottom:12px;">
-          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:4px;">Learning Intention</div>
-          <div style="font-size:0.88rem;color:#1a1a2e;font-weight:500;">I am learning to travel through space using different locomotor movements.</div>
+        <div style="margin-bottom:12px;display:flex;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:0.66rem;font-weight:700;color:#1d4ed8;background:#eff6ff;border-radius:20px;padding:3px 9px;">✓ Victorian Curriculum 2.0</span>
+          <span style="font-size:0.66rem;font-weight:700;color:#166534;background:#f0fdf4;border-radius:20px;padding:3px 9px;">✓ VTLM 2.0 Aligned</span>
+          <span style="font-size:0.66rem;font-weight:700;color:#92400e;background:#fffbeb;border-radius:20px;padding:3px 9px;">✓ Differentiation included</span>
         </div>
         <div style="margin-bottom:12px;">
-          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:4px;">Success Criteria</div>
-          <div style="font-size:0.82rem;color:#374151;line-height:1.6;">✓ &nbsp;I can walk, jog and skip in different directions<br>✓ &nbsp;I can change direction when I hear the signal<br>✓ &nbsp;I can move safely without bumping others</div>
+          <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:5px;">Learning Intention</div>
+          <div style="background:#eff6ff;border-left:3px solid #1565C0;border-radius:0 6px 6px 0;padding:9px 12px;font-size:0.85rem;color:#1e40af;font-style:italic;line-height:1.5;">I am learning to send and receive a ball using a chest pass with correct technique.</div>
         </div>
         <div style="margin-bottom:12px;">
-          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:6px;">Lesson Steps</div>
+          <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:5px;">Success Criteria</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;">✓</span>I can grip the ball with fingers spread and thumbs behind (W-grip)</div>
+            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;">✓</span>I can step forward with my opposite foot and push the ball from my chest</div>
+            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;">✓</span>I can "give" with my hands on receiving to safely cushion the ball</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:6px;">Lesson Sequence <span style="color:#d1d5db;font-weight:400;">· 50 min</span></div>
           <div style="display:flex;flex-direction:column;gap:6px;">
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.8rem;">
-              <div style="background:#1565C0;color:white;border-radius:4px;padding:2px 7px;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:1px;">WARM-UP</div>
-              <div style="color:#374151;">Energiser tag game — scatter poly spots. Students travel freely, changing movement on whistle (walk → skip → gallop). 3 freezes practised.</div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.79rem;">
+              <div style="background:#3b82f6;color:white;border-radius:4px;padding:2px 7px;font-size:0.62rem;font-weight:700;flex-shrink:0;margin-top:1px;white-space:nowrap;">WARM-UP · 8min</div>
+              <div style="color:#374151;line-height:1.5;"><b>Shark Tag</b> — students dribble a ball in a defined space. If tagged, sit and complete a mental maths challenge on a whiteboard before rejoining. Activates heart rate and focus.</div>
             </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.8rem;">
-              <div style="background:#0d47a1;color:white;border-radius:4px;padding:2px 7px;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:1px;">SKILL FOCUS</div>
-              <div style="color:#374151;">Explicit teach: demonstrate walk, jog, skip, gallop. Students mirror. "Freeze — show me your best skip." Check knees-up, arm swing.</div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.79rem;">
+              <div style="background:#1565C0;color:white;border-radius:4px;padding:2px 7px;font-size:0.62rem;font-weight:700;flex-shrink:0;margin-top:1px;white-space:nowrap;">SKILL · 12min</div>
+              <div style="color:#374151;line-height:1.5;"><b>STEP cues:</b> Elbows out → Step forward → Eyes on target → Push &amp; follow through. Mirror drill in pairs (slow-motion). Teacher uses proximity praise and targeted feedback.</div>
             </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.8rem;">
-              <div style="background:#1976d2;color:white;border-radius:4px;padding:2px 7px;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:1px;">GAME</div>
-              <div style="color:#374151;">Movement maze — cones define lanes. Teacher calls movements. Students earn a star sticker for each correct switch. 3 rounds.</div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.79rem;">
+              <div style="background:#0d47a1;color:white;border-radius:4px;padding:2px 7px;font-size:0.62rem;font-weight:700;flex-shrink:0;margin-top:1px;white-space:nowrap;">PRACTICE · 15min</div>
+              <div style="color:#374151;line-height:1.5;"><b>Partner passing</b> — 5 m apart, 10 passes then swap. Track personal best (cone target on ground). Extension: step back to 7 m. Support: use larger ball or allow a chest-height bounce pass.</div>
             </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.8rem;">
-              <div style="background:#43a047;color:white;border-radius:4px;padding:2px 7px;font-size:0.65rem;font-weight:700;flex-shrink:0;margin-top:1px;">EXIT TICKET</div>
-              <div style="color:#374151;">Thumbs up/sideways/down — "Show me how confident you are skipping." 2 students demonstrate to the class before pack-up.</div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.79rem;">
+              <div style="background:#7c3aed;color:white;border-radius:4px;padding:2px 7px;font-size:0.62rem;font-weight:700;flex-shrink:0;margin-top:1px;white-space:nowrap;">GAME · 12min</div>
+              <div style="color:#374151;line-height:1.5;"><b>3v3 Keep-Away</b> — no running with the ball, 1 point per 5 consecutive passes. Applies technique under decision-making pressure. Teacher pauses for teachable moments.</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.79rem;">
+              <div style="background:#16a34a;color:white;border-radius:4px;padding:2px 7px;font-size:0.62rem;font-weight:700;flex-shrink:0;margin-top:1px;white-space:nowrap;">EXIT · 3min</div>
+              <div style="color:#374151;line-height:1.5;"><b>Traffic light self-assess</b> — Green / Amber / Red card per success criterion. Two students share a success + one thing to practise next lesson.</div>
             </div>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #f3f4f6;">
-          <div style="font-size:0.72rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📦 Poly spots × 20, cones × 8, whistle</div>
-          <div style="font-size:0.72rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">⏱ 45 min</div>
-          <div style="font-size:0.72rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📤 Export DOCX · PDF · Compass</div>
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📦 Basketballs × 1 per pair · cones × 10 · traffic light cards × 25 · mini whiteboards × 8</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📋 VCHPEM082 · VCHPEM083</div>
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📤 Export DOCX · PDF · Compass · Slides</div>
         </div>
       </div>
     </div>
