@@ -2301,6 +2301,10 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   <div id="resultsPanel" class="panel">
     <a class="back-link" id="backToPlanner">← Back to planner</a>
 
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <span id="progressLabel" style="font-size:12px;color:#64748b;font-weight:500;">Generating lessons…</span>
+      <span id="aiIndicator" style="display:none;font-size:11px;font-weight:600;color:#3b6ef8;background:#eff6ff;padding:3px 10px;border-radius:100px;">✦ AI</span>
+    </div>
     <div class="progress-bar">
       <div class="progress-fill" id="progressFill" style="width:0%"></div>
     </div>
@@ -6158,9 +6162,15 @@ function generateAll() {
       });
     }
 
-    // Try Claude AI generation first, fall back to template if not authenticated or error
+    // AI generation for paid users, template fallback for free/error
     if (currentUser && isPaidUser()) {
       var unitObj = (UNITS[state.subject] || []).find(function(u) { return u.id === state.unit; });
+      // Update progress label to show AI is working
+      var progLabel = document.getElementById('progressLabel');
+      if (progLabel) progLabel.textContent = 'Building lesson ' + (curCount + 1) + ' of ' + weeks + ' with AI…';
+      var aiInd = document.getElementById('aiIndicator');
+      if (aiInd) aiInd.style.display = 'inline';
+      
       api('/lessons/generate', {
         method: 'POST',
         body: JSON.stringify({
@@ -6172,21 +6182,29 @@ function generateAll() {
           year_level: state.yearLevel,
           duration: state.duration,
           school_name: state.school,
-          curriculum_standards: cds.slice(0, 4)
+          curriculum_standards: cds.slice(0, 5)
         })
       }).then(function(res) {
         if (res && res.lesson) {
-          buildAndRender(res.lesson);
+          var l = res.lesson;
+          // Normalise differentiation: Claude returns support/extension OR enabling/extending
+          var diff = l.differentiation || {};
+          var normDiff = {
+            support: diff.support || diff.enabling || '',
+            extension: diff.extension || diff.extending || ''
+          };
+          // context should be a string, not an object
+          var ctx = typeof l.context === 'string' ? l.context : 
+            (l.context ? 'Building on prior learning.' : '');
+          buildAndRender({ title: l.title, li: l.li, sc: l.sc, equipment: l.equipment, 
+            context: ctx, differentiation: normDiff, exitTicket: l.exitTicket });
         } else {
-          // Fallback to template
           buildAndRender(generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel));
         }
       }).catch(function() {
-        // Fallback to template on any error
         buildAndRender(generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel));
       });
     } else {
-      // Free tier or not logged in - use template
       buildAndRender(generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel));
     }
   }
