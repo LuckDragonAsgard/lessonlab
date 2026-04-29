@@ -1,9 +1,9 @@
 # lessonlab — Handover
 
 **Repo:** [github.com/LuckDragonAsgard/lessonlab](https://github.com/LuckDragonAsgard/lessonlab)
-**Last update:** 2026-04-27 — v11 lesson plan template locked, VTLM 2.0 compliant. Filled in by Mona's previous session.
+**Last update:** 2026-04-29 — **v11 template shipped across 10 subjects** (PE + Literacy + 9 new). VTLM 2.0 compliant on every subject. `gh-push` worker repaired.
 
-Index of all projects: [PaddyGallivan/asgard-handovers/INDEX.md](https://github.com/PaddyGallivan/asgard-handovers/blob/main/INDEX.md)
+Index of all projects: [LuckDragonAsgard/asgard-source/docs/HANDOVER.md](https://github.com/LuckDragonAsgard/asgard-source/blob/main/docs/HANDOVER.md)
 
 ---
 
@@ -11,7 +11,9 @@ Index of all projects: [PaddyGallivan/asgard-handovers/INDEX.md](https://github.
 
 **LessonLab** is a Victorian-Curriculum-2.0–aligned F–6 lesson-plan generator for Australian primary teachers. The web app at `app.html` lets specialist teachers compose lessons; the generator emits Word docs that are CRT-friendly on page 1 and VTLM 2.0 compliant on pages 2–3.
 
-This session (2026-04-27) **rebuilt the lesson plan template from scratch across 11 versions**. Landing point: **v11**, three A4 pages, fully VTLM 2.0 compliant. PE is the anchor subject; Literacy is the proof of cross-subject portability.
+The 2026-04-27 session **rebuilt the lesson plan template from scratch across 11 versions**. Landing point: **v11**, three A4 pages, fully VTLM 2.0 compliant. PE was the anchor; Literacy was the proof of cross-subject portability.
+
+The 2026-04-29 session **shipped v11 across the remaining 9 subjects** using a config-driven sed-replace orchestrator. All 10 subjects are now in `templates/`.
 
 ---
 
@@ -44,77 +46,81 @@ VTLM 2.0 implementation: schools using from 2025, full embedding mandated start 
 
 ---
 
-## Files in this repo (post-2026-04-27 push)
+## Files in this repo
 
 ```
 templates/
-  WPS_PE_Foundation_T2W1_v11.docx          # PE example — Foundation, "Running safely + 3-step stop"
-  WPS_PE_Foundation_T2W1_v11.pdf           # PDF preview
-  WPS_PE_LessonPlan_TEMPLATE_v11.docx      # Tokenised PE blank — generator-ready (~150 {{tokens}})
-  WPS_Literacy_Y2_T2W1_v11.docx            # Literacy example — Year 2 recount writing
-  build_v11_example.js                     # docx-js source for the PE example
-  build_v11_template.js                    # docx-js source for the PE blank
-  build_literacy_v11_example.js            # docx-js source for the Literacy example
+  WPS_PE_Foundation_T2W1_v11.docx               # PE example — Foundation, "Running safely + 3-step stop"
+  WPS_PE_Foundation_T2W1_v11.pdf                # PDF preview
+  WPS_PE_LessonPlan_TEMPLATE_v11.docx           # Tokenised PE blank — generator-ready (~150 {{tokens}})
+  WPS_Literacy_Y2_T2W1_v11.docx                 # Literacy example — Y2 recount writing
+  WPS_Numeracy_Y3_T2W1_v11_FIXED.docx           # NEW Numeracy Y3 — bridging through 10
+  WPS_Visual_Art_Y4_T2W1_v11_FIXED.docx         # NEW Visual Art Y4 — texture / rubbings / pattern
+  WPS_HASS_Y5_T2W1_v11_FIXED.docx               # NEW HASS Y5 — Victorian gold rush sources
+  WPS_Music_Y2_T2W1_v11_FIXED.docx              # NEW Music Y2 — beat vs rhythm
+  WPS_Wellbeing_Y1_T2W1_v11_FIXED.docx          # NEW Wellbeing Y1 — naming feelings
+  WPS_Digital_Tech_Y6_T2W1_v11_FIXED.docx       # NEW Digital Tech Y6 — algorithms with branching (Scratch)
+  WPS_French_Y3_T2W1_v11_FIXED.docx             # NEW French Y3 — greetings (bonjour, ça va)
+  WPS_Performing_Arts_Y4_T2W1_v11_FIXED.docx    # NEW Performing Arts Y4 — tableaux
+  WPS_Science_Y5_T2W1_v11_FIXED.docx            # NEW Science Y5 — states of matter
+  build_<subject>_v11_example.js                # docx-js source for each of the 10 subject docs
+  _build/
+    orchestrate_subjects.py                     # Config-driven sed-replace orchestrator
+    push_subjects.py                            # GitHub Contents API push helper
+    subject_configs.py                          # 9-subject content configs (part 1: Numeracy/VisualArt/HASS)
+    subject_configs_2.py                        # 9-subject content configs (part 2: Music/Wellbeing/DigitalTech/French/PerformingArts/Science)
+    build_v11_example.js                        # PE base used as substitution source
+    build_v11_template.js                       # PE blank tokenised template
 docs/
-  HANDOVER.md                              # This file
-  VTLM-2.0-mandate-checklist.md            # Element-by-element compliance checklist
-  TOKEN-MAP.md                             # Full token list (~150) — the generator API
+  HANDOVER.md                                   # This file
+  VTLM-2.0-mandate-checklist.md                 # Element-by-element compliance checklist
+  TOKEN-MAP.md                                  # Full token list (~150) — the generator API
 ```
 
 ---
 
-## Subject template change matrix
+## Subject template change matrix — all 10 SHIPPED
 
 The v11 skeleton stays the same for every subject. Only mid-blocks change:
 
-| Field | PE (anchor) | Literacy (done) | Numeracy (next) | Visual Art | Music | French | Performing Arts | HASS | Wellbeing | Digital Tech |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Equipment label | EQUIPMENT | RESOURCES / TEXTS | MATERIALS | MATERIALS / MEDIA | INSTRUMENTS | RESOURCES | COSTUMES / PROPS | RESOURCES | RESOURCES | TOOLS / DEVICES |
-| Signal | Whistle | Clap | Bell | "Tools down" bell | Conductor cue | "Écoutez!" | Freeze + breath | Bell | Mindful chime | "Eyes on screen" |
-| Phase 1 | Warm-up | Mini-lesson | Number talk | Hook / inspiration | Vocal warm-up | Bonjour ritual | Body warm-up | Big question | Check-in | Brief |
-| Phase 2 | Explicit Teaching | Modelled writing | Worked example | Technique demo | Listening + analysis | Vocab + dialogue | Modelled rehearsal | Source intro | Skill modelled | Iteration plan |
-| Phase 3 | Practice (We do) | Shared writing | Guided practice | Guided practice | Group sing/play | Pair dialogue | Group rehearsal | Source analysis | Pair practice | Build / code |
-| Phase 4 | Application (You do) | Independent writing | Independent problem | Independent making | Solo / small group | Mini-conversation | Performance | Recording / journal | Application scenario | Test |
-| Phase 5 | Pack up & reflect | Share-back | Share strategies | Gallery walk | Performance share | Au revoir + recap | Reflect + applaud | Discussion | Reflection circle | Evaluate |
+| Field | PE | Literacy | Numeracy | Visual Art | Music | French | Performing Arts | HASS | Wellbeing | Digital Tech | Science |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Year | F | Y2 | Y3 | Y4 | Y2 | Y3 | Y4 | Y5 | Y1 | Y6 | Y5 |
+| Equipment label | EQUIPMENT | RESOURCES / TEXTS | MATERIALS | MATERIALS / MEDIA | INSTRUMENTS | RESOURCES | COSTUMES / PROPS | RESOURCES | RESOURCES | TOOLS / DEVICES | EQUIPMENT |
+| Signal | Whistle | Clap | Bell | "Tools down" bell | Drumbeat | "Écoutez!" | Freeze + breath | Bell | Mindful chime | "Eyes on screen" | Bell |
+| Phase 1 | Warm-up | Mini-lesson | Number talk | Hook / inspiration | Vocal warm-up | Bonjour ritual | Body warm-up | Big question | Check-in | Brief | Hook |
+| Phase 2 | Explicit Teaching | Modelled writing | Worked example | Technique demo | Listening + analysis | Vocab + dialogue | Modelled rehearsal | Source intro | Skill modelled | Iteration plan | Modelled enquiry |
+| Phase 3 | Practice (We do) | Shared writing | Guided practice | Guided practice | Group sing/play | Pair dialogue | Group rehearsal | Source analysis | Pair practice | Build / code | Guided experiment |
+| Phase 4 | Application (You do) | Independent writing | Independent problem | Independent making | Solo / small group | Mini-conversation | Performance | Recording / journal | Application scenario | Test | Independent investigation |
+| Phase 5 | Pack up & reflect | Share-back | Share strategies | Gallery walk | Performance share | Au revoir + recap | Reflect + applaud | Discussion | Reflection circle | Evaluate | Share findings |
 
-**Recommended subject order by lesson volume:** Numeracy → Visual Art → HASS → Music → Wellbeing → Digital Tech → French → Performing Arts.
+All 10 PDFs/docx are in `templates/`. Each is VTLM-2.0 compliant on pages 2–3 with sentence stems, vocab tiers, worked example, CFU 1+2, Tier 1/Core/Tier 3, EAL/D + Koorie + Disability + Disadvantage cohort prompts, named adjustments, look-fors, misconceptions, retrieval plan.
 
 ---
 
 ## How to build a new subject template
 
-1. `cp templates/build_literacy_v11_example.js templates/build_<subject>_v11_example.js` (Literacy is the cleanest non-PE pattern)
-2. Walk through the python sed-replace block at the top of the script — swap PE/Literacy content for your subject. Use the matrix above for label changes.
-3. Build:
+1. Add a new entry to `templates/_build/subject_configs.py` (or `subject_configs_2.py`) — copy any existing subject dict and edit the ~140 fields.
+2. Run the orchestrator:
    ```bash
-   cd /tmp && mkdir -p ll && cd ll
-   npm init -y && npm install docx
-   # paste the build script here
-   node build_<subject>_v11_example.js
+   cd templates/_build
+   python3 orchestrate_subjects.py
    ```
-4. Validate: `python3 .claude/skills/docx/scripts/office/validate.py FILE.docx`
-5. **Word zip-ordering fix** (mandatory — Word refuses files where `[Content_Types].xml` isn't at zip position 0):
-   ```python
-   import zipfile
-   def reorder(infile, outfile):
-       src = zipfile.ZipFile(infile,'r')
-       entries = [(i, src.read(i.filename)) for i in src.infolist() if not i.filename.endswith('/')]
-       entries.sort(key=lambda x: (0 if x[0].filename=='[Content_Types].xml' else 1, x[0].filename))
-       with zipfile.ZipFile(outfile,'w',zipfile.ZIP_DEFLATED) as dst:
-           for info, data in entries:
-               ni = zipfile.ZipInfo(info.filename, date_time=info.date_time)
-               ni.compress_type = zipfile.ZIP_DEFLATED
-               dst.writestr(ni, data)
+   This loops through every subject in the configs, applies sed-replace on `build_v11_example.js` (PE base), runs `node` to build the docx, applies the Word zip-ordering fix, and writes a `_FIXED.docx`.
+3. Push to repo:
+   ```bash
+   ONLY=YourSubject python3 push_subjects.py
    ```
-6. Render PDF for review: `python3 .claude/skills/docx/scripts/office/soffice.py --headless --convert-to pdf FILE.docx`
-7. Push to this repo via `gh-push.pgallivan.workers.dev` once it's repaired (currently broken — see Known Issues).
+4. Optionally render PDF: `python3 .claude/skills/docx/scripts/office/soffice.py --headless --convert-to pdf FILE.docx`
+
+The orchestrator emits WARN messages for "missing snippets" — these are benign: earlier substitutions (lesson_title, vc_codes, SCs) consume snippets that later compound substitutions also reference. The output is correct.
 
 ---
 
 ## How to deploy
 
 - App: deployed via Vercel from `index.html` + `app.html` in this repo (vercel.json present).
-- Default pattern for new files: push to this repo via `gh-push.pgallivan.workers.dev`. **As of 2026-04-29 the worker is broken** (`GH_PUSH_BEARER secret not set on worker`). Until repaired, push manually via git or GitHub web UI.
+- Default pattern for new files: push to this repo via `gh-push.pgallivan.workers.dev` (now repaired, see below).
 
 ---
 
@@ -124,42 +130,35 @@ The v11 skeleton stays the same for every subject. Only mid-blocks change:
 - **GitHub org:** `LuckDragonAsgard` (legacy at `PaddyGallivan/lessonlab`)
 - **D1 databases:** lesson content via `lessonlab-api` worker; session log in `asgard-prod` (host worker `asgard-brain`)
 - **Secrets:** `asgard-vault.pgallivan.workers.dev` (PIN-gated; PIN rotated 2026-04-28 — see vault `/secret/PADDY_PIN`)
+- **gh-push bearer:** stored at vault `/secret/GH_PUSH_BEARER` and bound to the gh-push worker.
 
 ---
 
 ## Known issues / TODO
 
-### Blockers
-- ⚠️ **`gh-push` worker is broken** as of 2026-04-29 — every endpoint returns `500 {"error":"GH_PUSH_BEARER secret not set on worker"}`. Need to set the bearer secret on the worker before any new files can be pushed via the worker. Workaround: push via git CLI or GitHub web UI.
-- ⚠️ **PIN rotated 2026-04-28** — old `2967` was leaked in public source. Any handover doc referencing `2967` is stale. New PIN at vault `/secret/PADDY_PIN`. (Earlier handovers in Drive contained the old PIN — those should be considered compromised.)
+### Resolved
+- ✅ **gh-push worker repaired** (2026-04-29) — `GH_PUSH_BEARER` minted via `openssl rand -hex 32`, saved to vault, bound to worker.
+- ✅ **9 remaining subject templates shipped** (2026-04-29) — Numeracy, Visual Art, HASS, Music, Wellbeing, Digital Tech, French, Performing Arts, Science. All clean of PE leakage.
+- ✅ **Drive deprecation** — all build artefacts now live here in GitHub. Drive copies (in 🏰 ASGARD folder, paddy@luckdragon.io) can be retired.
 
 ### Open work
-- Cut **7 remaining subject templates** (Numeracy → Visual Art → HASS → Music → Wellbeing → Digital Tech → French → Performing Arts) using the `build_literacy_v11_example.js` pattern.
-- **Wire v11 into `WPS_Lesson_Generator_FINAL.gs`** (or whichever generator script is current) — swap the existing output template for the v11 token map. Once swapped, the generator emits all future lessons in v11 shape automatically. ~252 Science lessons are queued behind this.
+- **Wire v11 into `WPS_Lesson_Generator_FINAL.gs`** (or current generator) — swap output template to v11 token map. Once swapped, generator emits all future lessons in v11 shape automatically.
 - **Port existing v6/v7 PE lessons forward** to v11 shape.
-- **Migrate v11 source out of Drive** — the previous session pushed everything to paddy@luckdragon.io's Drive (🏰 ASGARD folder, file IDs in earlier handovers v1–v4). Per the new GitHub-first storage rule (`memory/github_first_storage.md`), all those files should now live here in this repo and the Drive copies retired.
+- **Build per-subject tokenised TEMPLATEs** — currently we have an example .docx per subject; the generator will need a `WPS_<Subject>_LessonPlan_TEMPLATE_v11.docx` blank with `{{tokens}}` for each. Pattern in `build_v11_template.js` (PE) is the reference — apply same sed-replace strategy.
+- **Build remaining year levels** within each subject (currently only one year per subject as a proof of shape).
 
 ---
 
 ## Recent work
 
+### 2026-04-29 — 9 subjects shipped + gh-push repair (this session)
+
+Built the orchestrator (`orchestrate_subjects.py`) that loads per-subject configs (~141 fields each), applies sed-replace on the PE base, builds via `node`, applies Word zip-fix, and pushes via the GitHub Contents API. All 10 subjects (PE/Literacy/9 new) now in `templates/` with verified zero PE leakage on the new 9.
+
+`gh-push` worker repaired by minting a fresh bearer secret, saving to `asgard-vault` at `/secret/GH_PUSH_BEARER`, and binding it to the worker via the CF API. Workers Routes:Edit and Workers Scripts:Edit token (`asgard-fullops`) used.
+
 ### 2026-04-27 — v11 lesson plan template
 
-Mona iterated the WPS PE lesson plan from v6/v7 (pre-session anchor) through to **v11** in a single session. Path: v8 (tokens, removed page1↔2 duplication, added "won't join in", boundary diagram, why-it-matters, warm-up VTLM home) → v9 (vertical-centred cells) → v10 (all VTLM 2.0 mandates) → v11 (CRT-friendly page 1, full A4 fill, 3 pages).
+Iterated WPS PE lesson plan from v6/v7 → **v11** in a single session. Path: v8 (tokens, removed page1↔2 duplication, added "won't join in", boundary diagram, why-it-matters, warm-up VTLM home) → v9 (vertical-centred cells) → v10 (all VTLM 2.0 mandates) → v11 (CRT-friendly page 1, full A4 fill, 3 pages). Then tokenised PE blank into a generator-ready template (~150 `{{tokens}}`) and cut a Literacy Y2 T2W1 v11 example to prove the shape works for any subject.
 
-Then while Mona was AFK she returned and asked me to keep going: I tokenised the PE blank into a generator-ready template (~150 `{{tokens}}`) and cut a Literacy Y2 T2W1 v11 example to prove the shape works for any subject.
-
-**Earlier session output was uploaded to Drive (now deprecated).** Drive file IDs from previous handover (only relevant if Mona pulls them off Drive before the migration completes):
-
-- v11 PE example: `1W9lpJFThu5XILuRp6bH-H6tcZui4oAzY`
-- v11 PE blank tokenised: `1G5Mbx5Fc9cl60Ip9EH1Q42HXEVckwvH4`
-- v11 Literacy example: `12HU3iokEFwzKpa4k-3oPO_8-ZjdX87r7`
-- Build scripts: `1EbnSWDUIcKfu2r1a3TP_CPVuXBDSaAdN` (PE example), `1OP-9cTDWLstaHZr_058tSKypnsnoKxAB` (PE blank), `1W_0DQ76i7wLnQTgibEAAtqal9HlN0y0j` (Literacy)
-- Earlier handover docs: `1ldsmIxYrDXV...` (v1), `15um8dTW...` (v2), `1HdSmcRpu...` (v3), v4 was prepared but failed to upload due to PIN rotation
-- claude_sessions row IDs: 10, 11, 12
-
-These Drive files contain the **old leaked PIN `2967`** in references — when migrating, redact that.
-
-### 2026-04-29 — Migration audit (this session)
-
-Found `LuckDragonAsgard/lessonlab` repo exists with stub HANDOVER.md. This update fills it in with v11 state. The actual `templates/*.docx` + `templates/build_*.js` artefacts still need to be pushed to the repo — blocked on `gh-push` repair (see Blockers).
+claude_sessions row IDs: 10, 11, 12 (2026-04-27), 13 (this session 2026-04-29).
