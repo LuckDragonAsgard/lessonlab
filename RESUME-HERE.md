@@ -49,7 +49,7 @@ Subscription SaaS. Subjects: Literacy, Numeracy, Science, Health & PE, Visual Ar
 
 ### 🔴 Action required (Paddy/Mona)
 - Get Professional Indemnity + Cyber Liability insurance quotes (BizCover)
-- GST registration if approaching $75k turnover
+- ✅ GST registered (23 April 2026)
 - Trademark "LessonLab" on IP Australia (~$250, class 41)
 - See [docs/legal-compliance.md](docs/legal-compliance.md) for full checklist
 

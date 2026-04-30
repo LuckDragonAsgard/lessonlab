@@ -63,10 +63,9 @@ All three pages are linked from the marketing page footer and include the ABN.
 **Suggested provider:** BizCover (bizcover.com.au) — online quotes, ~30 min.
 Typical cost for small SaaS: PI $500–1,500/yr · Cyber $500–1,200/yr.
 
-### 🟡 GST registration
-- Required once annual turnover reaches $75,000
-- Register at business.gov.au before hitting threshold
-- Stripe billing needs to issue tax invoices with GST once registered
+### ✅ GST registration
+- Registered from 23 April 2026 ✅
+- Ensure Stripe is configured to collect GST on Australian transactions and issue valid tax invoices
 
 ### 🟡 Trademark — "LessonLab"
 - Name not yet registered
