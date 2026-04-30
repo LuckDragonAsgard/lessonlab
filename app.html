@@ -13,12 +13,12 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lessonlab.com.au">
   <meta property="og:title" content="LessonLab — Lesson planning done in minutes">
-  <meta property="og:description" content="Generate complete lesson plans for F–6 across 9 subjects. Victorian Curriculum 2.0 aligned. Done in seconds.">
+  <meta property="og:description" content="Generate complete lesson plans for F–6 across 11 subjects. Victorian Curriculum 2.0 aligned. Done in seconds.">
   <meta property="og:site_name" content="LessonLab">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="LessonLab — Lesson planning done in minutes">
-  <meta name="twitter:description" content="Complete lesson plans for F–6 across 9 subjects. Victorian Curriculum 2.0 aligned.">
+  <meta name="twitter:description" content="Complete lesson plans for F–6 across 11 subjects. Victorian Curriculum 2.0 aligned.">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -2594,6 +2594,38 @@ const SUBJ_CFG = {
     signal: 'Lids down = eyes on teacher. Hand up = silence.',
     expectations: 'Respect devices. Stay on task. Be a good digital citizen.',
     behaviour: 'Redirect \u2192 screen check \u2192 device privilege paused if misused.'
+  },
+  'hass': {
+    name: 'HASS',
+    full: 'Humanities and Social Sciences',
+    colour: '#7D3C00',
+    accent: '#A0522D',
+    icon: '🌏',
+    phases: ['Connect', 'Investigate', 'Discuss & Analyse', 'Communicate', 'Reflect'],
+    times: ['5 min', '15 min', '15 min', '10 min', '5 min'],
+    entry: 'Enter quietly → retrieve HASS book → read the inquiry question on the board.',
+    exit: 'Pack away → share one thing you discovered → line up.',
+    entSay: 'Come in, get your book, read today\'s inquiry question.',
+    exSay: 'Pack up. Who can share one thing they found out today?',
+    signal: 'Hand up = silence. Count 5-4-3-2-1 = eyes on teacher.',
+    expectations: 'Ask good questions. Use evidence. Respect all perspectives. Think critically.',
+    behaviour: 'Redirect → re-focus on inquiry question → if persistent, independent reflection task.'
+  },
+  'wellbeing': {
+    name: 'Wellbeing',
+    full: 'Personal & Social Wellbeing',
+    colour: '#1A5276',
+    accent: '#2E86C1',
+    icon: '🧠',
+    phases: ['Check In', 'Explore', 'Practise', 'Apply', 'Reflect'],
+    times: ['5 min', '10 min', '15 min', '10 min', '10 min'],
+    entry: 'Enter quietly → sit in circle/seats → begin mindful breathing.',
+    exit: 'Whole-group share → set an intention → line up calmly.',
+    entSay: 'Come in, find your spot, let\'s start with a few quiet breaths.',
+    exSay: 'Thanks for sharing today. Set one intention to take with you.',
+    signal: 'Hand up = silence. Bell = pause and listen.',
+    expectations: 'Respect all feelings. Keep stories confidential. Listen without judgement. Be kind.',
+    behaviour: 'Gentle redirect → validate feelings → re-focus on activity → restorative conversation if needed.'
   }
 };
 
@@ -2743,6 +2775,24 @@ const SCAFFOLDS = {
       'Leadership role (debug helper, presenter)',
       'Create for an authentic audience'
     ]
+  },
+  'hass': {
+    enabling: ['Visible inquiry question throughout lesson', 'Pre-teach key vocabulary (source, evidence, perspective)', 'Display LI and SC', 'Graphic organisers for note-taking', 'Sentence starters for discussion'],
+    instruction: ['Model source analysis step by step', 'Think-aloud historical/geographic reasoning', 'Show exemplar inquiry responses', 'Deconstruct inquiry question before students begin'],
+    practice: ['Structured note-taking scaffold', 'Teacher-led guided inquiry before independent', 'Pause and share evidence found'],
+    game: ['Open inquiry with SC visible', 'Students choose their investigation angle', 'Mild/Medium/Spicy question complexity'],
+    reflection: ['Revisit inquiry question — what did we find?', 'Evidence rating — how strong is our evidence?', 'Perspective check — whose voice is missing?'],
+    inclusion: ['Pre-read key sources before lesson', 'Simplified source versions available', 'Chunked steps — one inquiry question at a time', 'Paired inquiry before solo'],
+    extension: ['Evaluate conflicting sources', 'Develop their own inquiry question', 'Create a multimedia presentation of findings']
+  },
+  'wellbeing': {
+    enabling: ['Predictable, safe routine every session', 'Clear community agreements visible', 'Low-stakes check-in — hands/thumbs', 'Private reflection option always available', 'SEL vocabulary wall'],
+    instruction: ['Model sharing with I-statements', 'Normalise all emotions — no wrong answers', 'Use puppets/scenarios for younger students', 'Think-aloud self-regulation strategies'],
+    practice: ['Pair-share before whole group', 'Role-play scenarios with coaching', 'Mindfulness or regulation activity embedded'],
+    game: ['Open discussion with community agreements visible', 'Students can share or pass', 'Journal/drawing option for private reflection'],
+    reflection: ['Check out: one word/feeling to describe today', 'What strategy might I use this week?', 'Revisit community agreements — how did we go?'],
+    inclusion: ['Always a private/journal option', 'Seating choice — circle, desk, floor', 'Shorter sharing time for students who find it hard', 'Trauma-informed check-in before group work'],
+    extension: ['Lead a mindfulness activity for the class', 'Design a wellbeing strategy poster', 'Peer-support role in group activities']
   }
 };
 
@@ -2859,6 +2909,18 @@ const UNITS = {
       desc: 'Design, create and evaluate digital solutions',
       focuses: ['Algorithms', 'Visual Programming', 'Branching & Loops', 'User Interface Design', 'Testing & Debugging', 'Game Design']
     }
+  ],
+  'hass': [
+    { id: 'geography', name: 'Geography', skills: ['Map reading', 'Place description', 'Environmental awareness', 'Data collection', 'Spatial thinking', 'Sustainability', 'Comparing places', 'Field investigation'], desc: 'Explore places, environments and sustainability through geographic inquiry.', focuses: ['My Place & Local Area', 'Australian Landscapes', 'Environments & Sustainability', 'Weather & Climate', 'Water in the World', 'Landforms & Environments'] },
+    { id: 'history', name: 'History', skills: ['Chronological thinking', 'Source analysis', 'Historical perspective', 'Cause & effect', 'Comparing past & present', 'Significance', 'Evidence', 'Narrative'], desc: 'Investigate personal, local, national and world histories.', focuses: ['Family & Personal History', 'The Past in the Present', 'Community History', 'First Nations Peoples', 'Australian Colonies', 'World War I & II', 'Migration & Movement'] },
+    { id: 'civics', name: 'Civics & Citizenship', skills: ['Democratic values', 'Rule of law', 'Government structures', 'Community participation', 'Rights & responsibilities', 'Decision making', 'Inquiry', 'Action'], desc: 'Explore how democracy, government and civic participation work in Australia.', focuses: ['Rules & Laws', 'Community & Government', 'Australian Democracy', 'Local Government', 'National Government', 'Civic Action'] },
+    { id: 'economics', name: 'Economics & Business', skills: ['Resource allocation', 'Decision making', 'Trade & exchange', 'Needs vs wants', 'Consumer awareness', 'Enterprise', 'Financial literacy', 'Sustainability'], desc: 'Investigate economic concepts, enterprise and financial decision making.', focuses: ['Needs vs Wants', 'Buying & Selling', 'Producers & Consumers', 'Financial Decisions', 'Business & Enterprise', 'Trade & Globalisation'] }
+  ],
+  'wellbeing': [
+    { id: 'emotions', name: 'Emotional Literacy', skills: ['Identifying emotions', 'Emotional regulation', 'Empathy', 'Self-awareness', 'Coping strategies', 'Growth mindset', 'Resilience', 'Positive self-talk'], desc: 'Build emotional awareness, regulation skills and positive mental health.', focuses: ['Naming & Understanding Emotions', 'Triggers & Responses', 'Coping Strategies', 'Empathy & Perspective-Taking', 'Growth Mindset', 'Gratitude & Strengths'] },
+    { id: 'relationships', name: 'Relationships & Social Skills', skills: ['Communication', 'Active listening', 'Conflict resolution', 'Inclusion', 'Teamwork', 'Respect', 'Boundary setting', 'Peer support'], desc: 'Develop positive relationships, communication and conflict resolution skills.', focuses: ['Being a Good Friend', 'Active Listening', 'Conflict Resolution', 'Inclusion & Belonging', 'Online Safety & Relationships', 'Asking for Help'] },
+    { id: 'identity', name: 'Identity & Values', skills: ['Self-concept', 'Cultural identity', 'Personal values', 'Strengths recognition', 'Goal setting', 'Decision making', 'Integrity', 'Diversity appreciation'], desc: 'Explore personal identity, values and what makes each of us unique.', focuses: ['My Strengths', 'Personal Values', 'Cultural Identity', 'Setting Goals', 'Making Good Decisions', 'Celebrating Diversity'] },
+    { id: 'safety', name: 'Health & Safety', skills: ['Personal safety', 'Online safety', 'Recognising risk', 'Help-seeking', 'Healthy habits', 'Body autonomy', 'First aid basics', 'Consent'], desc: 'Understand personal safety, health choices and how to stay safe online and offline.', focuses: ['Body Safety & Consent', 'Online Safety', 'Healthy Choices', 'Recognising & Reporting Risk', 'Road Safety', 'Sun Smart & Physical Health'] }
   ]
 };
 
@@ -8149,7 +8211,7 @@ function updateTermGrid() {
   const thead = document.querySelector('#termGrid thead tr');
   tbody.innerHTML = '';
 
-  const subjects = ['literacy', 'numeracy', 'pe', 'visual-art', 'french', 'music', 'drama'];
+  const subjects = ['literacy', 'numeracy', 'pe', 'visual-art', 'french', 'music', 'drama', 'science', 'digital_tech', 'hass', 'wellbeing'];
   const yearLevels = state.selectedYearLevels;
   const numWeeks = parseInt(document.getElementById('termWeeksSelector').value) || 10;
   const hasMultipleYearLevels = yearLevels.length > 1;
@@ -8371,7 +8433,7 @@ function updateCurriculumCoverage() {
   }
 
   const unitSelects = document.querySelectorAll('.term-unit-select');
-  const subjects = ['literacy', 'numeracy', 'pe', 'visual-art', 'french', 'music', 'drama'];
+  const subjects = ['literacy', 'numeracy', 'pe', 'visual-art', 'french', 'music', 'drama', 'science', 'digital_tech', 'hass', 'wellbeing'];
   const coverage = {};
 
   unitSelects.forEach((select, idx) => {
