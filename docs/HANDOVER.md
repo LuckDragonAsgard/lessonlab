@@ -1,7 +1,7 @@
 # lessonlab — Handover
 
 **Repo:** [github.com/LuckDragonAsgard/lessonlab](https://github.com/LuckDragonAsgard/lessonlab)
-**Last update:** 2026-04-29 — **v11 template shipped across 10 subjects** (PE + Literacy + 9 new). VTLM 2.0 compliant on every subject. `gh-push` worker repaired.
+**Last update:** 2026-04-30 — **Site migrated to lessonlab.luckdragon.io**. All 10 subjects fixed on marketing page (Performing Arts, HASS, Wellbeing). lessonlab-api patched for 3 new subjects. Literacy TEMPLATE blank shipped.
 
 Index of all projects: [LuckDragonAsgard/asgard-source/docs/HANDOVER.md](https://github.com/LuckDragonAsgard/asgard-source/blob/main/docs/HANDOVER.md)
 
@@ -19,10 +19,10 @@ The 2026-04-29 session **shipped v11 across the remaining 9 subjects** using a c
 
 ## Live URLs
 
-- **App (production):** https://lessonlab.com.au — uses `app.html` from this repo
-- **API:** https://lessonlab-api.pgallivan.workers.dev (D1-backed, ~931 lessons across 9 subjects pre-Science)
+- **App (production):** https://lessonlab.luckdragon.io — CF Worker `lessonlab` (inline v11 build), `app.html` proxied from GitHub raw
+- **API:** https://lessonlab-api.pgallivan.workers.dev (D1-backed, ~931 lessons)
 - **Lesson handler:** https://lesson-handler.pgallivan.workers.dev
-- **Marketing index:** `index.html` → `https://www.lessonlab.com.au/`
+- **Legacy redirect:** `lessonlab.com.au` + `www.lessonlab.com.au` → `lessonlab.luckdragon.io` via `lessonlab-redirect` CF Worker
 
 ---
 
