@@ -2,6 +2,14 @@
   "rewrites": [
     { "source": "/app", "destination": "/app.html" }
   ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "lessonlab.com.au" }],
+      "destination": "https://www.lessonlab.com.au/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
