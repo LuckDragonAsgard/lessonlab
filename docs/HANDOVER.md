@@ -162,3 +162,19 @@ Built the orchestrator (`orchestrate_subjects.py`) that loads per-subject config
 Iterated WPS PE lesson plan from v6/v7 → **v11** in a single session. Path: v8 (tokens, removed page1↔2 duplication, added "won't join in", boundary diagram, why-it-matters, warm-up VTLM home) → v9 (vertical-centred cells) → v10 (all VTLM 2.0 mandates) → v11 (CRT-friendly page 1, full A4 fill, 3 pages). Then tokenised PE blank into a generator-ready template (~150 `{{tokens}}`) and cut a Literacy Y2 T2W1 v11 example to prove the shape works for any subject.
 
 claude_sessions row IDs: 10, 11, 12 (2026-04-27), 13 (this session 2026-04-29).
+
+### 2026-04-30 — v11 generator wiring + tokenised blanks shipped
+
+- Built **9 tokenised TEMPLATE blanks** for the new subjects (`templates/WPS_<Subject>_LessonPlan_TEMPLATE_v11_FIXED.docx`) — generator-ready, 133 `{{tokens}}` each. Used `_build/orchestrate_blanks.py` (labels-only sed-replace from the PE blank).
+- **Patched the PE blank** to tokenise `{{signal_1}}, {{signal_2}}, {{phase_label_4}}` (previously hardcoded PE labels).
+- **Wired v11 into `app.html`** — added `exportToWordV11()` and a "v11 Word (VTLM)" button next to the existing Download Word. Function fetches the per-subject blank from GitHub raw, fills 133 tokens from current `state`, re-zips and downloads. MVP: exports the FIRST lesson only — multi-lesson v11 is a follow-up.
+- **Added `docs/TOKEN-MAP.md`** — full 133-token reference (the generator API).
+- **Added `docs/VTLM-2.0-mandate-checklist.md`** — element-by-element compliance audit.
+
+Open follow-ups:
+- Multi-lesson v11 export (currently only first lesson is emitted; rest of the term plan is silently dropped).
+- Many tokens fall back to defaults because current state model doesn't carry richer fields (e.g. vocabulary tiers, sentence stems, metacog prompts, cohort prompts). To get them populated by the generator instead of defaulted, extend `generateLesson()` to emit them.
+- Port v6/v7 PE lessons forward.
+- Build more year levels per subject.
+
+claude_sessions row IDs: 13 (2026-04-29), 14 (this session 2026-04-30).
