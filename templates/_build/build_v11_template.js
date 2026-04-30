@@ -127,9 +127,9 @@ function buildDoc() {
     rows: [new TableRow({ children: [cell([
       P({ alignment: AlignmentType.CENTER, children: [
         T("SIGNAL: ", { bold: true, size: 22 }),
-        T("1 whistle = FREEZE", { bold: true, size: 22, color: "B22222" }),
+        T("{{signal_1}}", { bold: true, size: 22, color: "B22222" }),
         T("    \u00b7    ", { size: 22 }),
-        T("2 whistles = come to teacher", { bold: true, size: 22, color: "B22222" }),
+        T("{{signal_2}}", { bold: true, size: 22, color: "B22222" }),
       ]}),
       P({ alignment: AlignmentType.CENTER, children: [T("Practise the signal x 3 in the first 2 minutes.", { italics: true, size: 16 })] }),
     ], { shading: SHADE_BANNER })]})]
@@ -429,7 +429,7 @@ function buildDoc() {
         bullet("{{practice_stem_2}}"),
       ]),
       planRow("Check for understanding (CFU 2)", [tokenLine("{{cfu_2}}")]),
-      planRow("Application (You do)", [small("Activity script: see page 1, phase 4 (Traffic Lights).", { italics: true })]),
+      planRow("Application (You do)", [small("Activity script: see page 1, phase 4 ({{phase_label_4}}).", { italics: true })]),
     ]
   }));
 
