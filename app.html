@@ -12024,302 +12024,310 @@ function rateLessonAI(idx, rating, btn) {
     <button onclick="saveAccountSettings()" style="width:100%;padding:0.75rem;background:#3b82f6;color:white;border:none;border-radius:0.375rem;font-weight:600;cursor:pointer;font-size:0.9rem;">Save Changes</button>
   </div>
 
+
 <script>
 (function() {
-  var ALLOWED = [
-    'pgallivan@outlook.com',
-    'stevenpuhar@yahoo.com.au',
-    'rooney.jaclyn.l@gmail.com'
-  ];
-  var WIDGET_URL = 'https://falkor-widget.luckdragon.io';
-  var AGENT_PIN = 'JilSS1zLn3Rl7mWrM6fOJc69';
+  var ALLOWED = ['pgallivan@outlook.com','stevenpuhar@yahoo.com.au','rooney.jaclyn.l@gmail.com'];
+  var WU = 'https://falkor-widget.luckdragon.io';
+  var AP = 'JilSS1zLn3Rl7mWrM6fOJc69';
+  var lastLesson = null;
+  var chatHistory = [];
 
   function initWidget() {
-    if (window.__falkorWidget) return;
-    window.__falkorWidget = true;
+    if (window.__fkW) return;
+    window.__fkW = true;
 
-    var style = document.createElement('style');
-    style.textContent = [
-      '#fk-btn{position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;',
-      'background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;cursor:pointer;',
-      'box-shadow:0 4px 18px rgba(124,58,237,0.45);z-index:99999;display:flex;align-items:center;justify-content:center;}',
-      '#fk-btn svg{width:26px;height:26px;fill:white;}',
-      '#fk-panel{position:fixed;bottom:90px;right:24px;width:360px;max-height:560px;',
-      'background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.18);',
-      'z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:system-ui,sans-serif;}',
-      '#fk-head{background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:14px 16px;',
-      'display:flex;align-items:center;gap:10px;color:white;}',
-      '#fk-head span{font-weight:700;font-size:15px;}',
-      '#fk-head small{font-size:11px;opacity:0.8;display:block;}',
-      '#fk-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:200px;}',
-      '.fk-msg{max-width:82%;padding:9px 13px;border-radius:12px;font-size:13.5px;line-height:1.45;}',
-      '.fk-msg.bot{background:#f3f0ff;color:#2d1a6e;border-bottom-left-radius:3px;align-self:flex-start;}',
-      '.fk-msg.user{background:#7c3aed;color:white;border-bottom-right-radius:3px;align-self:flex-end;}',
-      '.fk-msg.lesson{background:#f0fdf4;color:#14532d;border:1px solid #bbf7d0;max-width:100%;font-size:12.5px;}',
-      '#fk-shortcuts{display:flex;gap:6px;padding:0 14px 10px;flex-wrap:wrap;}',
-      '.fk-chip{background:#ede9fe;color:#6d28d9;border:none;border-radius:20px;padding:5px 12px;',
-      'font-size:12px;cursor:pointer;font-weight:500;}',
-      '.fk-chip:hover{background:#ddd6fe;}',
-      '#fk-footer{padding:10px 14px;border-top:1px solid #f0f0f0;display:flex;gap:8px;}',
-      '#fk-input{flex:1;border:1px solid #e0d6ff;border-radius:20px;padding:8px 14px;',
-      'font-size:13.5px;outline:none;resize:none;font-family:inherit;}',
-      '#fk-input:focus{border-color:#7c3aed;}',
-      '#fk-send{background:#7c3aed;color:white;border:none;border-radius:50%;',
-      'width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;}',
-      '#fk-send:hover{background:#6d28d9;}',
-      '.fk-lesson-card{background:#fff;border:1px solid #d1fae5;border-radius:10px;padding:12px;margin-top:6px;}',
-      '.fk-lesson-card h4{margin:0 0 6px;font-size:13px;color:#065f46;}',
-      '.fk-lesson-card p{margin:3px 0;font-size:12px;color:#374151;}',
-      '.fk-lesson-card .fk-lbl{font-weight:600;color:#1f2937;}',
-      '.fk-dl-btn{margin-top:10px;background:#059669;color:white;border:none;border-radius:8px;',
-      'padding:7px 14px;font-size:12px;cursor:pointer;font-weight:600;}',
-      '.fk-dl-btn:hover{background:#047857;}',
-      '.fk-typing{display:flex;gap:4px;align-items:center;padding:4px 0;}',
-      '.fk-typing span{width:7px;height:7px;background:#a78bfa;border-radius:50%;animation:fkbounce 1s infinite;}',
-      '.fk-typing span:nth-child(2){animation-delay:0.15s;}',
-      '.fk-typing span:nth-child(3){animation-delay:0.3s;}',
-      '@keyframes fkbounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}'
-    ].join('');
-    document.head.appendChild(style);
+    var s = document.createElement('style');
+    s.textContent = '#fkb{position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;cursor:pointer;box-shadow:0 4px 18px rgba(124,58,237,.45);z-index:99999;display:flex;align-items:center;justify-content:center;}' +
+    '#fkb svg{width:26px;height:26px;fill:white;}' +
+    '#fkp{position:fixed;bottom:90px;right:24px;width:370px;max-height:580px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.18);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:system-ui,sans-serif;}' +
+    '#fkh{background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:12px 16px;display:flex;align-items:center;gap:10px;color:white;}' +
+    '#fkh .fkt{font-weight:700;font-size:15px;}#fkh .fks{font-size:11px;opacity:.8;display:block;}' +
+    '#fkm{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:180px;}' +
+    '.fm{max-width:84%;padding:8px 12px;border-radius:12px;font-size:13.5px;line-height:1.45;}' +
+    '.fb{background:#f3f0ff;color:#2d1a6e;border-bottom-left-radius:3px;align-self:flex-start;}' +
+    '.fu{background:#7c3aed;color:white;border-bottom-right-radius:3px;align-self:flex-end;}' +
+    '.fl{background:#f0fdf4;color:#14532d;border:1px solid #bbf7d0;max-width:100%;font-size:12.5px;}' +
+    '#fksc{display:flex;gap:5px;padding:0 12px 8px;flex-wrap:wrap;}' +
+    '.fc{background:#ede9fe;color:#6d28d9;border:none;border-radius:20px;padding:5px 11px;font-size:12px;cursor:pointer;font-weight:500;}' +
+    '.fc:hover{background:#ddd6fe;}' +
+    '#fkf{padding:8px 12px;border-top:1px solid #f0f0f0;display:flex;gap:8px;align-items:flex-end;}' +
+    '#fki{flex:1;border:1px solid #e0d6ff;border-radius:12px;padding:8px 12px;font-size:13.5px;outline:none;resize:none;font-family:inherit;max-height:100px;}' +
+    '#fki:focus{border-color:#7c3aed;}' +
+    '#fkul{background:none;border:none;cursor:pointer;padding:4px;color:#9ca3af;font-size:18px;line-height:1;}' +
+    '#fkul:hover{color:#7c3aed;}' +
+    '#fks{background:#7c3aed;color:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}' +
+    '#fks:hover{background:#6d28d9;}' +
+    '.fkcard{background:#fff;border:1px solid #d1fae5;border-radius:10px;padding:11px;margin-top:4px;}' +
+    '.fkcard h4{margin:0 0 6px;font-size:13px;color:#065f46;font-weight:700;}' +
+    '.fkcard p{margin:3px 0;font-size:12px;color:#374151;}' +
+    '.fkcard .lb{font-weight:600;color:#1f2937;}' +
+    '.fkbtns{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;}' +
+    '.fkbtns button{padding:5px 11px;border:none;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600;}' +
+    '.fkcp{background:#059669;color:white;}.fkcp:hover{background:#047857;}' +
+    '.fkdl{background:#3b82f6;color:white;}.fkdl:hover{background:#2563eb;}' +
+    '.fkty{display:flex;gap:4px;align-items:center;padding:3px 0;}' +
+    '.fkty span{width:7px;height:7px;background:#a78bfa;border-radius:50%;animation:fkb2 1s infinite;}' +
+    '.fkty span:nth-child(2){animation-delay:.15s;}.fkty span:nth-child(3){animation-delay:.3s;}' +
+    '#fkfi{display:none;}' +
+    '.fkctx{font-size:11px;color:#6b7280;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:4px 8px;margin-bottom:6px;}' +
+    '@keyframes fkb2{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}';
+    document.head.appendChild(s);
 
-    var btn = document.createElement('button');
-    btn.id = 'fk-btn';
-    btn.title = 'Chat with Falkor';
+    var btn = document.createElement('button'); btn.id = 'fkb'; btn.title = 'Falkor AI';
     btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
 
-    var panel = document.createElement('div');
-    panel.id = 'fk-panel';
-    panel.innerHTML = [
-      '<div id="fk-head">',
-      '<svg width="32" height="32" viewBox="0 0 32 32" style="flex-shrink:0"><circle cx="16" cy="16" r="16" fill="rgba(255,255,255,0.2)"/>',
-      '<text x="16" y="21" text-anchor="middle" font-size="16" fill="white">🐉</text></svg>',
-      '<div><span>Falkor</span><small>LessonLab AI Assistant</small></div>',
-      '</div>',
-      '<div id="fk-msgs"></div>',
-      '<div id="fk-shortcuts">',
-      '<button class="fk-chip" onclick="falkorChip(\'Generate a lesson for me\')">✨ Generate lesson</button>',
-      '<button class="fk-chip" onclick="falkorChip(\'How do I use LessonLab?\')">❓ Help</button>',
-      '</div>',
-      '<div id="fk-footer">',
-      '<textarea id="fk-input" rows="1" placeholder="Ask Falkor anything..."></textarea>',
-      '<button id="fk-send">',
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>',
-      '</button>',
-      '</div>'
-    ].join('');
+    var panel = document.createElement('div'); panel.id = 'fkp';
+    panel.innerHTML = '<div id="fkh"><svg width="30" height="30" viewBox="0 0 30 30" style="flex-shrink:0"><circle cx="15" cy="15" r="15" fill="rgba(255,255,255,.2)"/><text x="15" y="20" text-anchor="middle" font-size="15" fill="white">🐉</text></svg><div><div class="fkt">Falkor</div><div class="fks">LessonLab AI — lesson generator + assistant</div></div></div>' +
+    '<div id="fkm"></div>' +
+    '<div id="fksc">' +
+    '<button class="fc" onclick="fkChip(\'Generate a lesson for me\')">✨ Generate</button>' +
+    '<button class="fc" onclick="fkChip(\'Make it longer and more detailed\')">📝 More detail</button>' +
+    '<button class="fc" onclick="fkChip(\'How do I use LessonLab?\')">❓ Help</button>' +
+    '</div>' +
+    '<input type="file" id="fkfi" accept=".txt,.docx,.pdf">' +
+    '<div id="fkf"><button id="fkul" title="Upload old lesson for context">📎</button><textarea id="fki" rows="1" placeholder="Describe a lesson or ask anything..."></textarea><button id="fks"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>';
 
     document.body.appendChild(btn);
     document.body.appendChild(panel);
 
-    var msgs = document.getElementById('fk-msgs');
-    var input = document.getElementById('fk-input');
-    var open = false;
+    var msgs = document.getElementById('fkm');
+    var inp = document.getElementById('fki');
+    var fileInput = document.getElementById('fkfi');
+    var isOpen = false;
+    var uploadedCtx = null;
 
-    function addMsg(text, cls, html) {
-      var d = document.createElement('div');
-      d.className = 'fk-msg ' + cls;
-      if (html) { d.innerHTML = text; } else { d.textContent = text; }
-      msgs.appendChild(d);
-      msgs.scrollTop = msgs.scrollHeight;
-      return d;
+    function addMsg(text, cls, asHtml) {
+      var d = document.createElement('div'); d.className = 'fm ' + cls;
+      if (asHtml) d.innerHTML = text; else d.textContent = text;
+      msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
+    }
+    function typing() {
+      var d = document.createElement('div'); d.className = 'fm fb';
+      d.innerHTML = '<div class="fkty"><span></span><span></span><span></span></div>';
+      msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
     }
 
-    function addTyping() {
-      var d = document.createElement('div');
-      d.className = 'fk-msg bot';
-      d.innerHTML = '<div class="fk-typing"><span></span><span></span><span></span></div>';
-      msgs.appendChild(d);
-      msgs.scrollTop = msgs.scrollHeight;
-      return d;
-    }
-
-    function formatLesson(lesson, lessonId) {
+    function lessonCard(lesson) {
       var diff = lesson.differentiation || {};
-      var html = [
-        '<div class="fk-lesson-card">',
-        '<h4>📋 ' + (lesson.title || 'Generated Lesson') + '</h4>',
-        '<p><span class="fk-lbl">Learning Intention:</span><br>' + (lesson.li || '') + '</p>',
-        '<p><span class="fk-lbl">Success Criteria:</span><br>' + (Array.isArray(lesson.sc) ? lesson.sc.join('<br>') : (lesson.sc || '')) + '</p>',
-        lesson.equipment ? '<p><span class="fk-lbl">Equipment:</span> ' + (Array.isArray(lesson.equipment) ? lesson.equipment.join(', ') : lesson.equipment) + '</p>' : '',
-        diff.support ? '<p><span class="fk-lbl">Support:</span> ' + diff.support + '</p>' : '',
-        diff.extension ? '<p><span class="fk-lbl">Extension:</span> ' + diff.extension + '</p>' : '',
-        lesson.exitTicket ? '<p><span class="fk-lbl">Exit Ticket:</span> ' + lesson.exitTicket + '</p>' : '',
-        '<button class="fk-dl-btn" onclick="falkorCopyLesson(' + JSON.stringify(JSON.stringify(lesson)).replace(/'/g, '&#39;') + ')">📋 Copy to Clipboard</button>',
-        '</div>'
-      ].join('');
-      return html;
+      var sc = Array.isArray(lesson.sc) ? lesson.sc.join('<br>• ') : (lesson.sc || '');
+      var eq = Array.isArray(lesson.equipment) ? lesson.equipment.join(', ') : (lesson.equipment || '');
+      return '<div class="fkcard">' +
+        '<h4>📋 ' + (lesson.title || 'Lesson') + '</h4>' +
+        '<p><span class="lb">Learning Intention:</span> ' + (lesson.li || '') + '</p>' +
+        (sc ? '<p><span class="lb">Success Criteria:</span><br>• ' + sc + '</p>' : '') +
+        (eq ? '<p><span class="lb">Equipment:</span> ' + eq + '</p>' : '') +
+        (diff.support ? '<p><span class="lb">Support:</span> ' + diff.support + '</p>' : '') +
+        (diff.extension ? '<p><span class="lb">Extension:</span> ' + diff.extension + '</p>' : '') +
+        (lesson.exitTicket ? '<p><span class="lb">Exit Ticket:</span> ' + lesson.exitTicket + '</p>' : '') +
+        '<div class="fkbtns">' +
+        '<button class="fkcp" onclick="fkCopy()">📋 Copy</button>' +
+        '<button class="fkdl" onclick="fkDownload()">⬇ Download txt</button>' +
+        '</div></div>';
     }
 
-    window.falkorCopyLesson = function(lessonJson) {
-      try {
-        var lesson = JSON.parse(lessonJson);
-        var diff = lesson.differentiation || {};
-        var text = [
-          'LESSON: ' + (lesson.title || ''),
-          '',
-          'Learning Intention: ' + (lesson.li || ''),
-          '',
-          'Success Criteria:',
-          Array.isArray(lesson.sc) ? lesson.sc.map(function(s){return '- ' + s;}).join('\n') : (lesson.sc || ''),
-          '',
-          'Equipment: ' + (Array.isArray(lesson.equipment) ? lesson.equipment.join(', ') : (lesson.equipment || '')),
-          '',
-          'Support: ' + (diff.support || ''),
-          'Extension: ' + (diff.extension || ''),
-          '',
-          'Exit Ticket: ' + (lesson.exitTicket || '')
-        ].join('\n');
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(function() {
-            addMsg('Lesson copied to clipboard!', 'bot');
-          });
-        }
-      } catch(e) {}
+    window.fkCopy = function() {
+      if (!lastLesson) return;
+      var l = lastLesson; var diff = l.differentiation || {};
+      var sc = Array.isArray(l.sc) ? l.sc.map(function(x){return '- '+x;}).join('\n') : (l.sc || '');
+      var eq = Array.isArray(l.equipment) ? l.equipment.join(', ') : (l.equipment || '');
+      var txt = 'LESSON: ' + (l.title||'') + '\n\nLearning Intention: ' + (l.li||'') +
+        '\n\nSuccess Criteria:\n' + sc + '\n\nEquipment: ' + eq +
+        '\n\nSupport: ' + (diff.support||'') + '\nExtension: ' + (diff.extension||'') +
+        '\n\nExit Ticket: ' + (l.exitTicket||'') + '\n\nContext: ' + (l.context||'');
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ addMsg('Copied to clipboard!', 'fb'); });
     };
 
-    function isLessonRequest(text) {
-      var lower = text.toLowerCase();
-      var keywords = ['lesson', 'generate', 'create a', 'make a', 'plan a', 'write a', 'build a',
-        'year level', 'year 3', 'year 4', 'year 5', 'year 6', 'y3', 'y4', 'y5', 'y6',
-        'pe lesson', 'literacy lesson', 'maths lesson', 'science lesson', 'numeracy lesson'];
-      for (var i = 0; i < keywords.length; i++) {
-        if (lower.indexOf(keywords[i]) !== -1) return true;
-      }
+    window.fkDownload = function() {
+      if (!lastLesson) return;
+      var l = lastLesson; var diff = l.differentiation || {};
+      var sc = Array.isArray(l.sc) ? l.sc.map(function(x){return '- '+x;}).join('\n') : (l.sc || '');
+      var eq = Array.isArray(l.equipment) ? l.equipment.join(', ') : (l.equipment || '');
+      var txt = 'LESSON: ' + (l.title||'') + '\n\nLearning Intention: ' + (l.li||'') +
+        '\n\nSuccess Criteria:\n' + sc + '\n\nEquipment: ' + eq +
+        '\n\nSupport: ' + (diff.support||'') + '\nExtension: ' + (diff.extension||'') +
+        '\n\nExit Ticket: ' + (l.exitTicket||'');
+      var blob = new Blob([txt], {type:'text/plain'});
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = (l.title || 'lesson').replace(/[^a-z0-9]/gi,'_') + '.txt';
+      a.click();
+    };
+
+    window.fkChip = function(t) { inp.value = t; send(t); };
+
+    function extractJson(txt) {
+      var m = txt.match(/```json\s*([\s\S]*?)```/) || txt.match(/\{[\s\S]*"subject"[\s\S]*\}/);
+      if (!m) return null;
+      try { return JSON.parse(m[1] || m[0]); } catch(e) { return null; }
+    }
+
+    function isAmend(t) {
+      var kw = ['make it','longer','shorter','more detail','less detail','add more','remove','change','amend','edit','update','redo','rewrite','different format','simplify','expand','shorten','adjust','tweak','modify','another version'];
+      t = t.toLowerCase();
+      for (var i=0;i<kw.length;i++) if (t.indexOf(kw[i]) !== -1) return true;
       return false;
     }
 
-    function extractJsonFromText(text) {
-      var match = text.match(/\{[\s\S]*?\}/);
-      if (!match) return null;
-      try { return JSON.parse(match[0]); } catch(e) { return null; }
+    function isLesson(t) {
+      var kw = ['lesson','generate','create a','make a','plan a','write a','build a','need a','year level',
+        'year 1','year 2','year 3','year 4','year 5','year 6','foundation','prep','pe lesson',
+        'literacy lesson','maths lesson','numeracy lesson','science lesson'];
+      t = t.toLowerCase();
+      for (var i=0;i<kw.length;i++) if (t.indexOf(kw[i]) !== -1) return true;
+      return false;
     }
 
-    function generateLessonFromRequest(userText, typingEl) {
-      var parsePrompt = 'LESSONLAB_PARSE: Parse this lesson request and respond with ONLY a JSON object (no explanation): ' +
-        '{"subject":"one of: pe/literacy/numeracy/science/visual-art/music/drama/french/digital_tech/hass/wellbeing/performing_arts",' +
-        '"unit":"short unit name",' +
-        '"focus":"main lesson focus or topic",' +
-        '"year_level":"e.g. Years 3-4",' +
-        '"duration":"e.g. 45 mins",' +
-        '"school_name":"school name if mentioned, else Williamstown Primary School"}. ' +
-        'Request: ' + userText;
+    function callChat(text, onDone, onErr) {
+      fetch(WU + '/chat', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:text, product:'LessonLab', agent_pin:AP})
+      }).then(function(r){return r.json();})
+      .then(function(d){ onDone(d.reply || d.response || d.message || ''); })
+      .catch(onErr || function(){ addMsg('Connection issue — try again.','fb'); });
+    }
 
-      fetch(WIDGET_URL + '/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: parsePrompt, product: 'LessonLab', agent_pin: AGENT_PIN })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var params = extractJsonFromText(data.reply || data.response || data.message || '');
-        if (params && params.subject && params.focus) {
-          if (typingEl) typingEl.innerHTML = '<div class="fk-typing"><span></span><span></span><span></span></div>';
-          var body = {
-            subject: params.subject || 'pe',
-            unit: params.unit || userText,
-            focus: params.focus || userText,
-            week: 1,
-            total_weeks: 10,
-            year_level: params.year_level || 'Years 3-4',
-            duration: params.duration || '45 mins',
-            school_name: params.school_name || 'Williamstown Primary School',
-            curriculum_standards: []
-          };
-          return api('/lessons/generate', {
-            method: 'POST',
-            body: JSON.stringify(body)
+    function generateLesson(userText, t) {
+      var ctxNote = uploadedCtx ? ' Reference this uploaded lesson for style/format: ' + uploadedCtx.slice(0,800) : '';
+      var parsePrompt = 'LESSONLAB_PARSE: Parse this lesson request and return ONLY a JSON object with NO other text: ' +
+        '{"subject":"pe|literacy|numeracy|science|visual-art|music|drama|french|digital_tech|hass|wellbeing|performing_arts",' +
+        '"unit":"short unit name","focus":"main lesson focus","year_level":"e.g. Years 3-4",' +
+        '"duration":"e.g. 45 mins","school_name":"school if mentioned else Williamstown Primary School"}' +
+        ctxNote + '. Request: ' + userText;
+
+      callChat(parsePrompt, function(reply) {
+        var params = extractJson(reply);
+        if (params && params.subject) {
+          api('/lessons/generate', {
+            method:'POST',
+            body:JSON.stringify({
+              subject: params.subject||'pe', unit: params.unit||userText,
+              focus: params.focus||userText, week:1, total_weeks:10,
+              year_level: params.year_level||'Years 3-4',
+              duration: params.duration||'45 mins',
+              school_name: params.school_name||'Williamstown Primary School',
+              curriculum_standards:[]
+            })
           }).then(function(res) {
-            if (typingEl) typingEl.remove();
+            if (t) t.remove();
             if (res && res.lesson) {
-              addMsg(formatLesson(res.lesson, res.ai_lesson_id), 'bot lesson', true);
-              addMsg('Lesson generated! Use the copy button to grab it, or ask me to adjust anything.', 'bot');
+              lastLesson = res.lesson;
+              chatHistory.push({role:'assistant', type:'lesson', lesson: res.lesson});
+              addMsg(lessonCard(res.lesson), 'fm fl', true);
+              addMsg('Done! You can say "make it longer", "add more detail", "change the format", or upload an old lesson for style reference.', 'fb');
             } else {
-              addMsg('I couldn\'t generate that lesson. ' + (res.error || 'Try again with more detail.'), 'bot');
+              addMsg('Couldn\'t generate — ' + (res&&res.error||'try again with more detail.'), 'fb');
             }
-          });
+          }).catch(function(){ if(t)t.remove(); addMsg('API error. Try again.','fb'); });
         } else {
-          if (typingEl) typingEl.remove();
-          addMsg('Tell me more! Try: "Generate a Year 5 PE lesson on throwing skills, 45 minutes"', 'bot');
+          if (t) t.remove();
+          addMsg('Could you be more specific? Try: "Year 4 PE lesson on kicking skills, 45 minutes"', 'fb');
         }
-      })
-      .catch(function(e) {
-        if (typingEl) typingEl.remove();
-        addMsg('Something went wrong. Please try again.', 'bot');
-        console.error('Falkor lesson error:', e);
       });
     }
 
-    function sendChat(text) {
-      if (!text.trim()) return;
-      addMsg(text, 'user');
-      input.value = '';
-      input.style.height = 'auto';
-      var typing = addTyping();
+    function amendLesson(userText, t) {
+      var lessonStr = JSON.stringify(lastLesson);
+      var ctxNote = uploadedCtx ? ' Also consider this uploaded reference: ' + uploadedCtx.slice(0,600) : '';
+      var prompt = 'LESSONLAB_AMEND: Here is the current lesson as JSON: ' + lessonStr +
+        '. User instruction: "' + userText + '"' + ctxNote +
+        '. Return the amended lesson as a JSON block wrapped in ```json ... ```. Include ALL fields: title, li, sc (array), equipment (array), context, differentiation.support, differentiation.extension, exitTicket.';
 
-      if (isLessonRequest(text)) {
-        addMsg('On it! Generating your lesson now...', 'bot');
-        typing.remove();
-        var t2 = addTyping();
-        generateLessonFromRequest(text, t2);
+      callChat(prompt, function(reply) {
+        if (t) t.remove();
+        var amended = extractJson(reply);
+        if (amended && (amended.title || amended.li)) {
+          lastLesson = amended;
+          chatHistory.push({role:'assistant', type:'lesson', lesson: amended});
+          addMsg(lessonCard(amended), 'fm fl', true);
+          addMsg('Updated! Keep refining or ask me anything else.', 'fb');
+        } else {
+          addMsg(reply, 'fb');
+        }
+      });
+    }
+
+    function send(text) {
+      text = (text || inp.value).trim();
+      if (!text) return;
+      inp.value = ''; inp.style.height = 'auto';
+      addMsg(text, 'fu');
+      chatHistory.push({role:'user', text:text});
+
+      if (uploadedCtx && !isAmend(text) && !isLesson(text)) {
+        addMsg('Got your uploaded lesson as context. Now describe what you need!', 'fb');
         return;
       }
 
-      fetch(WIDGET_URL + '/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text, product: 'LessonLab', agent_pin: AGENT_PIN })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        typing.remove();
-        addMsg(data.reply || data.response || data.message || 'Hi! I\'m Falkor. How can I help?', 'bot');
-      })
-      .catch(function() {
-        typing.remove();
-        addMsg('Connection issue. Please try again.', 'bot');
+      var t = typing();
+
+      if (lastLesson && isAmend(text)) {
+        amendLesson(text, t);
+        return;
+      }
+      if (isLesson(text)) {
+        t.remove();
+        addMsg('On it! Generating now...', 'fb');
+        var t2 = typing();
+        generateLesson(text, t2);
+        return;
+      }
+
+      callChat(text, function(reply) {
+        t.remove();
+        if (reply.indexOf('{') !== -1 && reply.indexOf('"subject"') !== -1) {
+          var p = extractJson(reply);
+          if (p && p.subject) { generateLesson(text, null); return; }
+        }
+        addMsg(reply, 'fb');
       });
     }
 
-    window.falkorChip = function(text) {
-      input.value = text;
-      sendChat(text);
-    };
+    // File upload handler
+    fileInput.addEventListener('change', function() {
+      var file = fileInput.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var raw = e.target.result;
+        if (typeof raw === 'string') {
+          uploadedCtx = raw.slice(0, 3000);
+        } else {
+          // Try to extract text from docx XML
+          var arr = new Uint8Array(raw);
+          var str = '';
+          for (var i=0;i<arr.length;i++) { if(arr[i]>31&&arr[i]<127) str+=String.fromCharCode(arr[i]); }
+          var match = str.match(/w:t[^>]*>([^<]{3,})/g);
+          if (match) uploadedCtx = match.map(function(m){return m.replace(/^w:t[^>]*>/,'');}).join(' ').slice(0,3000);
+          else uploadedCtx = str.slice(0,3000);
+        }
+        addMsg('📎 Got "' + file.name + '" — I\'ll use this as style/format context. Now tell me what lesson you want!', 'fb');
+        fileInput.value = '';
+      };
+      if (file.name.match(/\.txt$/i)) reader.readAsText(file);
+      else reader.readAsArrayBuffer(file);
+    });
 
-    btn.addEventListener('click', function() {
-      open = !open;
-      panel.style.display = open ? 'flex' : 'none';
-      if (open && msgs.children.length === 0) {
-        addMsg('Hey! I\'m Falkor 🐉 Your LessonLab AI. Tell me what lesson you need — subject, year level, topic, duration — and I\'ll generate it for you.', 'bot');
+    document.getElementById('fkul').addEventListener('click', function(){ fileInput.click(); });
+    document.getElementById('fks').addEventListener('click', function(){ send(); });
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} });
+    inp.addEventListener('input', function(){ this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,100)+'px'; });
+
+    btn.addEventListener('click', function(){
+      isOpen = !isOpen;
+      panel.style.display = isOpen ? 'flex' : 'none';
+      if (isOpen && msgs.children.length === 0) {
+        addMsg('Hey! I\'m Falkor 🐉 Tell me what lesson you need and I\'ll generate it. You can also paste or upload an old lesson for style reference, then ask me to create something similar.', 'fb');
       }
-    });
-
-    document.getElementById('fk-send').addEventListener('click', function() {
-      sendChat(input.value);
-    });
-
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendChat(input.value);
-      }
-    });
-
-    input.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = Math.min(this.scrollHeight, 100) + 'px';
     });
   }
 
-  // Poll for currentProfile, check whitelist
-  var attempts = 0;
-  var poll = setInterval(function() {
-    attempts++;
-    if (attempts > 120) { clearInterval(poll); return; }
+  var att = 0;
+  var poll = setInterval(function(){
+    if (++att > 120) { clearInterval(poll); return; }
     if (typeof currentProfile !== 'undefined' && currentProfile && currentProfile.email) {
       clearInterval(poll);
-      if (ALLOWED.indexOf(currentProfile.email) !== -1) {
-        initWidget();
-      }
+      if (ALLOWED.indexOf(currentProfile.email) !== -1) initWidget();
     }
   }, 500);
 })();
