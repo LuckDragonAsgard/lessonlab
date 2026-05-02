@@ -12044,6 +12044,7 @@ function rateLessonAI(idx, rating, btn) {
   var activeTab = 'chat';
   var editingLesson = null;
   var unitWeekData = {};
+  var diffPack = null;
 
   function getAppState() {
     try {
@@ -12087,7 +12088,6 @@ function rateLessonAI(idx, rating, btn) {
       '.fkpanelh{padding:10px 16px;background:#fff;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}',
       '.fkpanelh button{padding:4px 10px;border:1px solid #e2e8f0;border-radius:5px;font-size:11.5px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;white-space:nowrap;}',
       '.fkpanelh button:hover{background:#f8fafc;}',
-      // Library filter bar
       '#fklibfilter{padding:8px 12px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;gap:6px;flex-shrink:0;align-items:center;}',
       '#fklibsearch{flex:1;border:1px solid #e2e8f0;border-radius:6px;padding:5px 9px;font-size:12.5px;font-family:inherit;outline:none;color:#1e293b;background:#f8fafc;}',
       '#fklibsearch:focus{border-color:#94a3b8;background:#fff;}',
@@ -12107,6 +12107,8 @@ function rateLessonAI(idx, rating, btn) {
       '#fksc{display:flex;gap:6px;padding:0 16px 12px;flex-wrap:wrap;background:#f8fafc;flex-shrink:0;}',
       '.fc{background:#fff;color:#475569;border:1px solid #e2e8f0;border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:500;transition:all .15s;}',
       '.fc:hover{background:#f1f5f9;border-color:#cbd5e1;color:#1e293b;}',
+      '.fc.fchot{background:#1e293b;color:#fff;border-color:#1e293b;}',
+      '.fc.fchot:hover{background:#0f172a;}',
       '#fkf{padding:10px 14px;border-top:1px solid #e2e8f0;display:flex;gap:8px;align-items:flex-end;background:#fff;flex-shrink:0;}',
       '#fki{flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:13.5px;outline:none;resize:none;font-family:inherit;max-height:100px;color:#1e293b;background:#f8fafc;}',
       '#fki:focus{border-color:#94a3b8;background:#fff;}',
@@ -12123,6 +12125,19 @@ function rateLessonAI(idx, rating, btn) {
       '.fkbtns button:hover{background:#f8fafc;border-color:#cbd5e1;color:#1e293b;}',
       '.fkbtns .fkpri{background:#1e293b;color:#fff;border-color:#1e293b;}',
       '.fkbtns .fkpri:hover{background:#0f172a;}',
+      '.fkassess{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;margin-top:4px;font-size:13px;color:#1e293b;line-height:1.6;}',
+      '.fkassess h4{margin:0 0 8px;font-size:13px;font-weight:700;color:#0f172a;padding-bottom:6px;border-bottom:1px solid #f1f5f9;}',
+      '.fkassess .lb{font-weight:600;color:#64748b;display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin:8px 0 2px;}',
+      '.fkdiffpack{background:#fff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-top:4px;}',
+      '.fkdifftab{display:flex;border-bottom:1px solid #e2e8f0;}',
+      '.fkdifftab button{flex:1;padding:8px 4px;border:none;background:none;font-size:12px;font-weight:500;color:#64748b;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;}',
+      '.fkdifftab button.active{color:#1e293b;border-bottom-color:#1e293b;}',
+      '.fkdifftab button:hover{background:#f8fafc;}',
+      '.fkdiffcontent{padding:12px 14px;font-size:12.5px;color:#374151;line-height:1.5;}',
+      '.fkdiffbtns{padding:8px 14px 12px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid #f8fafc;}',
+      '.fkdiffbtns button{padding:5px 11px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;background:#fff;color:#475569;font-family:inherit;}',
+      '.fkdiffbtns button:hover{background:#f8fafc;}',
+      '.fkdiffbtns .fkpri{background:#1e293b;color:#fff;border-color:#1e293b;}',
       '.fkty{display:flex;gap:4px;align-items:center;padding:2px 0;}',
       '.fkty span{width:6px;height:6px;background:#cbd5e1;border-radius:50%;animation:fkb2 1.2s infinite;}',
       '.fkty span:nth-child(2){animation-delay:.2s;}.fkty span:nth-child(3){animation-delay:.4s;}',
@@ -12164,7 +12179,6 @@ function rateLessonAI(idx, rating, btn) {
       '#fkeditfoot button{padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;border:1px solid #e2e8f0;}',
       '#fkeditsave{background:#1e293b;color:#fff;border-color:#1e293b;}#fkeditsave:hover{background:#0f172a;}',
       '#fkeditcancel{background:#fff;color:#475569;}#fkeditcancel:hover{background:#f8fafc;}',
-      // Adapt modal
       '#fkadapt{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100001;display:none;align-items:center;justify-content:center;padding:16px;}',
       '#fkadaptbox{background:#fff;border-radius:12px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;}',
       '#fkadapth{background:#1e293b;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;color:#fff;}',
@@ -12236,7 +12250,6 @@ function rateLessonAI(idx, rating, btn) {
 
     var editModal = document.createElement('div'); editModal.id = 'fkedit';
     editModal.innerHTML = '<div id="fkeditbox"><div id="fkedith"><span>Edit Lesson</span><button id="fkeditclose" onclick="fkEditClose()">&#10005;</button></div><div id="fkeditbody"></div><div id="fkeditfoot"><button id="fkeditcancel" onclick="fkEditClose()">Cancel</button><button onclick="fkEditDownloadPdf()" style="padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;border:1px solid #e2e8f0;background:#fff;color:#475569;">PDF</button><button id="fkeditsave" onclick="fkEditSave()">Save changes</button></div></div>';
-
     var adaptModal = document.createElement('div'); adaptModal.id = 'fkadapt';
     adaptModal.innerHTML = '<div id="fkadaptbox"><div id="fkadapth"><span>Adapt Lesson</span><button id="fkadaptclose" onclick="fkAdaptClose()">&#10005;</button></div><div id="fkadaptbody"><p style="font-size:13px;color:#475569;margin:0 0 16px;">Create a version of this lesson adapted for a different context.</p><div class="fkadaptrow"><label>Year Level</label><input id="fkadaptyr" type="text" placeholder="e.g. Years 5-6"></div><div class="fkadaptrow"><label>Focus / Topic (optional)</label><input id="fkadaptfocus" type="text" placeholder="e.g. passing and receiving"></div><div class="fkadaptrow"><label>Any other changes</label><input id="fkadaptother" type="text" placeholder="e.g. shorter, outdoors, no equipment"></div><button id="fkadaptgo" onclick="fkAdaptRun()">Generate adapted version</button></div></div>';
 
@@ -12258,8 +12271,7 @@ function rateLessonAI(idx, rating, btn) {
 
     function showOnly(id) {
       ['fkm','fksc','fkf','fklib','fkunit','fkdash'].forEach(function(eid) {
-        var el = document.getElementById(eid); if (!el) return;
-        el.style.display = 'none';
+        var el = document.getElementById(eid); if (!el) return; el.style.display = 'none';
       });
       if (id === 'chat') {
         document.getElementById('fkm').style.cssText = 'flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:200px;background:#f8fafc;';
@@ -12272,9 +12284,7 @@ function rateLessonAI(idx, rating, btn) {
 
     window.fkTab = function(tab) {
       activeTab = tab;
-      document.querySelectorAll('.fktab').forEach(function(t, i) {
-        t.classList.toggle('active', ['chat','library','unit','dash'][i] === tab);
-      });
+      document.querySelectorAll('.fktab').forEach(function(t, i) { t.classList.toggle('active', ['chat','library','unit','dash'][i] === tab); });
       showOnly(tab === 'library' ? 'lib' : tab);
       if (tab === 'library') loadLibrary();
       if (tab === 'unit') loadUnitPlan();
@@ -12292,50 +12302,80 @@ function rateLessonAI(idx, rating, btn) {
       msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
     }
 
+    // Smart next-step chips after generation
+    function showNextSteps(week) {
+      var appSt = getAppState();
+      var scDiv = document.getElementById('fksc');
+      if (!scDiv) return;
+      // Clear existing chips
+      scDiv.innerHTML = '';
+      var chips = [];
+      // Next week chip
+      if (appSt && appSt.weeks) {
+        var totalWeeks = parseInt(appSt.weeks) || 10;
+        var startWeek = parseInt(appSt.startWeek) || 1;
+        var nextWeek = (week || 1) + 1;
+        if (nextWeek < startWeek + totalWeeks) {
+          chips.push({label: 'Generate week ' + nextWeek, hot: true, action: function() {
+            fkTab('chat');
+            addMsg('Generating week ' + nextWeek + '...', 'fb');
+            var t = typing();
+            generateLessonForWeek(nextWeek, appSt, t);
+          }});
+        }
+      }
+      chips.push({label: 'Generate assessment', hot: false, action: function() { fkGenerateAssessment(); }});
+      chips.push({label: 'Differentiation pack', hot: false, action: function() { fkDiffPack(); }});
+      if (appSt && appSt.yearLevel) {
+        var otherYr = appSt.yearLevel.indexOf('3') >= 0 || appSt.yearLevel.indexOf('4') >= 0 ? 'Years 5-6' : 'Years 3-4';
+        chips.push({label: 'Adapt for ' + otherYr, hot: false, action: function() {
+          document.getElementById('fkadaptyr').value = otherYr;
+          document.getElementById('fkadaptfocus').value = '';
+          document.getElementById('fkadaptother').value = '';
+          document.getElementById('fkadapt').style.display = 'flex';
+        }});
+      }
+      chips.push({label: 'More detail', hot: false, action: function() { fkChip('Make it longer and more detailed'); }});
+      chips.forEach(function(c) {
+        var b = document.createElement('button'); b.className = 'fc' + (c.hot ? ' fchot' : '');
+        b.textContent = c.label; b.onclick = c.action; scDiv.appendChild(b);
+      });
+    }
+
+    function resetChips() {
+      var scDiv = document.getElementById('fksc');
+      if (!scDiv) return;
+      scDiv.innerHTML = '<button class="fc" onclick="fkChip(\'Generate a lesson\')">Generate lesson</button>'+
+        '<button class="fc" onclick="fkChip(\'Make it longer and more detailed\')">More detail</button>'+
+        '<button class="fc" onclick="fkChip(\'How do I use LessonLab?\')">Help</button>';
+    }
+
     function buildDocxBody(lesson) {
-      function p(text, style) {
-        return '<w:p><w:pPr><w:pStyle w:val="'+(style||'Normal')+'"/></w:pPr><w:r><w:t xml:space="preserve">'+String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';
-      }
-      function heading(text, level) {
-        return '<w:p><w:pPr><w:pStyle w:val="Heading'+level+'"/></w:pPr><w:r><w:t>'+String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';
-      }
-      function label(lbl, val) {
-        return '<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">'+lbl+': </w:t></w:r><w:r><w:t xml:space="preserve">'+String(val||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';
-      }
-      var diff = lesson.differentiation || {}, sc = Array.isArray(lesson.sc)?lesson.sc:[lesson.sc||''];
-      var eq = Array.isArray(lesson.equipment)?lesson.equipment.join(', '):(lesson.equipment||lesson.materials||'');
-      var body = heading(lesson.title||'Lesson Plan',1)+label('Learning Intention',lesson.li||'')+heading('Success Criteria',2);
+      function p(text, style) { return '<w:p><w:pPr><w:pStyle w:val="'+(style||'Normal')+'"/></w:pPr><w:r><w:t xml:space="preserve">'+String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>'; }
+      function heading(text, level) { return '<w:p><w:pPr><w:pStyle w:val="Heading'+level+'"/></w:pPr><w:r><w:t>'+String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>'; }
+      function label(lbl, val) { return '<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">'+lbl+': </w:t></w:r><w:r><w:t xml:space="preserve">'+String(val||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>'; }
+      var diff=lesson.differentiation||{}, sc=Array.isArray(lesson.sc)?lesson.sc:[lesson.sc||''];
+      var eq=Array.isArray(lesson.equipment)?lesson.equipment.join(', '):(lesson.equipment||lesson.materials||'');
+      var body=heading(lesson.title||'Lesson Plan',1)+label('Learning Intention',lesson.li||'')+heading('Success Criteria',2);
       sc.forEach(function(s){body+=p('- '+s);});
-      if(eq) body+=label('Equipment',eq);
-      if(lesson.context) body+=label('Context',lesson.context);
+      if(eq) body+=label('Equipment',eq); if(lesson.context) body+=label('Context',lesson.context);
       body+=heading('Lesson Phases',2);
-      if(lesson.entry){body+=heading('Entry / Warm-up',3);body+=p(lesson.entry);}
-      if(lesson.entrySay) body+=label('Say',lesson.entrySay);
-      if(lesson.teach){body+=heading('Explicit Teaching',3);body+=p(lesson.teach);}
-      if(lesson.points) body+=label('Key Points',lesson.points);
-      if(lesson.cues) body+=label('Cue Words',lesson.cues);
+      if(lesson.entry){body+=heading('Entry / Warm-up',3);body+=p(lesson.entry);} if(lesson.entrySay) body+=label('Say',lesson.entrySay);
+      if(lesson.teach){body+=heading('Explicit Teaching',3);body+=p(lesson.teach);} if(lesson.points) body+=label('Key Points',lesson.points); if(lesson.cues) body+=label('Cue Words',lesson.cues);
       if(lesson.practice){body+=heading('Guided Practice',3);body+=p(lesson.practice);}
-      if(lesson.game){body+=heading('Application / Game',3);body+=p(lesson.game);}
-      if(lesson.ifWell) body+=label('If going well',lesson.ifWell);
-      if(lesson.exit){body+=heading('Exit / Reflection',3);body+=p(lesson.exit);}
-      if(lesson.ifNot) body+=label('If not working',lesson.ifNot);
-      body+=heading('Differentiation',2);
-      if(diff.support) body+=label('Support',diff.support);
-      if(diff.extension) body+=label('Extension',diff.extension);
+      if(lesson.game){body+=heading('Application / Game',3);body+=p(lesson.game);} if(lesson.ifWell) body+=label('If going well',lesson.ifWell);
+      if(lesson.exit){body+=heading('Exit / Reflection',3);body+=p(lesson.exit);} if(lesson.ifNot) body+=label('If not working',lesson.ifNot);
+      body+=heading('Differentiation',2); if(diff.support) body+=label('Support',diff.support); if(diff.extension) body+=label('Extension',diff.extension);
       if(lesson.exitTicket) body+=label('Exit Ticket',lesson.exitTicket);
       return body;
     }
-    function getDocxStyles(){
-      return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="1e293b"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:pPr><w:spacing w:before="200" w:after="80"/></w:pPr><w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="334155"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:pPr><w:spacing w:before="160" w:after="60"/></w:pPr><w:rPr><w:b/><w:i/><w:sz w:val="24"/><w:color w:val="475569"/></w:rPr></w:style></w:styles>';
-    }
+    function getDocxStyles(){return'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="1e293b"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:pPr><w:spacing w:before="200" w:after="80"/></w:pPr><w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="334155"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:pPr><w:spacing w:before="160" w:after="60"/></w:pPr><w:rPr><w:b/><w:i/><w:sz w:val="24"/><w:color w:val="475569"/></w:rPr></w:style></w:styles>';}
     function zipAndDownload(filename, docXml) {
       var relsXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
       var rootRels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
       var contentTypes='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>';
       if(typeof JSZip==='undefined'){var blob=new Blob([docXml],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename.replace(/\.docx$/,'.doc');a.click();return;}
-      var zip=new JSZip();
-      zip.file('[Content_Types].xml',contentTypes);zip.file('_rels/.rels',rootRels);
-      zip.file('word/document.xml',docXml);zip.file('word/styles.xml',getDocxStyles());zip.file('word/_rels/document.xml.rels',relsXml);
+      var zip=new JSZip();zip.file('[Content_Types].xml',contentTypes);zip.file('_rels/.rels',rootRels);zip.file('word/document.xml',docXml);zip.file('word/styles.xml',getDocxStyles());zip.file('word/_rels/document.xml.rels',relsXml);
       zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}).then(function(blob){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();});
     }
     function lessonToPrintHtml(lesson){
@@ -12343,12 +12383,9 @@ function rateLessonAI(idx, rating, btn) {
       var eq=Array.isArray(lesson.equipment)?lesson.equipment.join(', '):(lesson.equipment||lesson.materials||'');
       function sec(t,c){return c?'<div class="sec"><h3>'+t+'</h3><p>'+c+'</p></div>':'';}
       return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+(lesson.title||'Lesson')+'</title><style>body{font-family:Arial,sans-serif;max-width:700px;margin:32px auto;color:#1e293b;font-size:14px;line-height:1.6;}h1{font-size:22px;border-bottom:2px solid #1e293b;padding-bottom:8px;margin-bottom:16px;}h2{font-size:16px;color:#334155;margin:20px 0 6px;}h3{font-size:14px;color:#475569;font-style:italic;margin:14px 0 4px;}.sec{margin:10px 0;}ul{margin:4px 0 4px 16px;padding:0;}.diff{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}.diff div{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 12px;}.diff h3{margin:0 0 4px;font-size:12px;}@media print{body{margin:16px;}}</style></head><body>'+
-        '<h1>'+(lesson.title||'Lesson Plan')+'</h1>'+
-        (eq?'<p><b>Equipment:</b> '+eq+'</p>':'')+
-        '<h2>Learning Intention</h2><p>'+(lesson.li||'')+'</p>'+
-        '<h2>Success Criteria</h2><ul>'+sc.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'+
-        (lesson.context?'<h2>Context</h2><p>'+lesson.context+'</p>':'')+
-        '<h2>Lesson Phases</h2>'+
+        '<h1>'+(lesson.title||'Lesson Plan')+'</h1>'+(eq?'<p><b>Equipment:</b> '+eq+'</p>':'')+
+        '<h2>Learning Intention</h2><p>'+(lesson.li||'')+'</p><h2>Success Criteria</h2><ul>'+sc.map(function(x){return'<li>'+x+'</li>';}).join('')+'</ul>'+
+        (lesson.context?'<h2>Context</h2><p>'+lesson.context+'</p>':'')+'<h2>Lesson Phases</h2>'+
         sec('Entry / Warm-up',lesson.entry)+(lesson.entrySay?'<p><b>Say:</b> '+lesson.entrySay+'</p>':'')+
         sec('Explicit Teaching',lesson.teach)+(lesson.points?'<p><b>Key Points:</b> '+lesson.points+'</p>':'')+
         (lesson.cues?'<p><b>Cues:</b> '+lesson.cues+'</p>':'')+
@@ -12356,15 +12393,15 @@ function rateLessonAI(idx, rating, btn) {
         (lesson.ifWell?'<p><b>If going well:</b> '+lesson.ifWell+'</p>':'')+
         sec('Exit / Reflection',lesson.exit)+(lesson.ifNot?'<p><b>If not working:</b> '+lesson.ifNot+'</p>':'')+
         '<h2>Differentiation</h2><div class="diff"><div><h3>Support</h3><p>'+(diff.support||'')+'</p></div><div><h3>Extension</h3><p>'+(diff.extension||'')+'</p></div></div>'+
-        (lesson.exitTicket?'<h2>Exit Ticket</h2><p>'+lesson.exitTicket+'</p>':'')+
-        '</body></html>';
+        (lesson.exitTicket?'<h2>Exit Ticket</h2><p>'+lesson.exitTicket+'</p>':'')+'</body></html>';
     }
     function downloadPdf(lesson){var w=window.open('','_blank');w.document.write(lessonToPrintHtml(lesson));w.document.close();w.onload=function(){w.focus();w.print();};}
 
-    function lessonCard(lesson) {
+    function lessonCard(lesson, opts) {
       var diff=lesson.differentiation||{};
-      var sc=Array.isArray(lesson.sc)?lesson.sc.map(function(x){return '<li>'+x+'</li>';}).join(''):(lesson.sc||'');
+      var sc=Array.isArray(lesson.sc)?lesson.sc.map(function(x){return'<li>'+x+'</li>';}).join(''):(lesson.sc||'');
       var eq=Array.isArray(lesson.equipment)?lesson.equipment.join(', '):(lesson.equipment||lesson.materials||'');
+      var extraBtns=(opts&&opts.extraBtns)||'';
       return '<div class="fkcard"><h4>'+(lesson.title||'Generated Lesson')+'</h4>'+
         '<p><span class="lb">Learning Intention</span>'+(lesson.li||'')+'</p>'+
         (sc?'<p><span class="lb">Success Criteria</span><ul style="margin:3px 0 0 14px;padding:0;font-size:12.5px;color:#374151;">'+sc+'</ul></p>':'')+
@@ -12378,7 +12415,9 @@ function rateLessonAI(idx, rating, btn) {
           '<button onclick="fkLoadIntoApp()">Load into app</button>'+
           '<button onclick="fkEditLesson()">Edit</button>'+
           '<button onclick="fkAdaptOpen()">Adapt</button>'+
-          '<button onclick="fkCopyText()">Copy</button>'+
+          '<button onclick="fkDiffPack()">Diff pack</button>'+
+          '<button onclick="fkGenerateAssessment()">Assessment</button>'+
+          extraBtns+
         '</div><div id="fksavedmsg"></div></div>';
     }
 
@@ -12398,7 +12437,7 @@ function rateLessonAI(idx, rating, btn) {
     }
 
     window.fkDownloadDocx=function(lesson){
-      var src=lesson||lastLesson; if(!src) return;
+      var src=lesson||lastLesson;if(!src) return;
       var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+buildDocxBody(src)+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>';
       zipAndDownload((src.title||'lesson').replace(/[^a-z0-9]/gi,'_')+'.docx',docXml);
     };
@@ -12406,7 +12445,7 @@ function rateLessonAI(idx, rating, btn) {
     window.fkCopyText=function(){
       if(!lastLesson) return;
       var l=lastLesson,diff=l.differentiation||{};
-      var sc=Array.isArray(l.sc)?l.sc.map(function(x){return '- '+x;}).join('\n'):(l.sc||'');
+      var sc=Array.isArray(l.sc)?l.sc.map(function(x){return'- '+x;}).join('\n'):(l.sc||'');
       var eq=Array.isArray(l.equipment)?l.equipment.join(', '):(l.equipment||l.materials||'');
       var txt='LESSON: '+(l.title||'')+'\n\nLearning Intention: '+(l.li||'')+'\n\nSuccess Criteria:\n'+sc+'\n\nEquipment: '+eq+
         (l.entry?'\n\nEntry/Warm-up:\n'+l.entry:'')+(l.teach?'\n\nExplicit Teaching:\n'+l.teach:'')+
@@ -12415,8 +12454,7 @@ function rateLessonAI(idx, rating, btn) {
       if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){addMsg('Copied to clipboard.','fb');});
     };
     window.fkLoadIntoApp=function(lesson){
-      var src=lesson||lastLesson; if(!src) return;
-      if(lesson) lastLesson=lesson;
+      var src=lesson||lastLesson;if(!src) return;if(lesson) lastLesson=lesson;
       try{
         var appSt=getAppState();
         if(!appSt||!appSt.subject){addMsg('Select a subject in the app first, then use Load into app.','fb');return;}
@@ -12428,9 +12466,145 @@ function rateLessonAI(idx, rating, btn) {
             points:src.points||'',cues:src.cues||'',entry_crt:src.entry_crt||'',teach_crt:src.teach_crt||'',
             practice_crt:src.practice_crt||'',game_crt:src.game_crt||'',exit_crt:src.exit_crt||'',
             entrySay:src.entrySay||'',ifWell:src.ifWell||'',ifNot:src.ifNot||''},lastAiId||null);
-          fkTab('chat'); addMsg('Lesson loaded into the app.','fb');
-        } else { addMsg('Could not load — try generating a lesson in the main app first.','fb'); }
+          fkTab('chat');addMsg('Lesson loaded into the app.','fb');
+        }else{addMsg('Could not load — try generating a lesson in the main app first.','fb');}
       }catch(e){addMsg('Load failed: '+e.message,'fb');}
+    };
+
+    // Assessment generator
+    window.fkGenerateAssessment=function(){
+      if(!lastLesson){addMsg('Generate a lesson first, then create an assessment for it.','fb');return;}
+      addMsg('Generating assessment task...','fb');var t=typing();
+      var prompt='LESSONLAB_ASSESS: Generate a structured assessment task for this lesson.\n'+
+        'Lesson title: '+lastLesson.title+'\nLearning Intention: '+(lastLesson.li||'')+'\n'+
+        'Success Criteria: '+(Array.isArray(lastLesson.sc)?lastLesson.sc.join(', '):lastLesson.sc||'')+'\n\n'+
+        'Return a JSON object with these fields:\n'+
+        '{"title":"Assessment title","type":"observation|checklist|written|practical","description":"What students do",'+
+        '"criteria":[{"criterion":"What to look for","emerging":"emerging level","developing":"developing level","achieved":"achieved level"}],'+
+        '"teacher_notes":"What teacher observes/records","student_instructions":"What teacher says to students"}';
+      callChat(prompt,function(reply){
+        t.remove();
+        var assess=extractJson(reply);
+        if(assess&&assess.title){
+          var crit=(assess.criteria||[]).map(function(c,i){
+            return '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;">' +
+              '<div class="lb">'+c.criterion+'</div>' +
+              '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px;font-size:11.5px;">' +
+              '<div style="background:#fef9c3;border-radius:4px;padding:5px 7px;"><b style="font-size:10px;color:#854d0e;display:block;margin-bottom:2px;">EMERGING</b>'+c.emerging+'</div>' +
+              '<div style="background:#dbeafe;border-radius:4px;padding:5px 7px;"><b style="font-size:10px;color:#1e40af;display:block;margin-bottom:2px;">DEVELOPING</b>'+c.developing+'</div>' +
+              '<div style="background:#dcfce7;border-radius:4px;padding:5px 7px;"><b style="font-size:10px;color:#166534;display:block;margin-bottom:2px;">ACHIEVED</b>'+c.achieved+'</div>' +
+              '</div></div>';
+          }).join('');
+          var card='<div class="fkassess"><h4>'+assess.title+' <span style="font-size:10.5px;font-weight:500;color:#64748b;background:#f1f5f9;border-radius:4px;padding:2px 6px;">'+(assess.type||'').toUpperCase()+'</span></h4>'+
+            '<div class="lb">Description</div><p style="font-size:13px;margin:2px 0 8px;">'+assess.description+'</p>'+
+            (assess.student_instructions?'<div class="lb">Say to students</div><p style="font-size:13px;margin:2px 0 8px;font-style:italic;">"'+assess.student_instructions+'"</p>':'')+
+            (assess.teacher_notes?'<div class="lb">Teacher observes</div><p style="font-size:13px;margin:2px 0 8px;">'+assess.teacher_notes+'</p>':'')+
+            (crit?'<div class="lb" style="margin-top:10px;">Criteria</div>'+crit:'')+
+            '<div class="fkbtns"><button class="fkpri" onclick="fkDownloadAssessDoc()">Download Word</button><button onclick="fkDownloadAssessPdf()">Download PDF</button></div></div>';
+          window._fkLastAssess=assess;
+          addMsg(card,'fm fl',true);
+          addMsg('Assessment task ready. Aligned to your lesson\'s learning intention and success criteria.','fb');
+        }else{addMsg(reply||'Could not generate assessment. Please try again.','fb');}
+      });
+    };
+    window._fkLastAssess=null;
+    window.fkDownloadAssessDoc=function(){
+      var a=window._fkLastAssess||{};if(!a.title) return;
+      var body='';
+      function heading(t,l){return'<w:p><w:pPr><w:pStyle w:val="Heading'+l+'"/></w:pPr><w:r><w:t>'+String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';}
+      function p(t){return'<w:p><w:r><w:t xml:space="preserve">'+String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';}
+      function label(l,v){return'<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">'+l+': </w:t></w:r><w:r><w:t xml:space="preserve">'+String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';}
+      body+=heading(a.title+' ('+((a.type||'').toUpperCase())+')',1);
+      body+=label('Description',a.description);
+      if(a.student_instructions) body+=label('Say to students','"'+a.student_instructions+'"');
+      if(a.teacher_notes) body+=label('Teacher observes',a.teacher_notes);
+      if(a.criteria&&a.criteria.length){body+=heading('Assessment Criteria',2);a.criteria.forEach(function(c){body+=heading(c.criterion,3);body+=label('Emerging',c.emerging);body+=label('Developing',c.developing);body+=label('Achieved',c.achieved);});}
+      var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>';
+      zipAndDownload((a.title||'assessment').replace(/[^a-z0-9]/gi,'_')+'.docx',docXml);
+    };
+    window.fkDownloadAssessPdf=function(){
+      var a=window._fkLastAssess||{};if(!a.title) return;
+      var crit=(a.criteria||[]).map(function(c){
+        return '<tr><td style="font-weight:600;padding:6px 10px;border:1px solid #e2e8f0;">'+c.criterion+'</td>'+
+          '<td style="padding:6px 10px;border:1px solid #e2e8f0;background:#fef9c3;font-size:12px;">'+c.emerging+'</td>'+
+          '<td style="padding:6px 10px;border:1px solid #e2e8f0;background:#dbeafe;font-size:12px;">'+c.developing+'</td>'+
+          '<td style="padding:6px 10px;border:1px solid #e2e8f0;background:#dcfce7;font-size:12px;">'+c.achieved+'</td></tr>';
+      }).join('');
+      var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+a.title+'</title><style>body{font-family:Arial,sans-serif;max-width:750px;margin:32px auto;color:#1e293b;font-size:13px;line-height:1.5;}h1{font-size:20px;border-bottom:2px solid #1e293b;padding-bottom:8px;}h2{font-size:15px;color:#334155;margin:18px 0 6px;}table{width:100%;border-collapse:collapse;margin-top:8px;}th{background:#1e293b;color:#fff;padding:8px 10px;text-align:left;font-size:12px;}@media print{body{margin:10px;}}</style></head><body>'+
+        '<h1>'+a.title+' <span style="font-size:12px;font-weight:normal;color:#64748b;">'+(a.type||'').toUpperCase()+'</span></h1>'+
+        '<p><b>Description:</b> '+a.description+'</p>'+
+        (a.student_instructions?'<p><b>Say to students:</b> <em>"'+a.student_instructions+'"</em></p>':'')+
+        (a.teacher_notes?'<p><b>Teacher observes:</b> '+a.teacher_notes+'</p>':'')+
+        (crit?'<h2>Assessment Criteria</h2><table><tr><th>Criterion</th><th>Emerging</th><th>Developing</th><th>Achieved</th></tr>'+crit+'</table>':'')+
+        '</body></html>';
+      var w=window.open('','_blank');w.document.write(html);w.document.close();w.onload=function(){w.focus();w.print();};
+    };
+
+    // Differentiation pack
+    window.fkDiffPack=function(){
+      if(!lastLesson){addMsg('Generate a lesson first, then create a differentiation pack.','fb');return;}
+      addMsg('Generating differentiation pack — this creates 3 versions of your lesson (support, main, extension)...','fb');
+      var t=typing();
+      var appSt=getAppState();
+      var basePrompt='LESSONLAB_DIFF: Based on this lesson, generate THREE differentiated versions. The current lesson is the MAIN version.\n\nCurrent lesson: '+JSON.stringify(lastLesson)+'\n\n'+
+        'Return JSON: {"support":{"title":"...","li":"...","sc":[],"entry":"...","teach":"...","practice":"...","game":"...","exit":"...","differentiation":{"support":"reduced complexity","extension":""}},"main":<same as current but cleaned up>,"extension":{"title":"...","li":"...","sc":[],"entry":"...","teach":"...","practice":"...","game":"...","exit":"...","differentiation":{"support":"","extension":"higher order challenge"}}}\n\n'+
+        'Support: simpler language, more scaffolding, smaller steps\nExtension: more complex, higher order thinking, greater independence';
+      callChat(basePrompt,function(reply){
+        t.remove();
+        var pack=extractJson(reply);
+        if(pack&&(pack.support||pack.extension)){
+          diffPack={support:pack.support||lastLesson,main:pack.main||lastLesson,extension:pack.extension||lastLesson};
+          var activeDiff=0;
+          var tabLabels=['Support','Main','Extension'];
+          function renderDiffTab(idx){
+            var l=idx===0?diffPack.support:idx===1?diffPack.main:diffPack.extension;
+            var diff2=l.differentiation||{};
+            var sc=Array.isArray(l.sc)?l.sc.map(function(x){return'<li style="margin-bottom:3px;">'+x+'</li>';}).join(''):(l.sc||'');
+            return '<div class="lb">Learning Intention</div><p style="font-size:12.5px;margin:2px 0 8px;">'+l.li+'</p>'+
+              (sc?'<div class="lb">Success Criteria</div><ul style="margin:2px 0 8px 14px;padding:0;font-size:12.5px;color:#374151;">'+sc+'</ul>':'')+
+              (l.entry?'<div class="lb">Entry</div><p style="font-size:12.5px;margin:2px 0 8px;">'+l.entry+'</p>':'')+
+              (l.teach?'<div class="lb">Teaching</div><p style="font-size:12.5px;margin:2px 0 8px;">'+l.teach+'</p>':'')+
+              (l.practice?'<div class="lb">Practice</div><p style="font-size:12.5px;margin:2px 0 8px;">'+l.practice+'</p>':'')+
+              (l.game?'<div class="lb">Game</div><p style="font-size:12.5px;margin:2px 0 8px;">'+l.game+'</p>':'')+
+              (l.exit?'<div class="lb">Exit</div><p style="font-size:12.5px;margin:2px 0 8px;">'+l.exit+'</p>':'');
+          }
+          var card='<div class="fkdiffpack">'+
+            '<div class="fkdifftab">'+
+              tabLabels.map(function(label,i){return'<button class="'+(i===0?'active':'')+'" onclick="fkDiffTab('+i+',this)">'+label+'</button>';}).join('')+
+            '</div>'+
+            '<div id="fkdiffcontent" class="fkdiffcontent">'+renderDiffTab(0)+'</div>'+
+            '<div class="fkdiffbtns">'+
+              '<button class="fkpri" onclick="fkDownloadDiffAll()">Download all 3 (Word)</button>'+
+              '<button onclick="fkLoadDiffCurrent()">Load current into app</button>'+
+            '</div>'+
+          '</div>';
+          window._fkDiffRender=renderDiffTab;
+          window._fkDiffActive=0;
+          addMsg(card,'fm fl',true);
+          addMsg('Three versions ready. Switch between tabs to preview each. "Download all 3" exports them as a single Word doc with each version on a new page.','fb');
+        }else{addMsg(reply||'Could not generate differentiation pack. Please try again.','fb');}
+      });
+    };
+    window.fkDiffTab=function(idx,btn){
+      window._fkDiffActive=idx;
+      document.querySelectorAll('.fkdifftab button').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      var content=document.getElementById('fkdiffcontent');
+      if(content&&window._fkDiffRender) content.innerHTML=window._fkDiffRender(idx);
+    };
+    window.fkLoadDiffCurrent=function(){
+      if(!diffPack) return;
+      var idx=window._fkDiffActive||0;
+      var l=idx===0?diffPack.support:idx===1?diffPack.main:diffPack.extension;
+      lastLesson=l;fkLoadIntoApp(l);
+    };
+    window.fkDownloadDiffAll=function(){
+      if(!diffPack) return;
+      var pgBreak='<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+      var lessons=[diffPack.support,diffPack.main,diffPack.extension].filter(Boolean);
+      var allBody=lessons.map(function(l,i){return buildDocxBody(l)+(i<lessons.length-1?pgBreak:'');}).join('');
+      var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+allBody+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>';
+      zipAndDownload('differentiation_pack.docx',docXml);
     };
 
     // Edit modal
@@ -12439,11 +12613,8 @@ function rateLessonAI(idx, rating, btn) {
       var l=editingLesson,diff=l.differentiation||{};
       var sc=Array.isArray(l.sc)?l.sc.join('\n'):(l.sc||'');
       var eq=Array.isArray(l.equipment)?l.equipment.join(', '):(l.equipment||l.materials||'');
-      function field(id,label,val,rows){
-        return '<div class="fkeditfield"><label>'+label+'</label>'+
-          (rows>1?'<textarea id="fked_'+id+'" rows="'+rows+'">'+String(val||'').replace(/</g,'&lt;')+'</textarea>':
-          '<input id="fked_'+id+'" type="text" value="'+String(val||'').replace(/"/g,'&quot;').replace(/</g,'&lt;')+'">')+
-          '</div>';
+      function field(id,lbl,val,rows){
+        return '<div class="fkeditfield"><label>'+lbl+'</label>'+(rows>1?'<textarea id="fked_'+id+'" rows="'+rows+'">'+String(val||'').replace(/</g,'&lt;')+'</textarea>':'<input id="fked_'+id+'" type="text" value="'+String(val||'').replace(/"/g,'&quot;').replace(/</g,'&lt;')+'">')+'</div>';
       }
       document.getElementById('fkeditbody').innerHTML=
         field('title','Title',l.title,1)+field('li','Learning Intention',l.li,2)+
@@ -12452,16 +12623,14 @@ function rateLessonAI(idx, rating, btn) {
         field('teach','Explicit Teaching',l.teach,3)+field('points','Key Points',l.points,2)+
         field('cues','Cue Words',l.cues,1)+field('practice','Guided Practice',l.practice,3)+
         field('game','Application / Game',l.game,3)+field('exit','Exit / Reflection',l.exit,3)+
-        field('support','Support (differentiation)',diff.support,2)+
-        field('extension','Extension (differentiation)',diff.extension,2)+
+        field('support','Support (differentiation)',diff.support,2)+field('extension','Extension (differentiation)',diff.extension,2)+
         field('exitTicket','Exit Ticket',l.exitTicket,2);
       document.getElementById('fkedit').style.display='flex';
     };
     window.fkEditClose=function(){document.getElementById('fkedit').style.display='none';editingLesson=null;};
     window.fkEditSave=function(){
       function gv(id){var el=document.getElementById('fked_'+id);return el?el.value.trim():'';}
-      var updated={title:gv('title'),li:gv('li'),
-        sc:gv('sc').split('\n').map(function(s){return s.trim();}).filter(Boolean),
+      var updated={title:gv('title'),li:gv('li'),sc:gv('sc').split('\n').map(function(s){return s.trim();}).filter(Boolean),
         equipment:gv('equipment').split(',').map(function(s){return s.trim();}).filter(Boolean),
         context:gv('context'),entry:gv('entry'),teach:gv('teach'),points:gv('points'),cues:gv('cues'),
         practice:gv('practice'),game:gv('game'),exit:gv('exit'),exitTicket:gv('exitTicket'),
@@ -12470,9 +12639,8 @@ function rateLessonAI(idx, rating, btn) {
         practice_crt:(editingLesson||{}).practice_crt||'',game_crt:(editingLesson||{}).game_crt||'',
         exit_crt:(editingLesson||{}).exit_crt||'',entrySay:(editingLesson||{}).entrySay||'',
         ifWell:(editingLesson||{}).ifWell||'',ifNot:(editingLesson||{}).ifNot||''};
-      lastLesson=updated; fkEditClose(); fkTab('chat');
-      addMsg(lessonCard(updated),'fm fl',true);
-      addMsg('Lesson updated.','fb');
+      lastLesson=updated;fkEditClose();fkTab('chat');
+      addMsg(lessonCard(updated),'fm fl',true);addMsg('Lesson updated.','fb');
       if(lastParams) autoSave(updated,lastParams,lastAiId);
     };
     window.fkEditDownloadPdf=function(){
@@ -12486,8 +12654,7 @@ function rateLessonAI(idx, rating, btn) {
     window.fkAdaptOpen=function(){
       var appSt=getAppState();
       document.getElementById('fkadaptyr').value=(appSt&&appSt.yearLevel)||'';
-      document.getElementById('fkadaptfocus').value='';
-      document.getElementById('fkadaptother').value='';
+      document.getElementById('fkadaptfocus').value='';document.getElementById('fkadaptother').value='';
       document.getElementById('fkadapt').style.display='flex';
     };
     window.fkAdaptClose=function(){document.getElementById('fkadapt').style.display='none';};
@@ -12496,24 +12663,17 @@ function rateLessonAI(idx, rating, btn) {
       var yr=document.getElementById('fkadaptyr').value.trim();
       var focus=document.getElementById('fkadaptfocus').value.trim();
       var other=document.getElementById('fkadaptother').value.trim();
-      fkAdaptClose(); fkTab('chat');
+      fkAdaptClose();fkTab('chat');
       var instruction='Adapt this lesson for '+yr+(focus?' with focus on '+focus:'')+(other?'. Also: '+other:'');
-      addMsg(instruction,'fu');
-      chatHistory.push({role:'user',content:instruction});
-      addMsg('Adapting lesson...','fb');
-      var t=typing();
-      var prompt='LESSONLAB_AMEND: Current lesson JSON: '+JSON.stringify(lastLesson)+
-        '\nInstruction: "'+instruction+'". Return the adapted lesson as ```json ... ``` with ALL fields. Keep the same structure and style but adapt content, complexity and examples for '+yr+'.';
-      callChat(prompt,function(reply){
-        t.remove();
-        var amended=extractJson(reply);
+      addMsg(instruction,'fu');chatHistory.push({role:'user',content:instruction});
+      addMsg('Adapting lesson...','fb');var t=typing();
+      callChat('LESSONLAB_AMEND: Current lesson JSON: '+JSON.stringify(lastLesson)+'\nInstruction: "'+instruction+'". Return the adapted lesson as ```json ... ``` with ALL fields.',function(reply){
+        t.remove();var amended=extractJson(reply);
         if(amended&&(amended.title||amended.li)){
-          lastLesson=amended;
-          addMsg(lessonCard(amended),'fm fl',true);
-          addMsg('Adapted for '+yr+'. Download, edit or ask me to refine further.','fb');
-          chatHistory.push({role:'assistant',content:'[Adapted: '+amended.title+']'});
+          lastLesson=amended;addMsg(lessonCard(amended),'fm fl',true);
+          addMsg('Adapted for '+yr+'.','fb');chatHistory.push({role:'assistant',content:'[Adapted: '+amended.title+']'});
           if(lastParams){var p2=Object.assign({},lastParams,{year_level:yr});autoSave(amended,p2,null);}
-        } else {addMsg(reply||'Could not adapt. Please try again.','fb');}
+        }else{addMsg(reply||'Could not adapt. Please try again.','fb');}
       });
     };
 
@@ -12521,9 +12681,8 @@ function rateLessonAI(idx, rating, btn) {
 
     // Library
     function loadLibrary(){
-      var libh=document.getElementById('fklibh');
-      if(libh) libh.textContent='Loading...';
-      libPanel.querySelectorAll('.fklibitem').forEach(function(el){el.remove();});
+      var libh=document.getElementById('fklibh');if(libh) libh.textContent='Loading...';
+      libPanel.querySelectorAll('.fklibitem,.fkempty').forEach(function(el){el.remove();});
       api('/lessons').then(function(lessons){
         libLessons=Array.isArray(lessons)?lessons:(lessons&&lessons.data?lessons.data:[]);
         libFiltered=libLessons.slice();
@@ -12532,21 +12691,18 @@ function rateLessonAI(idx, rating, btn) {
       }).catch(function(){if(libh) libh.textContent='Could not load lessons.';});
     }
     function renderLibrary(){
-      libPanel.querySelectorAll('.fklibitem').forEach(function(el){el.remove();});
+      libPanel.querySelectorAll('.fklibitem,.fkempty').forEach(function(el){el.remove();});
       if(!libFiltered.length){
-        var empty=document.createElement('div');
+        var empty=document.createElement('div');empty.className='fkempty';
         empty.style.cssText='padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;';
-        empty.textContent='No lessons match your search.';
-        libPanel.appendChild(empty); return;
+        empty.textContent='No lessons match your search.';libPanel.appendChild(empty);return;
       }
-      libFiltered.forEach(function(ls,idx){
-        var realIdx=libLessons.indexOf(ls);
-        var ld=ls.lesson_data||{};
-        var subj=(ls.subject||'').toUpperCase(),yr=ls.year_level?' · '+ls.year_level:'';
-        var dt=ls.updated_at?' · '+ls.updated_at.split('T')[0]:'';
-        var item=document.createElement('div'); item.className='fklibitem';
+      libFiltered.forEach(function(ls){
+        var realIdx=libLessons.indexOf(ls);var ld=ls.lesson_data||{};
+        var item=document.createElement('div');item.className='fklibitem';
         item.innerHTML='<div class="fklibt">'+(ls.title||ld.title||'Lesson')+'</div>'+
-          '<div class="fklibs">'+subj+yr+dt+'</div>'+
+          '<div class="fklibs">'+((ls.subject||'').toUpperCase())+(ls.year_level?' · '+ls.year_level:'')+(ls.updated_at?' · '+ls.updated_at.split('T')[0]:'')+
+          (ls.week?' · Wk '+ls.week:'')+'</div>'+
           '<div class="fklibbtns">'+
             '<button class="fkpri" onclick="fkLibLoad('+realIdx+')">Load into app</button>'+
             '<button onclick="fkLibEdit('+realIdx+')">Edit</button>'+
@@ -12563,9 +12719,7 @@ function rateLessonAI(idx, rating, btn) {
       libFiltered=libLessons.filter(function(ls){
         var ld=ls.lesson_data||{};
         var title=(ls.title||ld.title||'').toLowerCase();
-        var matchSearch=!search||title.indexOf(search)>=0||(ls.unit||'').toLowerCase().indexOf(search)>=0;
-        var matchSubj=!subj||ls.subject===subj;
-        return matchSearch&&matchSubj;
+        return(!search||title.indexOf(search)>=0||(ls.unit||'').toLowerCase().indexOf(search)>=0)&&(!subj||ls.subject===subj);
       });
       var libh=document.getElementById('fklibh');
       if(libh) libh.textContent=libFiltered.length+' of '+libLessons.length+' lessons';
@@ -12581,13 +12735,47 @@ function rateLessonAI(idx, rating, btn) {
     };
     window.fkLibPdf=function(idx){var ls=libLessons[idx];if(!ls)return;downloadPdf(ls.lesson_data||ls);};
 
-    // Unit planner
+    // Unit planner with sequence awareness
+    function getSequenceContext(appSt,upToWeek){
+      var ctx=[];
+      var weeks=Object.keys(unitWeekData).map(Number).sort(function(a,b){return a-b;});
+      weeks.forEach(function(w){
+        if(w<upToWeek){var ls=unitWeekData[w];if(ls){var ld=ls.lesson_data||ls;ctx.push('Week '+w+': '+ld.title+(ld.li?' — LI: '+ld.li.slice(0,80):''));}}
+      });
+      return ctx.length?'\n\nPrevious weeks in this unit:\n'+ctx.join('\n'):'';
+    }
+
+    function generateLessonForWeek(week, appSt, t) {
+      var seqCtx = getSequenceContext(appSt, week);
+      var savedStyle = localStorage.getItem('fk_style_' + appSt.subject) || '';
+      var ctxNote = uploadedCtx ? ' Style reference: '+uploadedCtx.slice(0,400) : (savedStyle ? ' Style reference: '+savedStyle.slice(0,300) : '');
+      var parsePrompt = 'LESSONLAB_PARSE: Parse and return ONLY JSON: {"subject":"'+appSt.subject+'","unit":"'+(appSt.unit||appSt.subject)+'","focus":"week '+week+' of unit","year_level":"'+(appSt.yearLevel||'Years 3-4')+'","duration":"'+(appSt.duration||45)+' mins","school_name":"'+(appSt.school||'Williamstown Primary School')+'"}';
+      callChat(parsePrompt, function(reply) {
+        var params = extractJson(reply) || {subject:appSt.subject,unit:appSt.unit||appSt.subject,focus:'Week '+week,year_level:appSt.yearLevel||'Years 3-4',duration:String(appSt.duration||45),school_name:appSt.school||'Williamstown Primary School'};
+        api('/lessons/generate',{method:'POST',body:JSON.stringify({
+          subject:params.subject,unit:params.unit||appSt.unit||appSt.subject,
+          focus:(params.focus||'Week '+week)+(seqCtx?'\n\nBuild progressively on previous lessons. '+seqCtx:''),
+          week:week,total_weeks:parseInt(appSt.weeks)||10,
+          year_level:params.year_level||appSt.yearLevel||'Years 3-4',
+          duration:String(appSt.duration||45),
+          school_name:appSt.school||'Williamstown Primary School',
+          curriculum_standards:[]
+        })}).then(function(res){
+          if(t) t.remove();
+          if(res&&res.lesson){
+            lastLesson=res.lesson;lastParams=Object.assign({},params,{week:week});lastAiId=res.ai_lesson_id||null;
+            addMsg(lessonCard(res.lesson),'fm fl',true);
+            autoSave(res.lesson,lastParams,lastAiId);
+            showNextSteps(week);
+          }else{addMsg(res&&res.error||'Generation failed.','fb');}
+        }).catch(function(){if(t) t.remove();addMsg('API error.','fb');});
+      });
+    }
+
     function loadUnitPlan(){
       var appSt=getAppState();
-      var unith=document.getElementById('fkunith');
-      var fillBtn=document.getElementById('fkfillbtn');
-      unitPanel.querySelectorAll('.fkwkgrid').forEach(function(el){el.remove();});
-      unitPanel.querySelectorAll('.fkempty').forEach(function(el){el.remove();});
+      var unith=document.getElementById('fkunith');var fillBtn=document.getElementById('fkfillbtn');
+      unitPanel.querySelectorAll('.fkwkgrid,.fkempty').forEach(function(el){el.remove();});
       if(!appSt||!appSt.subject||!appSt.weeks){
         unith.textContent='No unit configured';
         var msg=document.createElement('div');msg.className='fkempty';
@@ -12600,23 +12788,17 @@ function rateLessonAI(idx, rating, btn) {
       unitWeekData={};
       api('/lessons').then(function(lessons){
         var all=Array.isArray(lessons)?lessons:[];
-        all.forEach(function(ls){
-          if(ls.subject===appSt.subject&&ls.unit===appSt.unit){
-            var w=parseInt(ls.week)||0;if(w) unitWeekData[w]=ls;
-          }
-        });
+        all.forEach(function(ls){if(ls.subject===appSt.subject&&ls.unit===appSt.unit){var w=parseInt(ls.week)||0;if(w) unitWeekData[w]=ls;}});
         var missing=0;
         var g=document.createElement('div');g.className='fkwkgrid';
         for(var w=startWeek;w<startWeek+totalWeeks;w++){
           var ls=unitWeekData[w];
-          var tile=document.createElement('div');
-          tile.className='fkwk'+(ls?' done':'');tile.id='fkwk_'+w;
+          var tile=document.createElement('div');tile.className='fkwk'+(ls?' done':'');tile.id='fkwk_'+w;
           var wNum=w;
           tile.innerHTML='<div class="fkwkdot"></div><div class="fkwkn">Week '+w+'</div>'+
             '<div class="fkwkt">'+(ls?(ls.title||'Generated').split(' ').slice(0,4).join(' '):'Tap to generate')+'</div>';
           tile.onclick=(function(week,lesson){return function(){fkWeekClick(week,lesson);};})(wNum,ls||null);
-          g.appendChild(tile);
-          if(!ls) missing++;
+          g.appendChild(tile);if(!ls) missing++;
         }
         unitPanel.appendChild(g);
         if(fillBtn){fillBtn.textContent='Generate '+missing+' missing';fillBtn.style.display=missing?'block':'none';}
@@ -12627,28 +12809,22 @@ function rateLessonAI(idx, rating, btn) {
       if(lesson){
         lastLesson=lesson.lesson_data||lesson;lastParams={subject:(getAppState()||{}).subject,unit:(getAppState()||{}).unit,week:week};
         fkTab('chat');addMsg(lessonCard(lastLesson),'fm fl',true);addMsg('Week '+week+' loaded.','fb');
-      } else {
+        showNextSteps(week);
+      }else{
         var appSt=getAppState();if(!appSt) return;
         var tile=document.getElementById('fkwk_'+week);if(tile) tile.className='fkwk generating';
-        api('/lessons/generate',{method:'POST',body:JSON.stringify({
-          subject:appSt.subject,unit:appSt.unit||appSt.subject,focus:appSt.unit||'',week:week,
-          total_weeks:parseInt(appSt.weeks)||10,year_level:appSt.yearLevel||'Years 3-4',
-          duration:String(appSt.duration||45),school_name:appSt.school||'Williamstown Primary School',curriculum_standards:[]
-        })}).then(function(res){
-          if(res&&res.lesson){
-            unitWeekData[week]={title:res.lesson.title,lesson_data:res.lesson,week:week};
-            lastLesson=res.lesson;lastParams={subject:appSt.subject,unit:appSt.unit,year_level:appSt.yearLevel,week:week};lastAiId=res.ai_lesson_id||null;
-            autoSave(res.lesson,lastParams,lastAiId);
-            if(tile){tile.className='fkwk done';tile.querySelector('.fkwkt').textContent=res.lesson.title.split(' ').slice(0,4).join(' ');}
-            loadUnitPlan();
-          }
-        }).catch(function(){if(tile) tile.className='fkwk';});
+        fkTab('chat');addMsg('Generating week '+week+(getSequenceContext(appSt,week)?' (building on previous weeks)':'')+'...','fb');
+        var t=typing();
+        generateLessonForWeek(week,appSt,t);
+        // Update tile after
+        setTimeout(function(){
+          if(lastLesson&&tile){tile.className='fkwk done';var tk=tile.querySelector('.fkwkt');if(tk) tk.textContent=lastLesson.title.split(' ').slice(0,4).join(' ');}
+        },8000);
       }
     };
 
     window.fkPrintUnit=function(){
       var appSt=getAppState();
-      var weeks=Object.keys(unitWeekData).sort(function(a,b){return a-b;});
       var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Unit Overview</title>'+
         '<style>body{font-family:Arial,sans-serif;max-width:900px;margin:32px auto;color:#1e293b;font-size:13px;}'+
         'h1{font-size:20px;border-bottom:2px solid #1e293b;padding-bottom:8px;margin-bottom:4px;}'+
@@ -12661,9 +12837,8 @@ function rateLessonAI(idx, rating, btn) {
         '@media print{body{margin:10px;}}</style></head><body>'+
         '<h1>'+(appSt&&appSt.unit?appSt.unit+' — ':'')+'Unit Overview</h1>'+
         '<div class="meta">'+(appSt?appSt.subject.toUpperCase()+(appSt.yearLevel?' · '+appSt.yearLevel:'')+(appSt.term?' · '+appSt.term:''):'')+'</div>'+
-        '<table><tr><th>Week</th><th>Lesson Title</th><th>Learning Intention</th><th>Equipment</th></tr>';
-      var totalWeeks=parseInt((appSt&&appSt.weeks)||10);
-      var startWeek=parseInt((appSt&&appSt.startWeek)||1);
+        '<table><tr><th>Week</th><th>Title</th><th>Learning Intention</th><th>Equipment</th></tr>';
+      var totalWeeks=parseInt((appSt&&appSt.weeks)||10),startWeek=parseInt((appSt&&appSt.startWeek)||1);
       for(var w=startWeek;w<startWeek+totalWeeks;w++){
         var ls=unitWeekData[w],ld=ls?(ls.lesson_data||ls):{};
         var eq=ld.equipment?(Array.isArray(ld.equipment)?ld.equipment.join(', '):ld.equipment):'';
@@ -12677,8 +12852,7 @@ function rateLessonAI(idx, rating, btn) {
     window.fkFillMissing=function(){
       var appSt=getAppState();if(!appSt) return;
       var totalWeeks=parseInt(appSt.weeks)||10,startWeek=parseInt(appSt.startWeek)||1;
-      var missing=[];
-      for(var w=startWeek;w<startWeek+totalWeeks;w++){if(!unitWeekData[w]) missing.push(w);}
+      var missing=[];for(var w=startWeek;w<startWeek+totalWeeks;w++){if(!unitWeekData[w]) missing.push(w);}
       if(!missing.length) return;
       fkTab('chat');bulkQueue=missing.slice();bulkRunning=true;
       var progressDiv=addMsg('','fm fb',true);var generated=[];var total=missing.length;
@@ -12690,13 +12864,15 @@ function rateLessonAI(idx, rating, btn) {
           msgs.scrollTop=msgs.scrollHeight;loadUnitPlan();return;
         }
         var week=bulkQueue.shift();var done=total-bulkQueue.length;
-        progressDiv.innerHTML='<div class="fkprogress">Generating week '+week+'...'+
+        var seqCtx=getSequenceContext(appSt,week);
+        progressDiv.innerHTML='<div class="fkprogress">Generating week '+week+' of '+(startWeek+totalWeeks-1)+(seqCtx?' (with sequence context)':'')+'...'+
           '<div class="fkpbar"><div class="fkpfill" style="width:'+Math.round((done/total)*100)+'%"></div></div></div>';
         msgs.scrollTop=msgs.scrollHeight;
         api('/lessons/generate',{method:'POST',body:JSON.stringify({
-          subject:appSt.subject,unit:appSt.unit||appSt.subject,focus:appSt.unit||'',week:week,
-          total_weeks:totalWeeks,year_level:appSt.yearLevel||'Years 3-4',duration:String(appSt.duration||45),
-          school_name:appSt.school||'Williamstown Primary School',curriculum_standards:[]
+          subject:appSt.subject,unit:appSt.unit||appSt.subject,
+          focus:'Week '+week+' of unit'+(seqCtx?'\n\nBuild progressively. '+seqCtx:''),
+          week:week,total_weeks:totalWeeks,year_level:appSt.yearLevel||'Years 3-4',
+          duration:String(appSt.duration||45),school_name:appSt.school||'Williamstown Primary School',curriculum_standards:[]
         })}).then(function(res){
           if(res&&res.lesson){generated.push(res.lesson);unitWeekData[week]={title:res.lesson.title,lesson_data:res.lesson};
             autoSave(res.lesson,{subject:appSt.subject,unit:appSt.unit,year_level:appSt.yearLevel,week:week},res.ai_lesson_id);
@@ -12718,20 +12894,17 @@ function rateLessonAI(idx, rating, btn) {
       var pgBreak='<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
       var allBody=lessons.map(function(l,i){return buildDocxBody(l)+(i<lessons.length-1?pgBreak:'');}).join('');
       var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+allBody+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>';
-      zipAndDownload('unit_lessons.docx',docXml);
-      addMsg('Exported '+lessons.length+' lessons as one Word document.','fb');
+      zipAndDownload('unit_lessons.docx',docXml);addMsg('Exported '+lessons.length+' lessons as one Word document.','fb');
     };
 
     // Dashboard
     function loadDashboard(){
-      dashPanel.querySelectorAll('.fkdashgrid,.fksubbar').forEach(function(el){el.remove();});
+      dashPanel.querySelectorAll('.fkdashgrid,.fksubbar,.fkempty').forEach(function(el){el.remove();});
       api('/lessons').then(function(lessons){
         var all=Array.isArray(lessons)?lessons:[];
         var subjectCounts={},recentMonth={};var now=new Date();
-        all.forEach(function(ls){
-          var s=ls.subject||'other';subjectCounts[s]=(subjectCounts[s]||0)+1;
-          if(ls.updated_at){var d=new Date(ls.updated_at);if((now-d)<30*24*60*60*1000) recentMonth[s]=(recentMonth[s]||0)+1;}
-        });
+        all.forEach(function(ls){var s=ls.subject||'other';subjectCounts[s]=(subjectCounts[s]||0)+1;
+          if(ls.updated_at){var d=new Date(ls.updated_at);if((now-d)<30*24*60*60*1000) recentMonth[s]=(recentMonth[s]||0)+1;}});
         var thisMonth=Object.values(recentMonth).reduce(function(a,b){return a+b;},0);
         var subjects=Object.keys(subjectCounts).sort(function(a,b){return subjectCounts[b]-subjectCounts[a];});
         var maxCount=subjects.length?subjectCounts[subjects[0]]:1;
@@ -12744,11 +12917,7 @@ function rateLessonAI(idx, rating, btn) {
         if(subjects.length){
           var bar=document.createElement('div');bar.className='fksubbar';
           bar.innerHTML='<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">By subject</div>'+
-            subjects.slice(0,6).map(function(s){
-              return '<div class="fksubrow"><div class="fksubname">'+s+'</div>'+
-                '<div class="fksubtrack"><div class="fksubfill" style="width:'+Math.round((subjectCounts[s]/maxCount)*100)+'%"></div></div>'+
-                '<div class="fksubct">'+subjectCounts[s]+'</div></div>';
-            }).join('');
+            subjects.slice(0,6).map(function(s){return'<div class="fksubrow"><div class="fksubname">'+s+'</div><div class="fksubtrack"><div class="fksubfill" style="width:'+Math.round((subjectCounts[s]/maxCount)*100)+'%"></div></div><div class="fksubct">'+subjectCounts[s]+'</div></div>';}).join('');
           dashPanel.appendChild(bar);
         }
       }).catch(function(){
@@ -12756,7 +12925,7 @@ function rateLessonAI(idx, rating, btn) {
       });
     }
 
-    function extractJson(txt){var m=txt.match(/```json\s*([\s\S]*?)```/)||txt.match(/\{[\s\S]*"(?:subject|title)"[\s\S]*?\}/);if(!m) return null;try{return JSON.parse(m[1]||m[0]);}catch(e){return null;}}
+    function extractJson(txt){var m=txt.match(/```json\s*([\s\S]*?)```/)||txt.match(/\{[\s\S]*"(?:subject|title|type|support|main)"[\s\S]*?\}/);if(!m) return null;try{return JSON.parse(m[1]||m[0]);}catch(e){return null;}}
     function isAmend(t){var kw=['make it','longer','shorter','more detail','less detail','add more','remove','change','amend','edit','update','redo','rewrite','different format','simplify','expand','shorten','adjust','tweak','modify','another version','add a','add some','take out','without','instead'];t=t.toLowerCase();for(var i=0;i<kw.length;i++) if(t.indexOf(kw[i])!==-1) return true;return false;}
     function isLesson(t){var kw=['lesson','generate','create a','make a','plan a','write a','build a','need a','year 1','year 2','year 3','year 4','year 5','year 6','foundation','prep','pe lesson','literacy lesson','maths lesson','numeracy lesson','science lesson','persuasive','fractions','kicking','throwing','handball','tag game','warm up'];t=t.toLowerCase();for(var i=0;i<kw.length;i++) if(t.indexOf(kw[i])!==-1) return true;return false;}
 
@@ -12778,50 +12947,45 @@ function rateLessonAI(idx, rating, btn) {
         if(params&&params.subject){
           var dur=(params.duration||'45 mins').toString().replace(/[^0-9]/g,'')||'45';
           api('/lessons/generate',{method:'POST',body:JSON.stringify({
-            subject:params.subject,unit:params.unit||userText,focus:params.focus||userText,week:1,total_weeks:10,
-            year_level:params.year_level||'Years 3-4',duration:dur,
+            subject:params.subject,unit:params.unit||userText,focus:params.focus||userText,
+            week:1,total_weeks:10,year_level:params.year_level||'Years 3-4',duration:dur,
             school_name:params.school_name||'Williamstown Primary School',curriculum_standards:[]
           })}).then(function(res){
             if(t) t.remove();
             if(res&&res.lesson){
               lastLesson=res.lesson;lastParams=params;lastAiId=res.ai_lesson_id||null;
               addMsg(lessonCard(res.lesson),'fm fl',true);
-              addMsg('Done. Download as Word or PDF, edit, adapt for another year level, or ask me to refine anything.','fb');
               chatHistory.push({role:'assistant',content:'[Generated: '+res.lesson.title+']'});
               autoSave(res.lesson,params,res.ai_lesson_id);
-            } else {addMsg(res&&res.error||'Generation failed. Try with more detail.','fb');}
+              showNextSteps(1);
+            }else{addMsg(res&&res.error||'Generation failed. Try with more detail.','fb');}
           }).catch(function(){if(t) t.remove();addMsg('API error. Please try again.','fb');});
-        } else {if(t) t.remove();addMsg('Could you be more specific? Try: "Year 4 PE lesson on kicking skills, 45 minutes"','fb');}
+        }else{if(t) t.remove();addMsg('Could you be more specific? Try: "Year 4 PE lesson on kicking skills, 45 minutes"','fb');}
       });
     }
 
     function amendLesson(userText,t){
       var ctxHistory=chatHistory.slice(-4).map(function(h){return h.role+': '+h.content;}).join('\n');
-      var prompt='LESSONLAB_AMEND: Current lesson JSON: '+JSON.stringify(lastLesson)+(ctxHistory?'\nPrevious context:\n'+ctxHistory:'')+'\nInstruction: "'+userText+'". Return the amended lesson as ```json ... ``` with ALL fields.';
-      callChat(prompt,function(reply){
-        if(t) t.remove();
-        var amended=extractJson(reply);
+      callChat('LESSONLAB_AMEND: Current lesson JSON: '+JSON.stringify(lastLesson)+(ctxHistory?'\nPrevious context:\n'+ctxHistory:'')+'\nInstruction: "'+userText+'". Return the amended lesson as ```json ... ``` with ALL fields.',function(reply){
+        if(t) t.remove();var amended=extractJson(reply);
         if(amended&&(amended.title||amended.li)){
           lastLesson=amended;addMsg(lessonCard(amended),'fm fl',true);
-          addMsg('Updated. Keep refining or use the buttons to download or load into the app.','fb');
-          chatHistory.push({role:'assistant',content:'[Amended: '+amended.title+']'});
+          addMsg('Updated.','fb');chatHistory.push({role:'assistant',content:'[Amended: '+amended.title+']'});
           if(lastParams) autoSave(amended,lastParams,lastAiId);
-        } else {addMsg(reply||'Could not amend. Please try again.','fb');}
+        }else{addMsg(reply||'Could not amend. Please try again.','fb');}
       });
     }
 
     function send(text){
       text=(text||inp.value).trim();if(!text) return;
       inp.value='';inp.style.height='auto';addMsg(text,'fu');
-      chatHistory.push({role:'user',content:text});
-      if(chatHistory.length>12) chatHistory=chatHistory.slice(-12);
+      chatHistory.push({role:'user',content:text});if(chatHistory.length>12) chatHistory=chatHistory.slice(-12);
       var t=typing();
       if(lastLesson&&isAmend(text)){amendLesson(text,t);return;}
       if(isLesson(text)){t.remove();addMsg('Generating your lesson now...','fb');var t2=typing();generateLesson(text,t2);return;}
       callChat(text,function(reply){
         t.remove();addMsg(reply||'How can I help?','fb');
-        chatHistory.push({role:'assistant',content:reply});
-        if(chatHistory.length>12) chatHistory=chatHistory.slice(-12);
+        chatHistory.push({role:'assistant',content:reply});if(chatHistory.length>12) chatHistory=chatHistory.slice(-12);
       });
     }
 
@@ -12836,7 +13000,7 @@ function rateLessonAI(idx, rating, btn) {
         var appSt=getAppState();
         if(appSt&&appSt.subject){try{localStorage.setItem('fk_style_'+appSt.subject,uploadedCtx);}catch(e){}
           addMsg('Style reference saved for '+appSt.subject.toUpperCase()+' — will apply automatically next session.','fb');
-        } else {addMsg('File "'+file.name+'" uploaded as style reference.','fb');}
+        }else{addMsg('File "'+file.name+'" uploaded as style reference.','fb');}
         fileInput.value='';
       };
       if(file.name.match(/\.txt$/i)) reader.readAsText(file);else reader.readAsArrayBuffer(file);
@@ -12862,8 +13026,8 @@ function rateLessonAI(idx, rating, btn) {
             var all=Array.isArray(lessons)?lessons:[];var appSt2=getAppState();
             if(all.length===0){
               addMsg('Welcome to Falkor. I\'m your LessonLab AI assistant.','fb');
-              setTimeout(function(){addMsg(appSt2&&appSt2.subject?'I can see you\'ve opened '+appSt2.subject.toUpperCase()+(appSt2.yearLevel?' for '+appSt2.yearLevel:'')+'. Want me to generate your first lesson? Just tell me the topic and duration.':'To get started: set your subject and year level in the app, then come back here and describe the lesson you need.','fb');},600);
-            } else {
+              setTimeout(function(){addMsg(appSt2&&appSt2.subject?'I can see you\'ve opened '+appSt2.subject.toUpperCase()+(appSt2.yearLevel?' for '+appSt2.yearLevel:'')+'. Want me to generate your first lesson?':'To get started: set your subject and year level in the app, then describe the lesson you need.','fb');},600);
+            }else{
               addMsg('Hi again. '+(appSt2&&appSt2.subject?'Working on '+appSt2.subject.toUpperCase()+(appSt2.yearLevel?' — '+appSt2.yearLevel:'')+(appSt2.unit?' — '+appSt2.unit:'')+'.':'You have '+all.length+' lesson'+(all.length===1?'':'s')+' saved. What are we generating today?'),'fb');
             }
           }).catch(function(){addMsg('Hi, I\'m Falkor. Describe the lesson you need and I\'ll generate it for you.','fb');});
@@ -12876,8 +13040,7 @@ function rateLessonAI(idx, rating, btn) {
   var poll=setInterval(function(){
     if(++att>120){clearInterval(poll);return;}
     if(typeof currentProfile!=='undefined'&&currentProfile&&currentProfile.email){
-      clearInterval(poll);
-      if(ALLOWED.indexOf(currentProfile.email)!==-1) initWidget();
+      clearInterval(poll);if(ALLOWED.indexOf(currentProfile.email)!==-1) initWidget();
     }
   },500);
 })();
