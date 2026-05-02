@@ -12036,6 +12036,10 @@ function rateLessonAI(idx, rating, btn) {
   var lastParams = null;
   var lastAiId = null;
   var uploadedCtx = null;
+  var chatHistory = [];
+  var bulkQueue = [];
+  var bulkRunning = false;
+  var libLessons = [];
 
   function getAppState() {
     try {
@@ -12046,7 +12050,9 @@ function rateLessonAI(idx, rating, btn) {
         school: state.school || 'Williamstown Primary School',
         duration: state.duration || 45,
         unit: state.unit || null,
-        term: state.term || 'Term 1'
+        term: state.term || 'Term 1',
+        weeks: state.weeks || null,
+        startWeek: state.startWeek || 1
       };
     } catch(e) { return null; }
   }
@@ -12062,20 +12068,42 @@ function rateLessonAI(idx, rating, btn) {
         'box-shadow:0 2px 12px rgba(0,0,0,0.25);z-index:99999;display:flex;align-items:center;justify-content:center;}',
       '#fkb:hover{background:#0f172a;}',
       '#fkb svg{width:20px;height:20px;fill:white;}',
-      '#fkp{position:fixed;bottom:82px;right:24px;width:390px;max-height:600px;',
+      '#fkp{position:fixed;bottom:82px;right:24px;width:390px;max-height:640px;',
         'background:#fff;border-radius:12px;border:1px solid #e2e8f0;',
         'box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:99998;display:none;flex-direction:column;',
         'overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}',
-      '#fkh{background:#1e293b;padding:14px 18px;display:flex;align-items:center;gap:12px;color:white;}',
+      '#fkh{background:#1e293b;padding:14px 18px;display:flex;align-items:center;gap:12px;color:white;flex-shrink:0;}',
       '#fkh .fklogo{width:28px;height:28px;background:#334155;border-radius:6px;',
         'display:flex;align-items:center;justify-content:center;flex-shrink:0;}',
       '#fkh .fklogo svg{width:16px;height:16px;fill:#94a3b8;}',
       '#fkh .fkt{font-weight:600;font-size:14px;letter-spacing:-.01em;}',
       '#fkh .fks{font-size:11px;color:#94a3b8;display:block;margin-top:1px;}',
-      '#fkctxbar{background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:8px 16px;',
-        'font-size:11.5px;color:#475569;display:none;align-items:center;gap:6px;}',
+      '#fkhtabs{display:flex;gap:0;flex-shrink:0;background:#fff;border-bottom:1px solid #e2e8f0;}',
+      '.fktab{flex:1;padding:9px 0;background:none;border:none;border-bottom:2px solid transparent;',
+        'font-size:12.5px;font-weight:500;color:#64748b;cursor:pointer;font-family:inherit;transition:all .15s;}',
+      '.fktab.active{color:#1e293b;border-bottom-color:#1e293b;}',
+      '.fktab:hover{color:#1e293b;background:#f8fafc;}',
+      '#fkctxbar{background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:8px 16px;flex-shrink:0;',
+        'font-size:11.5px;color:#475569;display:none;align-items:center;justify-content:space-between;gap:6px;}',
+      '#fkctxbar .fkctxl{display:flex;align-items:center;gap:6px;}',
       '#fkctxbar svg{width:12px;height:12px;fill:#94a3b8;flex-shrink:0;}',
+      '#fkbulkbtn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:3px 8px;',
+        'font-size:11px;color:#475569;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap;}',
+      '#fkbulkbtn:hover{background:#f1f5f9;border-color:#cbd5e1;color:#1e293b;}',
       '#fkm{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:200px;background:#f8fafc;}',
+      '#fklib{flex:1;overflow-y:auto;background:#f8fafc;display:none;flex-direction:column;}',
+      '#fklibh{padding:12px 16px;background:#fff;border-bottom:1px solid #e2e8f0;',
+        'font-size:12px;color:#64748b;flex-shrink:0;}',
+      '.fklibitem{padding:12px 16px;background:#fff;border-bottom:1px solid #f1f5f9;cursor:pointer;}',
+      '.fklibitem:hover{background:#f8fafc;}',
+      '.fklibitem .fklibt{font-size:13px;font-weight:600;color:#1e293b;margin-bottom:3px;}',
+      '.fklibitem .fklibs{font-size:11.5px;color:#64748b;}',
+      '.fklibitem .fklibbtns{margin-top:8px;display:flex;gap:6px;}',
+      '.fklibitem .fklibbtns button{padding:4px 10px;border:1px solid #e2e8f0;border-radius:5px;',
+        'font-size:11.5px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;}',
+      '.fklibitem .fklibbtns button:hover{background:#f8fafc;border-color:#cbd5e1;}',
+      '.fklibitem .fklibbtns .fkpri{background:#1e293b;color:#fff;border-color:#1e293b;}',
+      '.fklibitem .fklibbtns .fkpri:hover{background:#0f172a;}',
       '.fm{max-width:86%;padding:9px 13px;border-radius:10px;font-size:13.5px;line-height:1.5;}',
       '.fb{background:#fff;color:#1e293b;border:1px solid #e2e8f0;',
         'border-bottom-left-radius:3px;align-self:flex-start;',
@@ -12083,11 +12111,11 @@ function rateLessonAI(idx, rating, btn) {
       '.fu{background:#1e293b;color:white;border-bottom-right-radius:3px;align-self:flex-end;}',
       '.fl{background:#fff;color:#1e293b;border:1px solid #e2e8f0;max-width:100%;font-size:13px;',
         'box-shadow:0 1px 3px rgba(0,0,0,0.05);}',
-      '#fksc{display:flex;gap:6px;padding:0 16px 12px;flex-wrap:wrap;background:#f8fafc;}',
+      '#fksc{display:flex;gap:6px;padding:0 16px 12px;flex-wrap:wrap;background:#f8fafc;flex-shrink:0;}',
       '.fc{background:#fff;color:#475569;border:1px solid #e2e8f0;border-radius:20px;',
         'padding:5px 12px;font-size:12px;cursor:pointer;font-weight:500;transition:all .15s;}',
       '.fc:hover{background:#f1f5f9;border-color:#cbd5e1;color:#1e293b;}',
-      '#fkf{padding:10px 14px;border-top:1px solid #e2e8f0;display:flex;gap:8px;align-items:flex-end;background:#fff;}',
+      '#fkf{padding:10px 14px;border-top:1px solid #e2e8f0;display:flex;gap:8px;align-items:flex-end;background:#fff;flex-shrink:0;}',
       '#fki{flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;',
         'font-size:13.5px;outline:none;resize:none;font-family:inherit;',
         'max-height:100px;color:#1e293b;background:#f8fafc;}',
@@ -12108,7 +12136,7 @@ function rateLessonAI(idx, rating, btn) {
         'font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;}',
       '.fkbtns{margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;display:flex;gap:6px;flex-wrap:wrap;}',
       '.fkbtns button{padding:5px 12px;border:1px solid #e2e8f0;border-radius:6px;',
-        'font-size:12px;cursor:pointer;font-weight:500;background:#fff;color:#475569;transition:all .15s;}',
+        'font-size:12px;cursor:pointer;font-weight:500;background:#fff;color:#475569;transition:all .15s;font-family:inherit;}',
       '.fkbtns button:hover{background:#f8fafc;border-color:#cbd5e1;color:#1e293b;}',
       '.fkbtns .fkpri{background:#1e293b;color:#fff;border-color:#1e293b;}',
       '.fkbtns .fkpri:hover{background:#0f172a;}',
@@ -12117,6 +12145,10 @@ function rateLessonAI(idx, rating, btn) {
       '.fkty span:nth-child(2){animation-delay:.2s;}.fkty span:nth-child(3){animation-delay:.4s;}',
       '#fkfi{display:none;}',
       '.fksaved{font-size:11px;color:#059669;margin-top:6px;}',
+      '.fkstyle{font-size:11px;color:#7c3aed;margin-top:4px;}',
+      '.fkprogress{font-size:12px;color:#475569;padding:8px 0;border-top:1px solid #f1f5f9;margin-top:6px;}',
+      '.fkprogress .fkpbar{height:4px;background:#e2e8f0;border-radius:2px;margin-top:6px;overflow:hidden;}',
+      '.fkprogress .fkpfill{height:100%;background:#1e293b;border-radius:2px;transition:width .3s;}',
       '@keyframes fkb2{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}'
     ].join('');
     document.head.appendChild(s);
@@ -12131,8 +12163,16 @@ function rateLessonAI(idx, rating, btn) {
         '<div class="fklogo"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>',
         '<div><div class="fkt">Falkor</div><div class="fks">LessonLab AI Assistant</div></div>',
       '</div>',
-      '<div id="fkctxbar"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><span id="fkctxtxt"></span></div>',
+      '<div id="fkhtabs">',
+        '<button class="fktab active" onclick="fkTab(\'chat\')">Chat</button>',
+        '<button class="fktab" onclick="fkTab(\'library\')">My Lessons</button>',
+      '</div>',
+      '<div id="fkctxbar">',
+        '<div class="fkctxl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><span id="fkctxtxt"></span></div>',
+        '<button id="fkbulkbtn" onclick="fkBulkGenerate()" style="display:none;">Generate all weeks</button>',
+      '</div>',
       '<div id="fkm"></div>',
+      '<div id="fklib"><div id="fklibh">Loading your saved lessons...</div></div>',
       '<div id="fksc">',
         '<button class="fc" onclick="fkChip(\'Generate a lesson\')">Generate lesson</button>',
         '<button class="fc" onclick="fkChip(\'Make it longer and more detailed\')">More detail</button>',
@@ -12150,10 +12190,12 @@ function rateLessonAI(idx, rating, btn) {
     document.body.appendChild(panel);
 
     var msgs = document.getElementById('fkm');
+    var libPanel = document.getElementById('fklib');
     var inp = document.getElementById('fki');
     var fileInput = document.getElementById('fkfi');
     var ctxBar = document.getElementById('fkctxbar');
     var ctxTxt = document.getElementById('fkctxtxt');
+    var bulkBtn = document.getElementById('fkbulkbtn');
     var isOpen = false;
 
     function addMsg(text, cls, asHtml) {
@@ -12161,17 +12203,14 @@ function rateLessonAI(idx, rating, btn) {
       if (asHtml) d.innerHTML = text; else d.textContent = text;
       msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
     }
+
     function typing() {
       var d = document.createElement('div'); d.className = 'fm fb';
       d.innerHTML = '<div class="fkty"><span></span><span></span><span></span></div>';
       msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
     }
 
-    function buildDocx(lesson) {
-      var diff = lesson.differentiation || {};
-      var sc = Array.isArray(lesson.sc) ? lesson.sc : [lesson.sc || ''];
-      var eq = Array.isArray(lesson.equipment) ? lesson.equipment.join(', ') : (lesson.equipment || lesson.materials || '');
-
+    function buildDocxBody(lesson) {
       function p(text, style) {
         style = style || 'Normal';
         return '<w:p><w:pPr><w:pStyle w:val="' + style + '"/></w:pPr>' +
@@ -12185,12 +12224,14 @@ function rateLessonAI(idx, rating, btn) {
         return '<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">' + lbl + ': </w:t></w:r>' +
           '<w:r><w:t xml:space="preserve">' + String(val||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</w:t></w:r></w:p>';
       }
-
+      var diff = lesson.differentiation || {};
+      var sc = Array.isArray(lesson.sc) ? lesson.sc : [lesson.sc || ''];
+      var eq = Array.isArray(lesson.equipment) ? lesson.equipment.join(', ') : (lesson.equipment || lesson.materials || '');
       var body = '';
       body += heading(lesson.title || 'Lesson Plan', 1);
       body += label('Learning Intention', lesson.li || '');
       body += heading('Success Criteria', 2);
-      sc.forEach(function(s){ body += p('• ' + s); });
+      sc.forEach(function(s){ body += p('- ' + s); });
       if (eq) body += label('Equipment', eq);
       if (lesson.context) body += label('Context', lesson.context);
       body += heading('Lesson Phases', 2);
@@ -12205,19 +12246,25 @@ function rateLessonAI(idx, rating, btn) {
       if (lesson.exit) { body += heading('Exit / Reflection', 3); body += p(lesson.exit); }
       if (lesson.ifNot) { body += label('If not working', lesson.ifNot); }
       body += heading('Differentiation', 2);
-      if (diff.support) { body += label('Support', diff.support); }
-      if (diff.extension) { body += label('Extension', diff.extension); }
+      if (diff.support) body += label('Support', diff.support);
+      if (diff.extension) body += label('Extension', diff.extension);
       if (lesson.exitTicket) body += label('Exit Ticket', lesson.exitTicket);
+      return body;
+    }
 
+    function buildDocx(lesson) {
       var docXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
         '<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"' +
         ' xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
-        '<w:body>' + body +
+        '<w:body>' + buildDocxBody(lesson) +
         '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
         '<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr>' +
         '</w:body></w:document>';
+      return docXml;
+    }
 
-      var stylesXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    function getDocxStyles() {
+      return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
         '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
         '<w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/>' +
         '<w:rPr><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:style>' +
@@ -12231,17 +12278,17 @@ function rateLessonAI(idx, rating, btn) {
         '<w:pPr><w:spacing w:before="160" w:after="60"/></w:pPr>' +
         '<w:rPr><w:b/><w:i/><w:sz w:val="24"/><w:color w:val="475569"/></w:rPr></w:style>' +
         '</w:styles>';
+    }
 
+    function zipAndDownload(filename, docXml) {
       var relsXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
         '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
         '</Relationships>';
-
       var rootRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
         '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
         '</Relationships>';
-
       var contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
         '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
         '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
@@ -12249,44 +12296,29 @@ function rateLessonAI(idx, rating, btn) {
         '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
         '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
         '</Types>';
-
       if (typeof JSZip === 'undefined') {
-        var blob = new Blob(['﻿<html><body style="font-family:Arial,sans-serif;max-width:800px;margin:40px auto;">' +
-          '<h1>' + (lesson.title||'Lesson') + '</h1>' +
-          '<p><b>Learning Intention:</b> ' + (lesson.li||'') + '</p>' +
-          '<h2>Success Criteria</h2><ul>' + sc.map(function(s){return '<li>'+s+'</li>';}).join('') + '</ul>' +
-          (eq?'<p><b>Equipment:</b> '+eq+'</p>':'') +
-          (lesson.entry?'<h2>Entry / Warm-up</h2><p>'+lesson.entry+'</p>':'') +
-          (lesson.teach?'<h2>Explicit Teaching</h2><p>'+lesson.teach+'</p>':'') +
-          (lesson.practice?'<h2>Guided Practice</h2><p>'+lesson.practice+'</p>':'') +
-          (lesson.game?'<h2>Application / Game</h2><p>'+lesson.game+'</p>':'') +
-          (lesson.exit?'<h2>Exit / Reflection</h2><p>'+lesson.exit+'</p>':'') +
-          (diff.support?'<p><b>Support:</b> '+diff.support+'</p>':'') +
-          (diff.extension?'<p><b>Extension:</b> '+diff.extension+'</p>':'') +
-          '</body></html>'], {type:'application/msword'});
+        var blob = new Blob([docXml], {type:'application/msword'});
         var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = (lesson.title||'lesson').replace(/[^a-z0-9]/gi,'_') + '.doc';
-        a.click(); return;
+        a.download = filename.replace(/\.docx$/, '.doc'); a.click(); return;
       }
-
       var zip = new JSZip();
       zip.file('[Content_Types].xml', contentTypes);
       zip.file('_rels/.rels', rootRels);
       zip.file('word/document.xml', docXml);
-      zip.file('word/styles.xml', stylesXml);
+      zip.file('word/styles.xml', getDocxStyles());
       zip.file('word/_rels/document.xml.rels', relsXml);
       zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
         .then(function(blob) {
           var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-          a.download = (lesson.title||'lesson').replace(/[^a-z0-9]/gi,'_') + '.docx';
-          a.click();
+          a.download = filename; a.click();
         });
     }
 
-    function lessonCard(lesson) {
+    function lessonCard(lesson, opts) {
       var diff = lesson.differentiation || {};
       var sc = Array.isArray(lesson.sc) ? lesson.sc.map(function(x){return '<li>'+x+'</li>';}).join('') : (lesson.sc||'');
       var eq = Array.isArray(lesson.equipment) ? lesson.equipment.join(', ') : (lesson.equipment || lesson.materials || '');
+      var extraBtns = (opts && opts.extraBtns) || '';
       return '<div class="fkcard">' +
         '<h4>' + (lesson.title||'Generated Lesson') + '</h4>' +
         '<p><span class="lb">Learning Intention</span>' + (lesson.li||'') + '</p>' +
@@ -12299,6 +12331,7 @@ function rateLessonAI(idx, rating, btn) {
           '<button class="fkpri" onclick="fkDownloadDocx()">Download Word</button>' +
           '<button onclick="fkLoadIntoApp()">Load into app</button>' +
           '<button onclick="fkCopyText()">Copy text</button>' +
+          extraBtns +
         '</div>' +
         '<div id="fksavedmsg"></div>' +
         '</div>';
@@ -12316,7 +12349,7 @@ function rateLessonAI(idx, rating, btn) {
           focus: params.focus || '',
           year_level: params.year_level || '',
           term: (appSt && appSt.term) || 'Term 1',
-          week: 1,
+          week: params.week || 1,
           title: lesson.title || 'Falkor Lesson',
           learning_intention: lesson.li || '',
           success_criteria: sc,
@@ -12329,7 +12362,12 @@ function rateLessonAI(idx, rating, btn) {
       }).catch(function(){});
     }
 
-    window.fkDownloadDocx = function() { if (lastLesson) buildDocx(lastLesson); };
+    window.fkDownloadDocx = function() {
+      if (!lastLesson) return;
+      var docXml = buildDocx(lastLesson);
+      var fname = (lastLesson.title||'lesson').replace(/[^a-z0-9]/gi,'_') + '.docx';
+      zipAndDownload(fname, docXml);
+    };
 
     window.fkCopyText = function() {
       if (!lastLesson) return;
@@ -12349,8 +12387,10 @@ function rateLessonAI(idx, rating, btn) {
       });
     };
 
-    window.fkLoadIntoApp = function() {
-      if (!lastLesson || !lastParams) return;
+    window.fkLoadIntoApp = function(lesson) {
+      var src = lesson || lastLesson;
+      if (!src) return;
+      if (lesson) { lastLesson = lesson; lastParams = lastParams || {}; }
       try {
         var appSt = getAppState();
         if (!appSt || !appSt.subject) {
@@ -12359,36 +12399,203 @@ function rateLessonAI(idx, rating, btn) {
         }
         if (typeof buildAndRender === 'function') {
           buildAndRender({
-            title: lastLesson.title,
-            li: lastLesson.li,
-            sc: lastLesson.sc,
-            equipment: Array.isArray(lastLesson.equipment) ? lastLesson.equipment.join(' · ') : (lastLesson.equipment||lastLesson.materials||''),
-            context: lastLesson.context || '',
-            differentiation: lastLesson.differentiation || {},
-            exitTicket: lastLesson.exitTicket || '',
-            entry: lastLesson.entry || '',
-            teach: lastLesson.teach || '',
-            practice: lastLesson.practice || '',
-            game: lastLesson.game || '',
-            exit: lastLesson.exit || '',
-            points: lastLesson.points || '',
-            cues: lastLesson.cues || '',
-            entry_crt: lastLesson.entry_crt || '',
-            teach_crt: lastLesson.teach_crt || '',
-            practice_crt: lastLesson.practice_crt || '',
-            game_crt: lastLesson.game_crt || '',
-            exit_crt: lastLesson.exit_crt || ''
+            title: src.title, li: src.li, sc: src.sc,
+            equipment: Array.isArray(src.equipment) ? src.equipment.join(' · ') : (src.equipment||src.materials||''),
+            context: src.context || '', differentiation: src.differentiation || {},
+            exitTicket: src.exitTicket || '', entry: src.entry || '',
+            teach: src.teach || '', practice: src.practice || '',
+            game: src.game || '', exit: src.exit || '',
+            points: src.points || '', cues: src.cues || '',
+            entry_crt: src.entry_crt || '', teach_crt: src.teach_crt || '',
+            practice_crt: src.practice_crt || '', game_crt: src.game_crt || '',
+            exit_crt: src.exit_crt || '', entrySay: src.entrySay || '',
+            ifWell: src.ifWell || '', ifNot: src.ifNot || ''
           }, lastAiId || null);
-          addMsg('Lesson loaded into the app below.', 'fb');
+          fkTab('chat');
+          addMsg('Lesson loaded into the app.', 'fb');
         } else {
-          addMsg('Could not load — app may not have a lesson open. Try generating a lesson in the main app first.', 'fb');
+          addMsg('Could not load — try generating a lesson in the main app first.', 'fb');
         }
-      } catch(e) {
-        addMsg('Load failed: ' + e.message, 'fb');
-      }
+      } catch(e) { addMsg('Load failed: ' + e.message, 'fb'); }
     };
 
     window.fkChip = function(t){ inp.value=t; send(t); };
+
+    window.fkTab = function(tab) {
+      var chatEls = [msgs, document.getElementById('fksc'), document.getElementById('fkf')];
+      var tabs = document.querySelectorAll('.fktab');
+      if (tab === 'library') {
+        chatEls.forEach(function(el){ if(el) el.style.display='none'; });
+        libPanel.style.display = 'flex';
+        tabs[0].classList.remove('active'); tabs[1].classList.add('active');
+        loadLibrary();
+      } else {
+        chatEls.forEach(function(el){ if(el) el.style.display = el.id==='fkm'?'flex':el.id==='fksc'?'flex':'flex'; });
+        msgs.style.display = 'flex'; msgs.style.flexDirection = 'column';
+        document.getElementById('fksc').style.display = 'flex';
+        document.getElementById('fkf').style.display = 'flex';
+        libPanel.style.display = 'none';
+        tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+      }
+    };
+
+    function loadLibrary() {
+      var libh = document.getElementById('fklibh');
+      libh.textContent = 'Loading...';
+      // Clear previous items
+      var items = libPanel.querySelectorAll('.fklibitem');
+      items.forEach(function(el){ el.remove(); });
+      api('/lessons').then(function(lessons) {
+        libLessons = Array.isArray(lessons) ? lessons : (lessons && lessons.data ? lessons.data : []);
+        if (!libLessons.length) {
+          libh.textContent = 'No saved lessons yet. Generate a lesson to save it here.';
+          return;
+        }
+        libh.textContent = libLessons.length + ' saved lesson' + (libLessons.length===1?'':'s');
+        libLessons.forEach(function(ls, idx) {
+          var ld = ls.lesson_data || {};
+          var subj = (ls.subject||'').toUpperCase();
+          var yr = ls.year_level ? ' · ' + ls.year_level : '';
+          var dt = ls.updated_at ? ' · ' + ls.updated_at.split('T')[0] : '';
+          var item = document.createElement('div');
+          item.className = 'fklibitem';
+          item.innerHTML = '<div class="fklibt">' + (ls.title||ld.title||'Lesson') + '</div>' +
+            '<div class="fklibs">' + subj + yr + dt + '</div>' +
+            '<div class="fklibbtns">' +
+              '<button class="fkpri" onclick="fkLibLoad('+idx+')">Load into app</button>' +
+              '<button onclick="fkLibDownload('+idx+')">Download Word</button>' +
+            '</div>';
+          libPanel.appendChild(item);
+        });
+      }).catch(function(e) {
+        libh.textContent = 'Could not load lessons. Please try again.';
+      });
+    }
+
+    window.fkLibLoad = function(idx) {
+      var ls = libLessons[idx];
+      if (!ls) return;
+      var ld = ls.lesson_data || ls;
+      lastLesson = ld; lastParams = {subject: ls.subject, unit: ls.unit, year_level: ls.year_level};
+      fkLoadIntoApp(ld);
+    };
+
+    window.fkLibDownload = function(idx) {
+      var ls = libLessons[idx];
+      if (!ls) return;
+      var ld = ls.lesson_data || ls;
+      var docXml = buildDocx(ld);
+      var fname = (ls.title||ld.title||'lesson').replace(/[^a-z0-9]/gi,'_') + '.docx';
+      zipAndDownload(fname, docXml);
+    };
+
+    window.fkBulkGenerate = function() {
+      if (bulkRunning) return;
+      var appSt = getAppState();
+      if (!appSt || !appSt.subject || !appSt.weeks) {
+        addMsg('Set up a subject, year level and number of weeks in the app first.', 'fb');
+        fkTab('chat');
+        return;
+      }
+      fkTab('chat');
+      var totalWeeks = parseInt(appSt.weeks) || 10;
+      var startWeek = parseInt(appSt.startWeek) || 1;
+      bulkQueue = [];
+      for (var w = startWeek; w <= startWeek + totalWeeks - 1; w++) bulkQueue.push(w);
+      if (!bulkQueue.length) return;
+      bulkRunning = true;
+      var progressDiv = addMsg('', 'fm fb', true);
+      var generated = [];
+
+      function runNext() {
+        if (!bulkQueue.length) {
+          bulkRunning = false;
+          progressDiv.innerHTML = '<div class="fkprogress">Generated ' + generated.length + ' lessons.' +
+            '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' +
+            '<button class="fkbtns" style="padding:5px 12px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;background:#1e293b;color:#fff;border-color:#1e293b;" onclick="fkExportUnit(' + JSON.stringify(generated).replace(/"/g,'&quot;') + ')">Download all as Word</button>' +
+            '</div></div>';
+          msgs.scrollTop = msgs.scrollHeight;
+          return;
+        }
+        var week = bulkQueue.shift();
+        var done = totalWeeks - bulkQueue.length;
+        var pct = Math.round((done / totalWeeks) * 100);
+        progressDiv.innerHTML = '<div class="fkprogress">Generating week ' + week + ' of ' + (startWeek + totalWeeks - 1) + '...' +
+          '<div class="fkpbar"><div class="fkpfill" style="width:' + pct + '%"></div></div></div>';
+        msgs.scrollTop = msgs.scrollHeight;
+        api('/lessons/generate', {
+          method: 'POST',
+          body: JSON.stringify({
+            subject: appSt.subject,
+            unit: appSt.unit || appSt.subject,
+            focus: appSt.unit || '',
+            week: week,
+            total_weeks: totalWeeks,
+            year_level: appSt.yearLevel || 'Years 3-4',
+            duration: String(appSt.duration || 45),
+            school_name: appSt.school || 'Williamstown Primary School',
+            curriculum_standards: []
+          })
+        }).then(function(res) {
+          if (res && res.lesson) {
+            generated.push(res.lesson);
+            autoSave(res.lesson, {subject:appSt.subject, unit:appSt.unit, year_level:appSt.yearLevel, week:week}, res.ai_lesson_id);
+            lastLesson = res.lesson;
+            lastParams = {subject:appSt.subject, unit:appSt.unit, year_level:appSt.yearLevel};
+            lastAiId = res.ai_lesson_id || null;
+          }
+          setTimeout(runNext, 400);
+        }).catch(function() {
+          bulkQueue = [];
+          bulkRunning = false;
+          progressDiv.innerHTML = '<div class="fkprogress">Generation stopped — API error on week ' + week + '. ' + generated.length + ' lessons saved.</div>';
+        });
+      }
+      runNext();
+    };
+
+    window.fkExportUnit = function(lessons) {
+      if (!Array.isArray(lessons) || !lessons.length) { addMsg('No lessons to export.', 'fb'); return; }
+      var relsXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+        '</Relationships>';
+      var rootRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+        '</Relationships>';
+      var contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+        '<Default Extension="xml" ContentType="application/xml"/>' +
+        '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+        '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+        '</Types>';
+      var pgBreak = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+      var allBody = lessons.map(function(l, i) {
+        return buildDocxBody(l) + (i < lessons.length-1 ? pgBreak : '');
+      }).join('');
+      var docXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"' +
+        ' xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+        '<w:body>' + allBody +
+        '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
+        '<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr>' +
+        '</w:body></w:document>';
+      if (typeof JSZip === 'undefined') { addMsg('JSZip not available for unit export.', 'fb'); return; }
+      var zip = new JSZip();
+      zip.file('[Content_Types].xml', contentTypes);
+      zip.file('_rels/.rels', rootRels);
+      zip.file('word/document.xml', docXml);
+      zip.file('word/styles.xml', getDocxStyles());
+      zip.file('word/_rels/document.xml.rels', relsXml);
+      zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
+        .then(function(blob) {
+          var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+          a.download = 'unit_lessons.docx'; a.click();
+          addMsg('Unit exported — ' + lessons.length + ' lessons in one Word document.', 'fb');
+        });
+    };
 
     function extractJson(txt) {
       var m = txt.match(/```json\s*([\s\S]*?)```/) || txt.match(/\{[\s\S]*"(?:subject|title)"[\s\S]*?\}/);
@@ -12418,7 +12625,8 @@ function rateLessonAI(idx, rating, btn) {
     function callChat(text, onDone) {
       fetch(WU+'/chat',{
         method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:text, product:'LessonLab', agent_pin:AP})
+        body:JSON.stringify({text:text, product:'LessonLab', agent_pin:AP,
+          history: chatHistory.slice(-6)})
       }).then(function(r){return r.json();})
       .then(function(d){ onDone(d.reply||d.response||d.message||''); })
       .catch(function(){ addMsg('Connection error. Please try again.','fb'); });
@@ -12426,7 +12634,10 @@ function rateLessonAI(idx, rating, btn) {
 
     function generateLesson(userText, t) {
       var appSt = getAppState();
-      var ctxNote = uploadedCtx ? ' Use this uploaded lesson for style/format reference: '+uploadedCtx.slice(0,600) : '';
+      var savedStyle = appSt ? (localStorage.getItem('fk_style_'+appSt.subject) || '') : '';
+      var ctxNote = uploadedCtx
+        ? ' Use this uploaded lesson for style/format reference: '+uploadedCtx.slice(0,600)
+        : (savedStyle ? ' Use this saved style reference: '+savedStyle.slice(0,400) : '');
       var defaults = appSt ? (
         ' Defaults if not specified in request: subject=' + (appSt.subject||'pe') +
         ', year_level=' + (appSt.yearLevel||'Years 3-4') +
@@ -12446,7 +12657,7 @@ function rateLessonAI(idx, rating, btn) {
             method:'POST',
             body:JSON.stringify({
               subject:params.subject, unit:params.unit||userText,
-              focus:params.focus||userText, week:1, total_weeks:10,
+              focus:params.focus||userText, week:params.week||1, total_weeks:10,
               year_level:params.year_level||'Years 3-4',
               duration: dur,
               school_name:params.school_name||'Williamstown Primary School',
@@ -12455,11 +12666,10 @@ function rateLessonAI(idx, rating, btn) {
           }).then(function(res){
             if (t) t.remove();
             if (res && res.lesson) {
-              lastLesson = res.lesson;
-              lastParams = params;
-              lastAiId = res.ai_lesson_id || null;
+              lastLesson = res.lesson; lastParams = params; lastAiId = res.ai_lesson_id || null;
               addMsg(lessonCard(res.lesson),'fm fl',true);
-              addMsg('Done. Use "Download Word" for a .docx file, "Load into app" to add it to the current plan, or ask me to refine anything.','fb');
+              addMsg('Done. Download as Word, load into the app, or ask me to refine anything.','fb');
+              chatHistory.push({role:'assistant', content:'[Generated lesson: '+res.lesson.title+']'});
               autoSave(res.lesson, params, res.ai_lesson_id);
             } else {
               addMsg(res&&res.error||'Generation failed. Try with more detail.','fb');
@@ -12473,8 +12683,12 @@ function rateLessonAI(idx, rating, btn) {
     }
 
     function amendLesson(userText, t) {
+      var ctxHistory = chatHistory.slice(-4).map(function(h){
+        return h.role+': '+h.content;
+      }).join('\n');
       var prompt = 'LESSONLAB_AMEND: Current lesson JSON: '+JSON.stringify(lastLesson)+
-        '. Instruction: "'+userText+'". Return the amended lesson as ```json ... ``` with ALL fields: '+
+        (ctxHistory ? '\nPrevious context:\n'+ctxHistory : '') +
+        '\nInstruction: "'+userText+'". Return the amended lesson as ```json ... ``` with ALL fields: '+
         'title, li, sc (array), equipment (array), context, entry, teach, practice, game, exit, '+
         'points, cues, entry_crt, teach_crt, practice_crt, game_crt, exit_crt, '+
         'differentiation.support, differentiation.extension, exitTicket.';
@@ -12485,7 +12699,8 @@ function rateLessonAI(idx, rating, btn) {
         if (amended && (amended.title||amended.li)) {
           lastLesson = amended;
           addMsg(lessonCard(amended),'fm fl',true);
-          addMsg('Updated. Keep refining or use the buttons above to download or load into the app.','fb');
+          addMsg('Updated. Keep refining or use the buttons to download or load into the app.','fb');
+          chatHistory.push({role:'assistant', content:'[Amended lesson: '+amended.title+']'});
           if (lastParams) autoSave(amended, lastParams, lastAiId);
         } else {
           addMsg(reply||'Could not amend. Please try again.','fb');
@@ -12498,6 +12713,8 @@ function rateLessonAI(idx, rating, btn) {
       if (!text) return;
       inp.value = ''; inp.style.height = 'auto';
       addMsg(text,'fu');
+      chatHistory.push({role:'user', content:text});
+      if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
       var t = typing();
       if (lastLesson && isAmend(text)) { amendLesson(text,t); return; }
       if (isLesson(text)) {
@@ -12510,6 +12727,8 @@ function rateLessonAI(idx, rating, btn) {
       callChat(text, function(reply) {
         t.remove();
         addMsg(reply||'How can I help?','fb');
+        chatHistory.push({role:'assistant', content:reply});
+        if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
       });
     }
 
@@ -12527,7 +12746,14 @@ function rateLessonAI(idx, rating, btn) {
           var match = str.match(/w:t[^>]*>([^<]{3,})/g);
           uploadedCtx = match ? match.map(function(m){return m.replace(/^w:t[^>]*>/,'');}).join(' ').slice(0,3000) : str.slice(0,3000);
         }
-        addMsg('File "'+file.name+'" uploaded as style reference.','fb');
+        // Save to localStorage per subject for future sessions
+        var appSt = getAppState();
+        if (appSt && appSt.subject) {
+          try { localStorage.setItem('fk_style_'+appSt.subject, uploadedCtx); } catch(e){}
+          addMsg('File "'+file.name+'" uploaded and saved as style reference for '+appSt.subject.toUpperCase()+'.','fb');
+        } else {
+          addMsg('File "'+file.name+'" uploaded as style reference.','fb');
+        }
         fileInput.value='';
       };
       if (file.name.match(/\.txt$/i)) reader.readAsText(file);
@@ -12549,6 +12775,16 @@ function rateLessonAI(idx, rating, btn) {
             (appSt.yearLevel ? ' — ' + appSt.yearLevel : '') +
             (appSt.unit ? ' — ' + appSt.unit : '');
           ctxBar.style.display = 'flex';
+          // Show bulk generate if weeks configured
+          if (appSt.weeks && parseInt(appSt.weeks) > 1) {
+            bulkBtn.textContent = 'Generate all ' + appSt.weeks + ' weeks';
+            bulkBtn.style.display = 'block';
+          }
+          // Auto-load style memory for this subject
+          if (!uploadedCtx) {
+            var saved = localStorage.getItem('fk_style_'+appSt.subject);
+            if (saved) { uploadedCtx = saved; }
+          }
         }
         if (msgs.children.length === 0) {
           var greeting = 'Hi, I\'m Falkor. ';
@@ -12575,5 +12811,3 @@ function rateLessonAI(idx, rating, btn) {
   },500);
 })();
 </script>
-</div></body>
-</html>
