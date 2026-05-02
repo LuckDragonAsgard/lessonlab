@@ -12336,6 +12336,8 @@ function rateLessonAI(idx, rating, btn) {
         }});
       }
       chips.push({label: 'More detail', hot: false, action: function() { fkChip('Make it longer and more detailed'); }});
+      chips.push({label: 'Copy lesson', hot: false, action: function() { fkCopyLesson(); }});
+      chips.push({label: 'Share link', hot: false, action: function() { fkShareLesson(); }});
       chips.forEach(function(c) {
         var b = document.createElement('button'); b.className = 'fc' + (c.hot ? ' fchot' : '');
         b.textContent = c.label; b.onclick = c.action; scDiv.appendChild(b);
@@ -12709,7 +12711,9 @@ function rateLessonAI(idx, rating, btn) {
             '<button onclick="fkLibAdapt('+realIdx+')">Adapt</button>'+
             '<button onclick="fkLibDownload('+realIdx+')">Word</button>'+
             '<button onclick="fkLibPdf('+realIdx+')">PDF</button>'+
-          '</div>';
+            '<button onclick="fkLibShare('+realIdx+')" title="Copy share link">Share</button>'+
+          '</div>'+
+          '<div class="fklibrating">'+fkRatingHtml(ls.id||ls.title||realIdx)+'</div>';
         libPanel.appendChild(item);
       });
     }
@@ -12725,7 +12729,7 @@ function rateLessonAI(idx, rating, btn) {
       if(libh) libh.textContent=libFiltered.length+' of '+libLessons.length+' lessons';
       renderLibrary();
     };
-    window.fkLibLoad=function(idx){var ls=libLessons[idx];if(!ls)return;lastLesson=ls.lesson_data||ls;lastParams={subject:ls.subject,unit:ls.unit,year_level:ls.year_level};fkLoadIntoApp(lastLesson);};
+    window.fkLibLoad=function(idx){var ls=libLessons[idx];if(ls) fkTrackRecent(ls);if(!ls)return;lastLesson=ls.lesson_data||ls;lastParams={subject:ls.subject,unit:ls.unit,year_level:ls.year_level};fkLoadIntoApp(lastLesson);};
     window.fkLibEdit=function(idx){var ls=libLessons[idx];if(!ls)return;lastLesson=ls.lesson_data||ls;lastParams={subject:ls.subject,unit:ls.unit,year_level:ls.year_level};fkEditLesson(lastLesson);};
     window.fkLibAdapt=function(idx){var ls=libLessons[idx];if(!ls)return;lastLesson=ls.lesson_data||ls;lastParams={subject:ls.subject,unit:ls.unit,year_level:ls.year_level};fkTab('chat');fkAdaptOpen();};
     window.fkLibDownload=function(idx){
@@ -12807,7 +12811,7 @@ function rateLessonAI(idx, rating, btn) {
 
     window.fkWeekClick=function(week,lesson){
       if(lesson){
-        lastLesson=lesson.lesson_data||lesson;lastParams={subject:(getAppState()||{}).subject,unit:(getAppState()||{}).unit,week:week};
+        lastLesson=lesson.lesson_data||lesson;lastParams={subject:(getAppState()||{}).subject,unit:(getAppState()||{}).unit,week:week};fkTrackRecent(lesson);
         fkTab('chat');addMsg(lessonCard(lastLesson),'fm fl',true);addMsg('Week '+week+' loaded.','fb');
         showNextSteps(week);
       }else{
@@ -12925,6 +12929,111 @@ function rateLessonAI(idx, rating, btn) {
       });
     }
 
+
+    // ── v6: Copy, Rate, Share ──
+    window.fkCopyLesson = function() {
+      if (!lastLesson) { addMsg('No lesson loaded yet.', 'fb'); return; }
+      var l = lastLesson;
+      var sc = Array.isArray(l.sc) ? l.sc.map(function(s,i){return (i+1)+'. '+s;}).join('\n') : (l.sc||'');
+      var eq = Array.isArray(l.equipment) ? l.equipment.join(', ') : (l.equipment||l.materials||'');
+      var d = l.differentiation||{};
+      var phases = [
+        l.warmup && ('WARM UP\n'+l.warmup),
+        l.skill_focus && ('SKILL FOCUS\n'+l.skill_focus),
+        l.main_activity && ('MAIN ACTIVITY\n'+l.main_activity),
+        l.cool_down && ('COOL DOWN\n'+l.cool_down),
+        l.game && ('GAME\n'+l.game),
+        l.body && ('LESSON BODY\n'+l.body)
+      ].filter(Boolean).join('\n\n');
+      var txt = [
+        l.title||'',
+        l.subject?(l.subject.toUpperCase()+(l.year_level?' | '+l.year_level:'')+(l.duration?' | '+l.duration+' mins':'')):'' ,
+        '',
+        l.li && ('Learning Intention: '+l.li),
+        sc && ('Success Criteria:\n'+sc),
+        eq && ('Equipment: '+eq),
+        '',
+        phases,
+        d.support && ('SUPPORT: '+d.support),
+        d.extension && ('EXTENSION: '+d.extension)
+      ].filter(function(x){return x!==false&&x!==undefined&&x!=='';}).join('\n');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(txt).then(function() { addMsg('Lesson copied to clipboard.', 'fb'); });
+      } else {
+        var ta = document.createElement('textarea'); ta.value = txt;
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        addMsg('Lesson copied to clipboard.', 'fb');
+      }
+    };
+
+    function fkRatingHtml(key) {
+      var r = localStorage.getItem('fk_rate_'+key) || '';
+      var up = r==='up' ? ' fkrateactive' : '';
+      var dn = r==='down' ? ' fkrateactive' : '';
+      return '<button class="fkratebtn'+up+'" onclick="fkRate('+JSON.stringify(String(key))+',\'up\',this)" title="Good lesson">👍</button>'+
+             '<button class="fkratebtn'+dn+'" onclick="fkRate('+JSON.stringify(String(key))+',\'down\',this)" title="Needs work">👎</button>';
+    }
+    window.fkRate = function(key, val, btn) {
+      var prev = localStorage.getItem('fk_rate_'+key);
+      var newVal = prev===val ? '' : val;
+      if (newVal) localStorage.setItem('fk_rate_'+key, newVal); else localStorage.removeItem('fk_rate_'+key);
+      // refresh rating buttons near this btn
+      if (btn) {
+        var row = btn.closest('.fklibrating');
+        if (row) row.innerHTML = fkRatingHtml(key);
+      }
+    };
+
+    window.fkShareLesson = function() {
+      if (!lastLesson) { addMsg('No lesson loaded yet.', 'fb'); return; }
+      try {
+        var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(lastLesson))));
+        var shareUrl = window.location.href.split('?')[0] + '?fkshare=' + encoded;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareUrl).then(function() {
+            addMsg('Share link copied! Paste it for a colleague to open this lesson directly.', 'fb');
+          });
+        } else {
+          var ta = document.createElement('textarea'); ta.value = shareUrl;
+          document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+          addMsg('Share link copied!', 'fb');
+        }
+      } catch(e) { addMsg('Could not generate share link.', 'fb'); }
+    };
+    window.fkLibShare = function(idx) {
+      var ls = libLessons[idx]; if (!ls) return;
+      lastLesson = ls.lesson_data || ls;
+      fkShareLesson();
+    };
+
+    function fkTrackRecent(ls) {
+      try {
+        var recent = JSON.parse(localStorage.getItem('fk_recent')||'[]');
+        var key = ls.id || ls.title;
+        recent = recent.filter(function(r){ return (r.id||r.title) !== key; });
+        recent.unshift({id:ls.id,title:ls.title||((ls.lesson_data||{}).title),subject:ls.subject,year_level:ls.year_level,updated_at:ls.updated_at});
+        if (recent.length > 8) recent = recent.slice(0,8);
+        localStorage.setItem('fk_recent', JSON.stringify(recent));
+      } catch(e) {}
+    }
+
+    // Check for share param on open
+    function checkShareParam() {
+      try {
+        var param = new URLSearchParams(window.location.search).get('fkshare');
+        if (!param) return;
+        var lesson = JSON.parse(decodeURIComponent(escape(atob(param))));
+        if (lesson && lesson.title) {
+          lastLesson = lesson;
+          setTimeout(function() {
+            addMsg(lessonCard(lesson), 'fm fl', true);
+            addMsg('Shared lesson loaded: ' + lesson.title, 'fb');
+            showNextSteps(1);
+          }, 800);
+        }
+      } catch(e) {}
+    }
+
     function extractJson(txt){var m=txt.match(/```json\s*([\s\S]*?)```/)||txt.match(/\{[\s\S]*"(?:subject|title|type|support|main)"[\s\S]*?\}/);if(!m) return null;try{return JSON.parse(m[1]||m[0]);}catch(e){return null;}}
     function isAmend(t){var kw=['make it','longer','shorter','more detail','less detail','add more','remove','change','amend','edit','update','redo','rewrite','different format','simplify','expand','shorten','adjust','tweak','modify','another version','add a','add some','take out','without','instead'];t=t.toLowerCase();for(var i=0;i<kw.length;i++) if(t.indexOf(kw[i])!==-1) return true;return false;}
     function isLesson(t){var kw=['lesson','generate','create a','make a','plan a','write a','build a','need a','year 1','year 2','year 3','year 4','year 5','year 6','foundation','prep','pe lesson','literacy lesson','maths lesson','numeracy lesson','science lesson','persuasive','fractions','kicking','throwing','handball','tag game','warm up'];t=t.toLowerCase();for(var i=0;i<kw.length;i++) if(t.indexOf(kw[i])!==-1) return true;return false;}
@@ -13021,7 +13130,7 @@ function rateLessonAI(idx, rating, btn) {
           if(appSt.weeks&&parseInt(appSt.weeks)>1){bulkBtn.textContent='Generate all '+appSt.weeks+' weeks';bulkBtn.style.display='block';}
           if(!uploadedCtx){var saved=localStorage.getItem('fk_style_'+appSt.subject);if(saved) uploadedCtx=saved;}
         }
-        if(msgs.children.length===0){
+        checkShareParam();if(msgs.children.length===0){
           api('/lessons').then(function(lessons){
             var all=Array.isArray(lessons)?lessons:[];var appSt2=getAppState();
             if(all.length===0){
