@@ -12191,7 +12191,22 @@ function rateLessonAI(idx, rating, btn) {
       '.fkadaptrow input:focus,.fkadaptrow select:focus{border-color:#94a3b8;background:#fff;}',
       '#fkadaptgo{width:100%;padding:10px;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;}',
       '#fkadaptgo:hover{background:#0f172a;}',
-      '@keyframes fkb2{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}'
+      '@keyframes fkb2{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}',
+      /* v6-v7-v8 styles */
+      '.fklibrating{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}',
+      '.fkratebtn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:13px;opacity:.6;transition:opacity .15s,border-color .15s;}',
+      '.fkratebtn:hover{opacity:1;}',
+      '.fkratebtn.fkrateactive{opacity:1;border-color:#1e293b;background:#f1f5f9;}',
+      '.fknotebtn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:12px;color:#64748b;transition:all .15s;}',
+      '.fknotebtn:hover{border-color:#1e293b;color:#1e293b;}',
+      '.fknotebtn.fknoteon{color:#1e293b;border-color:#1e293b;font-size:13px;}',
+      '.fktermgrid{padding:0 12px 12px;overflow-x:auto;}',
+      '.fktermtbl{border-collapse:collapse;font-size:11px;width:100%;}',
+      '.fktermtbl th{background:#f1f5f9;color:#64748b;padding:4px 6px;text-align:center;font-weight:600;border:1px solid #e2e8f0;}',
+      '.fktermtbl td{padding:4px 6px;text-align:center;border:1px solid #e2e8f0;}',
+      '.fktermsub{text-align:left!important;font-weight:600;color:#1e293b;white-space:nowrap;background:#f8fafc;font-size:10px;}',
+      '.fktermcell{color:#cbd5e1;font-size:11px;}',
+      '.fktermcell.done{color:#16a34a;font-weight:700;background:#f0fdf4;}'
     ].join('');
     document.head.appendChild(s);
 
@@ -12213,6 +12228,7 @@ function rateLessonAI(idx, rating, btn) {
         '<div class="fkctxl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>',
         '<span id="fkctxtxt" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span></div>',
         '<button id="fkbulkbtn" onclick="fkBulkGenerate()" style="display:none;">Generate all weeks</button>',
+        '<button onclick="fkClearChat()" style="background:none;border:none;color:#94a3b8;font-size:11px;cursor:pointer;padding:2px 6px;white-space:nowrap;flex-shrink:0;" title="Clear chat">✕</button>',
       '</div>',
       '<div id="fkm"></div>',
       '<div id="fklib">',
@@ -12338,6 +12354,7 @@ function rateLessonAI(idx, rating, btn) {
       chips.push({label: 'More detail', hot: false, action: function() { fkChip('Make it longer and more detailed'); }});
       chips.push({label: 'Copy lesson', hot: false, action: function() { fkCopyLesson(); }});
       chips.push({label: 'Share link', hot: false, action: function() { fkShareLesson(); }});
+      chips.push({label: '📋 Sub plan', hot: false, action: function() { fkSubPlan(); }});
       chips.forEach(function(c) {
         var b = document.createElement('button'); b.className = 'fc' + (c.hot ? ' fchot' : '');
         b.textContent = c.label; b.onclick = c.action; scDiv.appendChild(b);
@@ -12712,6 +12729,7 @@ function rateLessonAI(idx, rating, btn) {
             '<button onclick="fkLibDownload('+realIdx+')">Word</button>'+
             '<button onclick="fkLibPdf('+realIdx+')">PDF</button>'+
             '<button onclick="fkLibShare('+realIdx+')" title="Copy share link">Share</button>'+
+            '<button onclick="fkLibDuplicate('+realIdx+')" title="Duplicate lesson">Dupe</button>'+
           '</div>'+
           '<div class="fklibrating">'+fkRatingHtml(ls.id||ls.title||realIdx)+fkNoteBtn(ls.id||ls.title||realIdx)+'</div>';
         libPanel.appendChild(item);
@@ -12924,6 +12942,33 @@ function rateLessonAI(idx, rating, btn) {
           bar.innerHTML='<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">By subject</div>'+
             subjects.slice(0,6).map(function(s){return'<div class="fksubrow"><div class="fksubname">'+s+'</div><div class="fksubtrack"><div class="fksubfill" style="width:'+Math.round((subjectCounts[s]/maxCount)*100)+'%"></div></div><div class="fksubct">'+subjectCounts[s]+'</div></div>';}).join('');
           dashPanel.appendChild(bar);
+        }
+        // Term grid
+        var termMap = {};
+        all.forEach(function(ls) {
+          var s = ls.subject||'other'; var w = parseInt(ls.week)||0; if (!w) return;
+          if (!termMap[s]) termMap[s] = {};
+          termMap[s][w] = ls.title||(ls.lesson_data&&ls.lesson_data.title)||'✓';
+        });
+        var termSubjs = Object.keys(termMap).sort();
+        if (termSubjs.length) {
+          var allWeeks = [];
+          termSubjs.forEach(function(s){ Object.keys(termMap[s]).forEach(function(w){ var n=parseInt(w); if(allWeeks.indexOf(n)<0) allWeeks.push(n); }); });
+          allWeeks.sort(function(a,b){return a-b;});
+          var tg = document.createElement('div'); tg.className = 'fktermgrid';
+          var tbl = '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-top:12px;border-top:1px solid #f1f5f9;">Term overview</div>'+
+            '<table class="fktermtbl"><tr><th style="text-align:left;">Subject</th>'+allWeeks.map(function(w){return '<th>W'+w+'</th>';}).join('')+'</tr>';
+          termSubjs.forEach(function(s) {
+            tbl += '<tr><td class="fktermsub">'+s.toUpperCase()+'</td>';
+            allWeeks.forEach(function(w) {
+              var t = termMap[s][w];
+              tbl += t ? '<td class="fktermcell done" title="'+t+'">✓</td>' : '<td class="fktermcell">·</td>';
+            });
+            tbl += '</tr>';
+          });
+          tbl += '</table>';
+          tg.innerHTML = tbl;
+          dashPanel.appendChild(tg);
         }
       }).catch(function(){
         var err=document.createElement('div');err.style.cssText='padding:24px 16px;text-align:center;color:#94a3b8;font-size:13px;';err.textContent='Could not load dashboard.';dashPanel.appendChild(err);
@@ -13143,6 +13188,53 @@ function rateLessonAI(idx, rating, btn) {
         }).join('')+'</ul></body></html>';
       var w2 = window.open('','_blank'); w2.document.write(html); w2.document.close();
       w2.onload = function(){ w2.focus(); w2.print(); };
+    };
+
+
+    // ── v8: Sub plan, Duplicate, Clear chat ──
+    window.fkSubPlan = function() {
+      if (!lastLesson) { addMsg('No lesson loaded yet.', 'fb'); return; }
+      addMsg('Generating sub plan...', 'fb');
+      var t = typing();
+      callChat('LESSONLAB_SUB: Create a substitute-teacher-friendly version of this lesson. Make it self-directed with clear written instructions at each phase (a non-specialist must be able to run it), simplify any jargon, and add a "sub_notes" field — an array of 3 practical classroom management bullet points. Current lesson: '+JSON.stringify(lastLesson)+'. Return as ```json ... ``` with ALL standard lesson fields plus sub_notes array.', function(reply) {
+        t.remove();
+        var sub = extractJson(reply);
+        if (sub && (sub.title || sub.li)) {
+          sub.title = (sub.title || lastLesson.title||'Lesson') + ' (Sub Plan)';
+          lastLesson = sub;
+          addMsg(lessonCard(sub), 'fm fl', true);
+          if (sub.sub_notes) {
+            var notes = Array.isArray(sub.sub_notes) ? sub.sub_notes : [sub.sub_notes];
+            addMsg('<div style="background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:12.5px;margin-top:2px;"><div style="font-weight:600;color:#92400e;margin-bottom:6px;">📋 Sub notes</div>'+notes.map(function(n){return'<div style="color:#78350f;margin-bottom:3px;">• '+n+'</div>';}).join('')+'</div>', 'fb', true);
+          }
+          addMsg('Sub plan ready. Download as Word to print for your relief teacher.', 'fb');
+          if (lastParams) autoSave(sub, lastParams, null);
+        } else { addMsg(reply||'Could not generate sub plan.', 'fb'); }
+      });
+    };
+
+    window.fkLibDuplicate = function(idx) {
+      var ls = libLessons[idx]; if (!ls) return;
+      var ld = JSON.parse(JSON.stringify(ls.lesson_data || ls));
+      ld.title = (ld.title||'Lesson') + ' (Copy)';
+      lastLesson = ld;
+      lastParams = {subject:ls.subject, unit:ls.unit, year_level:ls.year_level, week:ls.week};
+      lastAiId = null;
+      fkTab('chat');
+      addMsg(lessonCard(ld), 'fm fl', true);
+      addMsg('Duplicate loaded. Make your edits — it will save as a new lesson.', 'fb');
+      setTimeout(function(){ fkEditLesson(ld); }, 200);
+    };
+
+    window.fkClearChat = function() {
+      var m = document.getElementById('fkm'); if (m) m.innerHTML = '';
+      chatHistory = []; lastLesson = null; lastParams = null; lastAiId = null;
+      var scDiv = document.getElementById('fksc');
+      if (scDiv) scDiv.innerHTML =
+        '<button class="fc" onclick="fkChip('Generate a lesson')">Generate lesson</button>'+
+        '<button class="fc" onclick="fkChip('Make it longer and more detailed')">More detail</button>'+
+        '<button class="fc" onclick="fkChip('Add a differentiation activity')">Differentiate</button>';
+      addMsg('Chat cleared. What would you like to generate?', 'fb');
     };
 
     function extractJson(txt){var m=txt.match(/```json\s*([\s\S]*?)```/)||txt.match(/\{[\s\S]*"(?:subject|title|type|support|main)"[\s\S]*?\}/);if(!m) return null;try{return JSON.parse(m[1]||m[0]);}catch(e){return null;}}
