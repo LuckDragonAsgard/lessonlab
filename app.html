@@ -12192,6 +12192,28 @@ function rateLessonAI(idx, rating, btn) {
       '#fkadaptgo{width:100%;padding:10px;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;}',
       '#fkadaptgo:hover{background:#0f172a;}',
       '@keyframes fkb2{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}',
+      /* v9 styles */
+      '.fkcurtags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9;}',
+      '.fkcurtag{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:12px;padding:2px 8px;font-size:10.5px;font-weight:500;}',
+      '.fkwucard{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;margin-top:4px;font-size:13px;color:#1e293b;}',
+      '.fkwucard h4{margin:0 0 10px;font-size:13px;font-weight:700;color:#0f172a;padding-bottom:6px;border-bottom:1px solid #f1f5f9;}',
+      '.fkwuitem{padding:8px 0;border-bottom:1px solid #f8fafc;display:flex;align-items:flex-start;gap:8px;}',
+      '.fkwuitem:last-child{border-bottom:none;}',
+      '.fkwubody{flex:1;}',
+      '.fkwutitle{font-weight:600;font-size:12.5px;color:#1e293b;margin-bottom:2px;}',
+      '.fkwudesc{font-size:12px;color:#64748b;line-height:1.4;}',
+      '.fkwumeta{font-size:11px;color:#94a3b8;margin-top:3px;}',
+      '.fkwusave{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;color:#475569;white-space:nowrap;flex-shrink:0;}',
+      '.fkwusave:hover{border-color:#1e293b;color:#1e293b;}',
+      '.fkwusave.saved{background:#f0fdf4;border-color:#bbf7d0;color:#16a34a;}',
+      '.fkrisk{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;margin-top:4px;}',
+      '.fkrisk h4{margin:0 0 10px;font-size:13px;font-weight:700;color:#0f172a;padding-bottom:6px;border-bottom:1px solid #f1f5f9;}',
+      '.fkrisk table{width:100%;border-collapse:collapse;font-size:11.5px;}',
+      '.fkrisk th{background:#f8fafc;color:#475569;padding:6px 8px;text-align:left;font-weight:600;border:1px solid #e2e8f0;}',
+      '.fkrisk td{padding:6px 8px;border:1px solid #e2e8f0;vertical-align:top;color:#374151;}',
+      '.fkrisk .rlow{background:#f0fdf4;color:#16a34a;font-weight:600;}',
+      '.fkrisk .rmed{background:#fefce8;color:#ca8a04;font-weight:600;}',
+      '.fkrisk .rhigh{background:#fef2f2;color:#dc2626;font-weight:600;}',
       /* v6-v7-v8 styles */
       '.fklibrating{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}',
       '.fkratebtn{background:none;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:13px;opacity:.6;transition:opacity .15s,border-color .15s;}',
@@ -12355,6 +12377,9 @@ function rateLessonAI(idx, rating, btn) {
       chips.push({label: 'Copy lesson', hot: false, action: function() { fkCopyLesson(); }});
       chips.push({label: 'Share link', hot: false, action: function() { fkShareLesson(); }});
       chips.push({label: '📋 Sub plan', hot: false, action: function() { fkSubPlan(); }});
+      chips.push({label: '🏃 Warm-up ideas', hot: false, action: function() { fkWarmups(); }});
+      chips.push({label: '⚠️ Risk assess', hot: false, action: function() { fkRiskAssess(); }});
+      chips.push({label: '📰 Newsletter', hot: false, action: function() { fkNewsletter(); }});
       chips.forEach(function(c) {
         var b = document.createElement('button'); b.className = 'fc' + (c.hot ? ' fchot' : '');
         b.textContent = c.label; b.onclick = c.action; scDiv.appendChild(b);
@@ -12428,6 +12453,8 @@ function rateLessonAI(idx, rating, btn) {
         (diff.support?'<p><span class="lb">Support</span>'+diff.support+'</p>':'')+
         (diff.extension?'<p><span class="lb">Extension</span>'+diff.extension+'</p>':'')+
         (lesson.exitTicket?'<p><span class="lb">Exit Ticket</span>'+lesson.exitTicket+'</p>':'')+
+        (lesson.curriculum_tags&&lesson.curriculum_tags.length?'<div class="fkcurtags">'+(Array.isArray(lesson.curriculum_tags)?lesson.curriculum_tags:lesson.curriculum_tags.split(','))
+          .map(function(t){return'<span class="fkcurtag">'+t.trim()+'</span>';}).join('')+'</div>':'')+
         '<div class="fkbtns">'+
           '<button class="fkpri" onclick="fkDownloadDocx()">Word</button>'+
           '<button onclick="fkDownloadPdf()">PDF</button>'+
@@ -12436,6 +12463,7 @@ function rateLessonAI(idx, rating, btn) {
           '<button onclick="fkAdaptOpen()">Adapt</button>'+
           '<button onclick="fkDiffPack()">Diff pack</button>'+
           '<button onclick="fkGenerateAssessment()">Assessment</button>'+
+          '<button onclick="fkCurriculumAlign()">Curriculum</button>'+
           extraBtns+
         '</div><div id="fksavedmsg"></div></div>';
     }
@@ -13235,6 +13263,228 @@ function rateLessonAI(idx, rating, btn) {
         '<button class="fc" onclick="fkChip('Make it longer and more detailed')">More detail</button>'+
         '<button class="fc" onclick="fkChip('Add a differentiation activity')">Differentiate</button>';
       addMsg('Chat cleared. What would you like to generate?', 'fb');
+    };
+
+
+    // ── v9: Warm-up bank, Risk assessment, Newsletter, Curriculum alignment ──
+
+    var warmupResults = []; // temp storage for generated warmups
+
+    window.fkWarmups = function() {
+      if (!lastLesson) { addMsg('Generate a lesson first, then I can suggest matching warm-ups.', 'fb'); return; }
+      addMsg('Generating warm-up ideas for this lesson...', 'fb');
+      var t = typing();
+      var appSt = getAppState();
+      callChat('LESSONLAB_WARMUPS: Generate exactly 5 warm-up activities for this lesson. Subject: '+(lastLesson.subject||appSt&&appSt.subject||'PE')+'. Lesson focus: '+(lastLesson.title||'')+'. Year level: '+(lastLesson.year_level||appSt&&appSt.yearLevel||'Years 3-4')+'. Each warm-up should take 3-8 minutes. Return ONLY ```json {"warmups":[{"title":"...","duration":"5 min","description":"...","equipment":"...","skills":["..."]},...]} ``` with exactly 5 items.',
+      function(reply) {
+        t.remove();
+        var parsed = extractJson(reply);
+        var wus = parsed && (parsed.warmups || parsed);
+        if (!Array.isArray(wus) || !wus.length) { addMsg('Could not generate warm-ups. Try again.', 'fb'); return; }
+        warmupResults = wus;
+        var saved = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
+        var savedTitles = saved.map(function(w){ return w.title; });
+        var card = '<div class="fkwucard"><h4>🏃 Warm-up ideas — ' + (lastLesson.title||'this lesson') + '</h4>' +
+          wus.map(function(wu, i) {
+            var isSaved = savedTitles.indexOf(wu.title) >= 0;
+            return '<div class="fkwuitem">'+
+              '<div class="fkwubody">'+
+                '<div class="fkwutitle">'+wu.title+'</div>'+
+                '<div class="fkwudesc">'+wu.description+'</div>'+
+                '<div class="fkwumeta">'+(wu.duration||'')+(wu.equipment?' · '+wu.equipment:'')+(wu.skills&&wu.skills.length?' · '+wu.skills.join(', '):'')+'</div>'+
+              '</div>'+
+              '<button class="fkwusave'+(isSaved?' saved':'')+'" onclick="fkSaveWarmup('+i+',this)">'+(isSaved?'✓ Saved':'Save')+'</button>'+
+            '</div>';
+          }).join('') +
+          '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">'+
+            '<button style="padding:5px 11px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;background:#1e293b;color:#fff;border-color:#1e293b;font-family:inherit;" onclick="fkSaveAllWarmups()">Save all</button>'+
+            '<button style="padding:5px 11px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;" onclick="fkWarmupBank()">View bank</button>'+
+          '</div>'+
+        '</div>';
+        addMsg(card, 'fb', true);
+      });
+    };
+
+    window.fkSaveWarmup = function(idx, btn) {
+      var wu = warmupResults[idx]; if (!wu) return;
+      var bank = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
+      var exists = bank.some(function(w){ return w.title === wu.title; });
+      if (!exists) { bank.push(Object.assign({}, wu, {saved_at: new Date().toISOString(), source_lesson: lastLesson&&lastLesson.title})); localStorage.setItem('fk_warmup_bank', JSON.stringify(bank)); }
+      if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); }
+    };
+
+    window.fkSaveAllWarmups = function() {
+      var bank = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
+      var savedTitles = bank.map(function(w){ return w.title; });
+      var added = 0;
+      warmupResults.forEach(function(wu) {
+        if (savedTitles.indexOf(wu.title) < 0) { bank.push(Object.assign({}, wu, {saved_at: new Date().toISOString(), source_lesson: lastLesson&&lastLesson.title})); added++; }
+      });
+      localStorage.setItem('fk_warmup_bank', JSON.stringify(bank));
+      document.querySelectorAll('.fkwusave').forEach(function(b){ b.textContent='✓ Saved'; b.classList.add('saved'); });
+      addMsg('Saved ' + added + ' warm-ups to your bank. Total: ' + bank.length + '.', 'fb');
+    };
+
+    window.fkWarmupBank = function() {
+      var bank = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
+      var modal = document.createElement('div');
+      modal.id = 'fkwumodal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100002;display:flex;align-items:flex-start;justify-content:center;padding-top:60px;';
+      var content = bank.length ? bank.map(function(wu, i) {
+        return '<div class="fkwuitem" style="padding:10px 0;">'+
+          '<div class="fkwubody">'+
+            '<div class="fkwutitle">'+wu.title+'</div>'+
+            '<div class="fkwudesc">'+wu.description+'</div>'+
+            '<div class="fkwumeta">'+(wu.duration||'')+(wu.equipment?' · '+wu.equipment:'')+'</div>'+
+          '</div>'+
+          '<button onclick="fkDeleteWarmup('+i+')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;padding:4px;" title="Remove">✕</button>'+
+        '</div>';
+      }).join('') : '<p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px 0;">No warm-ups saved yet. Generate a lesson and use the warm-up ideas chip.</p>';
+      modal.innerHTML = '<div style="background:#fff;border-radius:12px;padding:20px;width:380px;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
+          '<div style="font-weight:700;font-size:14px;color:#1e293b;">🏃 Warmup Bank ('+bank.length+')</div>'+
+          '<button onclick="fkWarmupBankClose()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#94a3b8;">✕</button>'+
+        '</div>'+
+        '<div id="fkwubankitems">'+content+'</div>'+
+        '<div style="margin-top:12px;border-top:1px solid #f1f5f9;padding-top:12px;display:flex;gap:8px;">'+
+          '<button onclick="fkWarmupBankPrint()" style="flex:1;padding:7px;background:#1e293b;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Print all</button>'+
+          '<button onclick="fkWarmupBankClose()" style="padding:7px 14px;border:1px solid #e2e8f0;background:#fff;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">Close</button>'+
+        '</div></div>';
+      document.body.appendChild(modal);
+    };
+    window.fkWarmupBankClose = function() { var m=document.getElementById('fkwumodal'); if(m) m.remove(); };
+    window.fkDeleteWarmup = function(idx) {
+      var bank = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
+      bank.splice(idx, 1);
+      localStorage.setItem('fk_warmup_bank', JSON.stringify(bank));
+      fkWarmupBankClose(); fkWarmupBank();
+    };
+    window.fkWarmupBankPrint = function() {
+      var bank = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
+      if (!bank.length) return;
+      var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Warmup Bank</title>'+
+        '<style>body{font-family:Arial,sans-serif;max-width:700px;margin:32px auto;color:#1e293b;font-size:13px;}h1{font-size:20px;border-bottom:2px solid #1e293b;padding-bottom:8px;margin-bottom:16px;}.wu{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}.wut{font-weight:700;font-size:14px;margin-bottom:4px;}.wud{color:#374151;line-height:1.5;}.wum{font-size:11px;color:#94a3b8;margin-top:4px;}@media print{body{margin:10px;}}</style></head><body>'+
+        '<h1>🏃 Warmup Bank ('+bank.length+')</h1>'+
+        bank.map(function(wu){ return '<div class="wu"><div class="wut">'+wu.title+'</div><div class="wud">'+wu.description+'</div><div class="wum">'+(wu.duration||'')+(wu.equipment?' · Equipment: '+wu.equipment:'')+'</div></div>'; }).join('')+
+        '</body></html>';
+      var w2 = window.open('','_blank'); w2.document.write(html); w2.document.close(); w2.onload = function(){ w2.focus(); w2.print(); };
+    };
+
+    window.fkRiskAssess = function() {
+      if (!lastLesson) { addMsg('Generate a lesson first, then I can create a risk assessment for it.', 'fb'); return; }
+      addMsg('Generating risk assessment...', 'fb');
+      var t = typing();
+      callChat('LESSONLAB_RISK: Generate a PE risk assessment for this lesson. Return ONLY ```json {"activity":"...","supervision":"...","space":"...","hazards":[{"hazard":"...","likelihood":"Low|Medium|High","severity":"Low|Medium|High","controls":"..."}],"equipment_checks":["..."],"medical_notes":"..."} ``` with 4-6 hazard rows. Lesson: '+JSON.stringify(lastLesson), function(reply) {
+        t.remove();
+        var ra = extractJson(reply);
+        if (!ra || !ra.hazards) { addMsg(reply || 'Could not generate risk assessment.', 'fb'); return; }
+        window._fkLastRisk = ra;
+        var riskLevel = function(l) {
+          var levels = {Low:'rlow',Medium:'rmed',High:'rhigh'};
+          return '<span class="'+(levels[l]||'rmed')+'">'+l+'</span>';
+        };
+        var card = '<div class="fkrisk">'+
+          '<h4>⚠️ Risk Assessment — '+(lastLesson.title||'')+'</h4>'+
+          (ra.activity?'<p style="font-size:12px;color:#475569;margin:0 0 8px;"><strong>Activity:</strong> '+ra.activity+'</p>':'')+
+          (ra.space?'<p style="font-size:12px;color:#475569;margin:0 0 4px;"><strong>Space:</strong> '+ra.space+'</p>':'')+
+          (ra.supervision?'<p style="font-size:12px;color:#475569;margin:0 0 8px;"><strong>Supervision:</strong> '+ra.supervision+'</p>':'')+
+          '<table><tr><th>Hazard</th><th>Likelihood</th><th>Severity</th><th>Control measures</th></tr>'+
+          ra.hazards.map(function(h){ return '<tr><td>'+h.hazard+'</td><td>'+riskLevel(h.likelihood)+'</td><td>'+riskLevel(h.severity)+'</td><td style="font-size:11px;">'+h.controls+'</td></tr>'; }).join('')+
+          '</table>'+
+          (ra.equipment_checks&&ra.equipment_checks.length?'<p style="font-size:12px;margin:8px 0 0;"><strong>Equipment checks:</strong> '+ra.equipment_checks.join(', ')+'</p>':'')+
+          (ra.medical_notes?'<p style="font-size:12px;margin:4px 0 0;color:#dc2626;"><strong>Medical:</strong> '+ra.medical_notes+'</p>':'')+
+          '<div style="margin-top:10px;display:flex;gap:6px;">'+
+            '<button style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;cursor:pointer;background:#1e293b;color:#fff;font-family:inherit;" onclick="fkRiskPrint()">Print</button>'+
+            '<button style="padding:5px 11px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;" onclick="fkRiskDownload()">Word</button>'+
+          '</div></div>';
+        addMsg(card, 'fb', true);
+      });
+    };
+
+    window.fkRiskPrint = function() {
+      var ra = window._fkLastRisk; if (!ra) return;
+      var rl = function(l){ var c={Low:'#16a34a',Medium:'#ca8a04',High:'#dc2626'}; return '<span style="color:'+(c[l]||'#ca8a04')+';font-weight:700;">'+l+'</span>'; };
+      var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Risk Assessment</title>'+
+        '<style>body{font-family:Arial,sans-serif;max-width:750px;margin:32px auto;color:#1e293b;font-size:13px;}h1{font-size:18px;border-bottom:2px solid #1e293b;padding-bottom:8px;}p{margin:4px 0;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#1e293b;color:#fff;padding:7px 10px;text-align:left;font-size:12px;}td{padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:12px;vertical-align:top;}@media print{body{margin:10px;}}</style></head><body>'+
+        '<h1>⚠️ Risk Assessment — '+(lastLesson&&lastLesson.title||'')+'</h1>'+
+        '<p><strong>Activity:</strong> '+(ra.activity||'')+'</p>'+
+        '<p><strong>Space:</strong> '+(ra.space||'')+'</p>'+
+        '<p><strong>Supervision:</strong> '+(ra.supervision||'')+'</p>'+
+        '<table><tr><th>Hazard</th><th>Likelihood</th><th>Severity</th><th>Control Measures</th></tr>'+
+        ra.hazards.map(function(h){ return '<tr><td>'+h.hazard+'</td><td>'+rl(h.likelihood)+'</td><td>'+rl(h.severity)+'</td><td>'+h.controls+'</td></tr>'; }).join('')+
+        '</table>'+
+        (ra.equipment_checks&&ra.equipment_checks.length?'<p style="margin-top:12px;"><strong>Equipment checks:</strong> '+ra.equipment_checks.join(', ')+'</p>':'')+
+        (ra.medical_notes?'<p style="color:#dc2626;"><strong>Medical considerations:</strong> '+ra.medical_notes+'</p>':'')+
+        '<p style="margin-top:20px;font-size:11px;color:#94a3b8;">Generated: '+new Date().toLocaleDateString('en-AU')+'</p>'+
+        '</body></html>';
+      var w2 = window.open('','_blank'); w2.document.write(html); w2.document.close(); w2.onload = function(){ w2.focus(); w2.print(); };
+    };
+
+    window.fkRiskDownload = function() {
+      var ra = window._fkLastRisk; if (!ra) return;
+      function p(t){return'<w:p><w:r><w:t xml:space="preserve">'+String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';}
+      function h2(t){return'<w:p><w:pPr><w:pStyle w:val="Heading2"/></w:pPr><w:r><w:t>'+t+'</w:t></w:r></w:p>';}
+      function lbl(l,v){return'<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">'+l+': </w:t></w:r><w:r><w:t xml:space="preserve">'+String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</w:t></w:r></w:p>';}
+      var body = h2('Risk Assessment — '+(lastLesson&&lastLesson.title||''))+
+        lbl('Activity', ra.activity)+lbl('Space', ra.space)+lbl('Supervision', ra.supervision)+
+        ra.hazards.map(function(h){ return p(h.hazard+' | Likelihood: '+h.likelihood+' | Severity: '+h.severity+' | Controls: '+h.controls); }).join('')+
+        (ra.equipment_checks?lbl('Equipment checks', ra.equipment_checks.join(', ')):'')+
+        (ra.medical_notes?lbl('Medical notes', ra.medical_notes):'');
+      var docXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/></w:sectPr></w:body></w:document>';
+      zipAndDownload('risk_assessment_'+(lastLesson&&lastLesson.title||'lesson').replace(/[^a-z0-9]/gi,'_')+'.docx', docXml);
+    };
+
+    window.fkNewsletter = function() {
+      if (!lastLesson) { addMsg('Generate a lesson first, then I can write the newsletter snippet.', 'fb'); return; }
+      addMsg('Writing newsletter snippet...', 'fb');
+      var t = typing();
+      var appSt = getAppState();
+      callChat('LESSONLAB_NEWSLETTER: Write a friendly parent newsletter paragraph (3-4 sentences) explaining what students are learning in this lesson and why it matters. Use plain language — no jargon. Start with "In "+subject+" this week..." Lesson: '+JSON.stringify({title:lastLesson.title,li:lastLesson.li,subject:lastLesson.subject||appSt&&appSt.subject,year_level:lastLesson.year_level||appSt&&appSt.yearLevel})+'. Return ONLY the paragraph text — no JSON, no markdown.',
+      function(reply) {
+        t.remove();
+        var text = reply.replace(/^["']|["']$/g,'').trim();
+        var card = '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;font-size:13px;color:#1e293b;line-height:1.6;">'+
+          '<div style="font-weight:600;color:#15803d;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;">📰 Newsletter snippet</div>'+
+          '<p id="fknewstext" style="margin:0;font-style:italic;">'+text+'</p>'+
+          '<div style="margin-top:10px;display:flex;gap:6px;">'+
+            '<button style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;cursor:pointer;background:#15803d;color:#fff;font-family:inherit;" onclick="fkNewsletterCopy()">Copy text</button>'+
+          '</div></div>';
+        window._fkLastNewsletter = text;
+        addMsg(card, 'fb', true);
+      });
+    };
+
+    window.fkNewsletterCopy = function() {
+      var text = window._fkLastNewsletter || (document.getElementById('fknewstext')||{}).textContent || '';
+      if (!text) return;
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function(){ addMsg('Newsletter text copied to clipboard.', 'fb'); }); }
+      else { var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); addMsg('Copied.','fb'); }
+    };
+
+    window.fkCurriculumAlign = function() {
+      if (!lastLesson) { addMsg('No lesson loaded.', 'fb'); return; }
+      addMsg('Identifying Vic Curriculum 2.0 alignment...', 'fb');
+      var t = typing();
+      callChat('LESSONLAB_CURRICULUM: Identify which Victorian Curriculum 2.0 content descriptions this lesson aligns with. Return ONLY ```json {"tags":["HPE - Movement and Physical Activity - FMS","..."],"content_descriptions":[{"code":"VCHPEM1","description":"..."}]} ``` with 2-4 most relevant tags and content descriptions. Lesson: '+JSON.stringify({title:lastLesson.title,li:lastLesson.li,subject:lastLesson.subject,year_level:lastLesson.year_level}),
+      function(reply) {
+        t.remove();
+        var parsed = extractJson(reply);
+        if (parsed && (parsed.tags || parsed.content_descriptions)) {
+          var tags = parsed.tags || [];
+          var descs = parsed.content_descriptions || [];
+          if (tags.length) {
+            lastLesson.curriculum_tags = tags;
+            if (lastParams) autoSave(lastLesson, lastParams, lastAiId);
+          }
+          var card = '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#1e293b;">'+
+            '<div style="font-weight:700;color:#1d4ed8;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;">📚 Vic Curriculum 2.0 Alignment</div>'+
+            (tags.length?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">'+tags.map(function(t){return'<span style="background:#fff;border:1px solid #bfdbfe;border-radius:10px;padding:2px 8px;font-size:11px;color:#1d4ed8;font-weight:500;">'+t+'</span>';}).join('')+'</div>':'')+
+            descs.map(function(d){ return '<div style="margin-bottom:6px;"><span style="font-weight:700;color:#1d4ed8;">'+d.code+'</span> <span style="color:#374151;">'+d.description+'</span></div>'; }).join('')+
+          '</div>';
+          addMsg(card, 'fb', true);
+          addMsg('Tags saved to this lesson — they'll appear on the lesson card.', 'fb');
+        } else { addMsg(reply || 'Could not identify curriculum alignment.', 'fb'); }
+      });
     };
 
     function extractJson(txt){var m=txt.match(/```json\s*([\s\S]*?)```/)||txt.match(/\{[\s\S]*"(?:subject|title|type|support|main)"[\s\S]*?\}/);if(!m) return null;try{return JSON.parse(m[1]||m[0]);}catch(e){return null;}}
