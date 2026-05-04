@@ -12055,6 +12055,7 @@ function rateLessonAI(idx, rating, btn) {
         school: state.school || 'Williamstown Primary School',
         duration: state.duration || 45,
         unit: state.unit || null,
+        unitName: (state.unitData && state.unitData.name) || state.unit || null,
         term: state.term || 'Term 1',
         weeks: state.weeks || null,
         startWeek: state.startWeek || 1
