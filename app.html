@@ -3346,7 +3346,7 @@ let state = {
 // PROGRESSION ENGINE
 // ============================================================================
 
-function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
+function _generateLessonRaw(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
   const phase = weekNum <= totalWeeks * 0.3 ? 'intro' : weekNum <= totalWeeks * 0.7 ? 'develop' : 'apply';
   const yl = yearLevel || 'Years 3-4';
   const f = focus.toLowerCase();
@@ -5023,6 +5023,110 @@ const frYearMap = {'Foundation': _frFoundation, 'Years 1-2': _fr12, 'Years 5-6':
       individual: 'Independent practice and reflection'
     }
   };
+}
+
+// ============================================================================
+// generateLesson — wraps _generateLessonRaw and enriches with v11/VTLM 2.0 fields
+// (vocab tiers, sentence stems, metacog prompts, cohort prompts, worked
+//  example, retrieval plan). Keeps all 19 return blocks below untouched.
+// ============================================================================
+function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
+  var d = _generateLessonRaw(subj, unit, focus, weekNum, totalWeeks, yearLevel);
+  return _v11Enrich(d, subj, focus, weekNum, yearLevel);
+}
+
+// ============================================================================
+// _v11Enrich — augments a lesson data object with VTLM 2.0 fields the v11
+// Word template expects. Idempotent (sets d._v11Enriched flag). Only fills
+// fields that are not already present, so author overrides win.
+// ============================================================================
+function _v11Enrich(d, subj, focus, weekNum, year) {
+  if (!d || typeof d !== 'object') return d;
+  if (d._v11Enriched) return d;
+
+  var subjKey = (subj || d.subject || 'pe').toString().toLowerCase();
+  var focusStr = (focus || d.focus || d.li || '').toString();
+  var liShort = (d.li || focusStr || 'today’s focus').toString();
+
+  // Vocabulary tiers — Tier 1 everyday, Tier 2 lesson-specific, Tier 3 discipline.
+  var vocabBank = {
+    'pe':              { t1:'space, move, stop, signal, partner',         t2:'cue, signal, technique, modelling',     t3:'invasion, transition, marking, set play, evasion' },
+    'literacy':        { t1:'word, sentence, story, write, read',         t2:'paragraph, evidence, structure, draft',  t3:'cohesion, register, foreshadowing, perspective' },
+    'numeracy':        { t1:'count, add, take away, group, share',        t2:'estimate, strategy, place value, equation', t3:'partitioning, magnitude, compensation, decomposition' },
+    'maths':           { t1:'count, add, take away, group, share',        t2:'estimate, strategy, place value, equation', t3:'partitioning, magnitude, compensation, decomposition' },
+    'science':         { t1:'animal, plant, water, rock, weather',        t2:'observe, measure, predict, fair test',   t3:'hypothesis, variable, classification, ecosystem' },
+    'visual-art':      { t1:'colour, shape, line, draw, paint',           t2:'tone, texture, composition, contrast',   t3:'foreshortening, chiaroscuro, palette, juxtaposition' },
+    'music':           { t1:'beat, sound, fast, slow, loud',              t2:'rhythm, pitch, dynamics, tempo',         t3:'syncopation, ostinato, harmony, timbre' },
+    'drama':           { t1:'pretend, voice, body, freeze, role',         t2:'character, scene, status, mime',         t3:'protagonist, dramatic irony, blocking, ensemble' },
+    'french':          { t1:'bonjour, merci, oui, non, école',            t2:'verbe, accord, conjugaison',             t3:'subjonctif, francophone, registre' },
+    'digital_tech':    { t1:'computer, click, save, file, app',           t2:'algorithm, sequence, debug, input',      t3:'iteration, abstraction, decomposition, conditional' },
+    'hass':            { t1:'place, country, family, work, time',         t2:'community, source, evidence, change',    t3:'continuity, perspective, sustainability, citizenship' },
+    'wellbeing':       { t1:'feel, kind, friend, calm, ask',              t2:'emotion, regulate, respect, boundary',   t3:'metacognition, resilience, self-efficacy' },
+    'performing_arts': { t1:'act, sing, dance, perform, stage',           t2:'rehearsal, ensemble, blocking, expression', t3:'mise-en-scène, dynamics, devising, choreography' }
+  };
+  var vbase = vocabBank[subjKey] || vocabBank['pe'];
+  if (d.vocabTier1 == null) d.vocabTier1 = vbase.t1;
+  if (d.vocabTier2 == null) d.vocabTier2 = vbase.t2;
+  if (d.vocabTier3 == null) d.vocabTier3 = vbase.t3;
+
+  // Sentence stems — explicit teaching + practice.
+  var isPE = (subjKey === 'pe' || subjKey === 'performing_arts');
+  if (d.stem1 == null) d.stem1 = 'I noticed … because …';
+  if (d.stem2 == null) d.stem2 = 'A good ' + (isPE ? 'attempt' : 'answer') + ' shows … and …';
+  if (d.stem3 == null) d.stem3 = 'My strategy for ' + liShort + ' is …';
+  if (d.practiceStem1 == null) d.practiceStem1 = 'I am doing this because …';
+  if (d.practiceStem2 == null) d.practiceStem2 = 'My partner is on track because …';
+
+  // Metacognitive prompts.
+  if (d.metacog1 == null) d.metacog1 = 'What helped you most with ' + liShort + ' today?';
+  if (d.metacog2 == null) d.metacog2 = isPE ? 'What was tricky? Which body cue will you try next time?' : 'What was tricky? Which strategy will you try next time?';
+  if (d.metacog3 == null) d.metacog3 = isPE ? 'Which cue word did you say in your head?' : 'Which step did you do in your head?';
+
+  // Cohort prompts — slightly subject-aware.
+  if (d.eald1 == null)      d.eald1      = isPE ? 'Visual cue cards / picture sequences' : 'Visual word wall / picture cues';
+  if (d.eald2 == null)      d.eald2      = 'Sentence stems pre-shared on desk';
+  if (d.eald3 == null)      d.eald3      = 'Pair with bilingual buddy';
+  if (d.eald4 == null)      d.eald4      = isPE ? 'Demonstrate, don’t only describe' : 'Model in writing AND aloud';
+  if (d.koorie1 == null)    d.koorie1    = 'Connect to community / Country knowledge';
+  if (d.koorie2 == null)    d.koorie2    = 'Yarn circle for share-back';
+  if (d.koorie3 == null)    d.koorie3    = 'Acknowledge family / cultural knowledge';
+  if (d.koorie4 == null)    d.koorie4    = 'Strength-based language throughout';
+  if (d.disability1 == null) d.disability1 = 'Reduce sensory load — quiet zone';
+  if (d.disability2 == null) d.disability2 = 'Scribed / visual SC self-check';
+  if (d.disability3 == null) d.disability3 = isPE ? 'Movement / rest break option' : 'Movement break + chunked task';
+  if (d.disability4 == null) d.disability4 = 'ISP / IEP adjustments applied';
+  if (d.disadv1 == null)    d.disadv1    = isPE ? 'School equipment provided — no own kit' : 'Materials provided — no take-home';
+  if (d.disadv2 == null)    d.disadv2    = 'No-cost variants of the task';
+  if (d.disadv3 == null)    d.disadv3    = 'Predictable routine = safety';
+  if (d.disadv4 == null)    d.disadv4    = 'Strength noticed and named publicly';
+
+  // Worked example — subject-aware narrative for the modelling moment.
+  if (d.workedExample == null) {
+    if (isPE) {
+      d.workedExample = 'Teacher demonstrates the skill twice: first slowly while saying the cue words aloud, then at game pace. Two students try; the rest watch for the success criteria.';
+    } else if (subjKey === 'numeracy' || subjKey === 'maths') {
+      d.workedExample = 'Teacher solves one problem on the board: read, plan, do, check. Speak each step aloud — students copy the strategy into their books.';
+    } else if (subjKey === 'literacy') {
+      d.workedExample = 'Teacher writes one paragraph live, naming each move (hook, claim, evidence, link). Students annotate the model copy on their desk.';
+    } else if (subjKey === 'science') {
+      d.workedExample = 'Teacher walks through one observation: predict → set up → record → explain. Class names the variable being changed.';
+    } else if (subjKey === 'visual-art') {
+      d.workedExample = 'Teacher creates one example on the board, naming each artistic choice (line, shape, tone, contrast). Students label the choices on a copy.';
+    } else {
+      d.workedExample = 'Teacher demonstrates one full example, naming each step. Students label the steps on a copy.';
+    }
+  }
+
+  // Retrieval plan — keyed to the week so every lesson has a unique re-test schedule.
+  if (d.retrievalPlan == null) {
+    var w = parseInt(weekNum, 10) || parseInt(d.week, 10) || 1;
+    var r1 = Math.min(w + 2, 10);
+    var r2 = Math.min(w + 5, 10);
+    d.retrievalPlan = "Today’s cue words live on the wall. 30-second retrieval at the start of W" + r1 + " and W" + r2 + ". Re-test in the unit summative.";
+  }
+
+  d._v11Enriched = true;
+  return d;
 }
 
 // ============================================================================
@@ -7092,22 +7196,22 @@ function _v11TokenMap(d, cfg) {
     metacog_3: d.metacog3 || 'Which cue word did you use in your head?',
     retrieval_plan: d.retrievalPlan || 'Return to today’s cue every lesson this term. Re-test in W3 + W6.',
 
-    eald_1: 'Visual cue cards / pictures',
-    eald_2: 'Sentence stems pre-shared',
-    eald_3: 'Pair with bilingual buddy',
-    eald_4: 'Demonstrate, don’t only describe',
-    koorie_1: 'Connect to community/culture',
-    koorie_2: 'Yarn circle for reflection',
-    koorie_3: 'Acknowledge family knowledge',
-    koorie_4: 'Strength-based language',
-    disability_1: 'Reduce sensory load',
-    disability_2: 'Scribed SC self-check',
-    disability_3: 'Movement / break option',
-    disability_4: 'ISP / IEP adjustments applied',
-    disadv_1: 'Equipment provided — no own kit',
-    disadv_2: 'No-cost variants',
-    disadv_3: 'Predictable routine = safety',
-    disadv_4: 'Strength noticed and named',
+    eald_1: d.eald1 || 'Visual cue cards / pictures',
+    eald_2: d.eald2 || 'Sentence stems pre-shared',
+    eald_3: d.eald3 || 'Pair with bilingual buddy',
+    eald_4: d.eald4 || 'Demonstrate, don’t only describe',
+    koorie_1: d.koorie1 || 'Connect to community/culture',
+    koorie_2: d.koorie2 || 'Yarn circle for reflection',
+    koorie_3: d.koorie3 || 'Acknowledge family knowledge',
+    koorie_4: d.koorie4 || 'Strength-based language',
+    disability_1: d.disability1 || 'Reduce sensory load',
+    disability_2: d.disability2 || 'Scribed SC self-check',
+    disability_3: d.disability3 || 'Movement / break option',
+    disability_4: d.disability4 || 'ISP / IEP adjustments applied',
+    disadv_1: d.disadv1 || 'Equipment provided — no own kit',
+    disadv_2: d.disadv2 || 'No-cost variants',
+    disadv_3: d.disadv3 || 'Predictable routine = safety',
+    disadv_4: d.disadv4 || 'Strength noticed and named',
 
     student_name_eg: '(eg) Alex',
     adjustment_eg: 'Visual cue card on desk',
@@ -11959,7 +12063,7 @@ function rateLessonAI(idx, rating, btn) {
     body: JSON.stringify({ rating: rating })
   }).then(function(res) {
     if (res && res.success) {
-      showToast(rating === 1 ? '👍 Thanks! Helps us improve.' : '👎 Noted. We'll improve this.', 'success');
+      showToast(rating === 1 ? '👍 Thanks! Helps us improve.' : '👎 Noted. We’ll improve this.', 'success');
     }
   }).catch(function() {
     btn.disabled = false;
