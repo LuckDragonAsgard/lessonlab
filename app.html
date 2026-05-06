@@ -5036,6 +5036,59 @@ function generateLesson(subj, unit, focus, weekNum, totalWeeks, yearLevel) {
 }
 
 // ============================================================================
+// _v11LegacyMap — maps fields from v2/v3 prompt-format lessons (older AI
+// outputs stored in lessonlab-api D1 ai_lessons) onto the v11 token names so
+// the v11 docx export populates the rich slots instead of falling back to
+// generic placeholders. Idempotent (sets d._legacyMapped flag).
+// ============================================================================
+function _v11LegacyMap(d) {
+  if (!d || typeof d !== 'object' || d._legacyMapped) return d;
+
+  // materials → equipment
+  if (!d.equipment && d.materials) d.equipment = d.materials;
+
+  // cues string (e.g. "handball · grip · release · target") → cue1/cue2/cue3
+  if (d.cues && typeof d.cues === 'string' && (!d.cue1 || !d.cue2 || !d.cue3)) {
+    var cparts = d.cues.split(/\s*[·•]\s*|,\s*/).map(function(s){return s.trim();}).filter(Boolean);
+    if (!d.cue1 && cparts[0]) d.cue1 = cparts[0];
+    if (!d.cue2 && cparts[1]) d.cue2 = cparts[1];
+    if (!d.cue3 && cparts[2]) d.cue3 = cparts[2];
+  }
+
+  // points string → secondary fill for cues if cues field absent
+  if (d.points && typeof d.points === 'string' && (!d.cue1 || !d.cue2 || !d.cue3)) {
+    var pparts = d.points.split(/\s*[·•]\s*|\.\s+/).map(function(s){return s.trim();}).filter(Boolean);
+    if (!d.cue1 && pparts[0]) d.cue1 = pparts[0].slice(0, 40);
+    if (!d.cue2 && pparts[1]) d.cue2 = pparts[1].slice(0, 40);
+    if (!d.cue3 && pparts[2]) d.cue3 = pparts[2].slice(0, 40);
+  }
+
+  // entry narrative → entry1; entrySay → warmUpSay
+  if (d.entry && !d.entry1) d.entry1 = d.entry;
+  if (d.entrySay && !d.warmUpSay) d.warmUpSay = d.entrySay;
+
+  // teach narrative → teach1 (full text in slot 1, slots 2/3 fall back to defaults)
+  if (d.teach && !d.teach1) d.teach1 = d.teach;
+
+  // practice narrative → practice1
+  if (d.practice && !d.practice1) d.practice1 = d.practice;
+
+  // game narrative → app1 (the Application phase)
+  if (d.game && !d.app1) d.app1 = d.game;
+
+  // exit narrative → packup1
+  if (d.exit && !d.packup1) d.packup1 = d.exit;
+
+  // ifWell / ifNot → differentiation extension/support if not already set
+  if (!d.differentiation) d.differentiation = {};
+  if (d.ifWell && !d.differentiation.extension) d.differentiation.extension = d.ifWell;
+  if (d.ifNot && !d.differentiation.support) d.differentiation.support = d.ifNot;
+
+  d._legacyMapped = true;
+  return d;
+}
+
+// ============================================================================
 // _v11Enrich — augments a lesson data object with VTLM 2.0 fields the v11
 // Word template expects. Idempotent (sets d._v11Enriched flag). Only fills
 // fields that are not already present, so author overrides win.
@@ -5046,7 +5099,10 @@ function _v11Enrich(d, subj, focus, weekNum, year) {
 
   var subjKey = (subj || d.subject || 'pe').toString().toLowerCase();
   var focusStr = (focus || d.focus || d.li || '').toString();
-  var liShort = (d.li || focusStr || 'today’s focus').toString();
+  // Strip leading "I am learning to " / "We are learning to " so prompts read naturally.
+  var liShort = (d.li || focusStr || 'today’s focus').toString()
+    .replace(/^(?:I am|We are|I'm|We're|Students will be?)\s+learning\s+to\s+/i, '')
+    .replace(/^(?:to\s+)/i, '');
 
   // Vocabulary tiers — Tier 1 everyday, Tier 2 lesson-specific, Tier 3 discipline.
   var vocabBank = {
@@ -7063,6 +7119,11 @@ function _v11SubjectSlug(subj) {
 function _v11TokenMap(d, cfg) {
   // Build a {tokenName -> value} map from a lesson data object.
   // Falls back to sensible defaults for tokens not derivable from current state.
+  // Apply legacy (v2/v3 ai_lessons) field mapping + v11 enrichment so any
+  // lesson — whether freshly generated, loaded from D1, or imported — exports
+  // a fully populated v11 docx.
+  _v11LegacyMap(d);
+  _v11Enrich(d, d.subject, d.focus || d.li, d.week, d.year);
   var sc = Array.isArray(d.sc) ? d.sc : (d.sc || '').split('\n').filter(function(s){return s.trim();});
   var eq = (d.equipment || '').split(/\s*[·•·]\s*/).filter(function(s){return s.trim();});
   while (eq.length < 5) eq.push('—');
