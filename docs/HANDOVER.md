@@ -1,7 +1,7 @@
 # lessonlab — Handover
 
 **Repo:** [github.com/LuckDragonAsgard/lessonlab](https://github.com/LuckDragonAsgard/lessonlab)
-**Last update:** 2026-04-30 — **Site migrated to lessonlab.luckdragon.io**. All 10 subjects fixed on marketing page (Performing Arts, HASS, Wellbeing). lessonlab-api patched for 3 new subjects. Literacy TEMPLATE blank shipped.
+**Last update:** 2026-05-06 — **v11 generator follow-ups all shipped**: multi-lesson export stitches one combined docx; new `_v11Enrich` helper fills VTLM 2.0 vocab tiers / sentence stems / metacog / cohort prompts / worked example / retrieval plan; new `_v11LegacyMap` adapter ports the 604 v2/v3 ai_lessons forward at export time. Live at lessonlab.com.au.
 
 Index of all projects: [LuckDragonAsgard/asgard-source/docs/HANDOVER.md](https://github.com/LuckDragonAsgard/asgard-source/blob/main/docs/HANDOVER.md)
 
@@ -143,7 +143,7 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 
 ### Open work
 - **Wire v11 into `WPS_Lesson_Generator_FINAL.gs`** (or current generator) — swap output template to v11 token map. Once swapped, generator emits all future lessons in v11 shape automatically.
-- **Port existing v6/v7 PE lessons forward** to v11 shape.
+- ~~**Port existing v6/v7 PE lessons forward** to v11 shape.~~ — DONE 2026-05-06 (`_v11LegacyMap` runtime adapter; see Recent work).
 - **Build per-subject tokenised TEMPLATEs** — currently we have an example .docx per subject; the generator will need a `WPS_<Subject>_LessonPlan_TEMPLATE_v11.docx` blank with `{{tokens}}` for each. Pattern in `build_v11_template.js` (PE) is the reference — apply same sed-replace strategy.
 - **Build remaining year levels** within each subject (currently only one year per subject as a proof of shape).
 
@@ -178,3 +178,20 @@ Open follow-ups:
 - Build more year levels per subject.
 
 claude_sessions row IDs: 13 (2026-04-29), 14 (this session 2026-04-30).
+
+
+### 2026-05-06 — v11 generator follow-ups closed (multi-lesson, enrich, legacy port)
+
+Three open follow-ups from the 2026-04-30 session, all shipped to live `app.html`:
+
+- **Multi-lesson v11 export** — `exportToWordV11()` now stitches every lesson in `state.lessons` into a single combined `.docx`. Algorithm: load the per-subject blank once, peel off the body template (between `<w:body>` and the trailing `<w:sectPr>`), run token replacement against a fresh copy for each lesson, separate consecutive lessons with a `<w:br w:type="page"/>` paragraph, then reattach the original `<w:sectPr>...</w:body></w:document>` tail. Headers, footers, styles and rels untouched. Filename pattern: `<School>_<Subject>_T<term>_W<first>-W<last>_v11.docx` for multi, single-lesson naming preserved for n=1. Commit `69519084`.
+
+- **`_v11Enrich` helper** — new module-scope function that augments any lesson data object with VTLM 2.0 fields the v11 template expects but `_generateLessonRaw()` does not emit: vocabulary tiers (subject-aware bank covering all 11 subjects), sentence stems (explicit + practice), metacog prompts, EAL/D + Koorie + disability + disadvantage cohort prompts, worked-example narrative (subject-aware), and a week-keyed retrieval plan. `generateLesson()` is now a thin wrapper: rename of the original to `_generateLessonRaw()` + new wrapper that calls `_v11Enrich()`. Cohort token rows in `_v11TokenMap()` rewired to read `d.eald[1-4]` / `d.koorie[1-4]` / `d.disability[1-4]` / `d.disadv[1-4]` with prior hard-coded strings as fallbacks. Commit `5db375f9`.
+
+- **`_v11LegacyMap` adapter for v2/v3 ai_lessons** — runtime mapper that walks the 604 v2/v3 prompt-format AI-generated lessons in `lessonlab-api` D1 (`ai_lessons` table — 196 v2 PE + 392 v3 PE + 1 v3 literacy + 15 v1 unsubjected) and hoists their narrative fields (`materials → equipment`, `cues → cue1/cue2/cue3`, `points → cue fallback`, `entry → entry1`, `entrySay → warmUpSay`, `teach → teach1`, `practice → practice1`, `game → app1`, `exit → packup1`, `ifWell → differentiation.extension`, `ifNot → differentiation.support`) onto the v11 token names. `_v11TokenMap()` now calls `_v11LegacyMap(d)` and `_v11Enrich(d, ...)` at the start of every export, so a freshly-generated lesson, a lesson loaded from D1, or any imported legacy lesson all export to a fully populated v11 docx. Idempotent — both helpers set flags to skip on re-entry. Commit `5a1fdc88`.
+
+End-to-end verified against a real v3 row from D1 (id=212, "Handballing Helpers"): all of cue_1/2/3, entry_1, warm_up_say, teach_step_1, practice_step_1, app_step_1, packup_step_1, tier1_task_1, tier3_task_1 populate from the legacy fields rather than hitting the generic defaults.
+
+Defensive cleanup: pre-existing `'👎 Noted. We'll improve this.'` syntax error in `rateLessonAI()` (literal ASCII apostrophe inside SQ string — block #8 wouldn't parse in Node) was fixed at the same time by replacing the apostrophe with U+2019 `’`. Block #8 now parses cleanly.
+
+Verification on live: `https://www.lessonlab.com.au/app.html` size 1,122,141 bytes; `_v11LegacyMap` × 3, `_v11Enrich` × 7. Pages auto-deploy from `LuckDragonAsgard/lessonlab/main` on push.
