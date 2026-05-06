@@ -7150,20 +7150,44 @@ async function exportToWordV11() {
     if (!resp.ok) throw new Error('Could not fetch v11 blank for ' + subjectName + ' (' + resp.status + ')');
     var blob = await resp.blob();
 
-    // For multi-lesson exports we concatenate by re-using the blank for each
-    // and stitching document.xml bodies. MVP: export the FIRST lesson only.
-    // Multi-lesson v11 export is a follow-up.
-    var d = state.lessons[0].data;
-    d.school = d.school || state.school;
-    var tokens = _v11TokenMap(d, cfg);
-
+    // Multi-lesson v11 export — stitches all lessons into one combined docx.
+    // Strategy: load the blank once, peel off the per-lesson body template
+    // (everything between <w:body> and the trailing <w:sectPr>), run token
+    // replacement against a fresh copy for each lesson, separate consecutive
+    // lessons with a page-break paragraph, then reattach the original
+    // <w:sectPr>...</w:sectPr></w:body></w:document> tail. Headers, footers,
+    // styles and rels are preserved unchanged.
     var jszip = await JSZip.loadAsync(blob);
     var docXml = await jszip.file('word/document.xml').async('string');
-    Object.keys(tokens).forEach(function(k){
-      var re = new RegExp('\\{\\{' + k + '\\}\\}', 'g');
-      docXml = docXml.replace(re, _xesc(String(tokens[k] == null ? '' : tokens[k])));
-    });
-    jszip.file('word/document.xml', docXml);
+
+    var bodyOpenTag = '<w:body>';
+    var bodyOpenIdx = docXml.indexOf(bodyOpenTag);
+    var bodyCloseIdx = docXml.lastIndexOf('</w:body>');
+    var lastSectPrIdx = docXml.lastIndexOf('<w:sectPr');
+    if (bodyOpenIdx < 0 || bodyCloseIdx < 0 || lastSectPrIdx < 0 || lastSectPrIdx >= bodyCloseIdx) {
+      throw new Error('Could not parse v11 template document.xml structure');
+    }
+    var preBody = docXml.slice(0, bodyOpenIdx + bodyOpenTag.length);
+    var lessonTemplate = docXml.slice(bodyOpenIdx + bodyOpenTag.length, lastSectPrIdx);
+    var postBody = docXml.slice(lastSectPrIdx); // <w:sectPr/>...</w:body></w:document>
+
+    var PAGEBREAK = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+    var combined = preBody;
+    for (var i = 0; i < state.lessons.length; i++) {
+      var d = state.lessons[i].data;
+      d.school = d.school || state.school;
+      var tokens = _v11TokenMap(d, cfg);
+      var lessonXml = lessonTemplate;
+      Object.keys(tokens).forEach(function(k){
+        var re = new RegExp('\\{\\{' + k + '\\}\\}', 'g');
+        lessonXml = lessonXml.replace(re, _xesc(String(tokens[k] == null ? '' : tokens[k])));
+      });
+      if (i > 0) combined += PAGEBREAK;
+      combined += lessonXml;
+    }
+    combined += postBody;
+
+    jszip.file('word/document.xml', combined);
 
     var outBlob = await jszip.generateAsync({
       type: 'blob',
@@ -7172,14 +7196,23 @@ async function exportToWordV11() {
 
     var school = (state.school || 'LessonLab').replace(/[^a-zA-Z0-9]/g, '_');
     var subjSafe = (subjectName || 'Lesson').replace(/[^a-zA-Z0-9]/g, '_');
-    var weekN = (d.week || 1);
-    var filename = school + '_' + subjSafe + '_T' + (state.term||1) + 'W' + weekN + '_v11.docx';
+    var n = state.lessons.length;
+    var firstWeek = (state.lessons[0].data.week || 1);
+    var lastWeek = (state.lessons[n-1].data.week || firstWeek);
+    var filename = (n > 1)
+      ? school + '_' + subjSafe + '_T' + (state.term||1) + '_W' + firstWeek + '-W' + lastWeek + '_v11.docx'
+      : school + '_' + subjSafe + '_T' + (state.term||1) + 'W' + firstWeek + '_v11.docx';
     var url = URL.createObjectURL(outBlob);
     var a = document.createElement('a');
     a.href = url; a.download = filename; a.click();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
 
-    if (btn) { btn.textContent = '✅ v11 downloaded'; setTimeout(function(){ btn.textContent='📄 v11 Word (VTLM)'; btn.disabled = false; }, 2500); }
+    if (btn) {
+      btn.textContent = (n > 1)
+        ? ('✅ ' + n + ' lessons downloaded')
+        : '✅ v11 downloaded';
+      setTimeout(function(){ btn.textContent='📄 v11 Word (VTLM)'; btn.disabled = false; }, 2500);
+    }
   } catch (e) {
     console.error('v11 export failed', e);
     alert('v11 export failed: ' + e.message);
