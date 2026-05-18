@@ -5192,6 +5192,10 @@ function getExitTicketLines(exitTicket) {
   return exitTicket ? exitTicket.split(' | ') : [];
 }
 function buildHTML(d, cfg, cds) {
+  // v11 short-circuit: if the data has the v11 schema, render the 3-page CRT/VTLM/Differentiation layout (used by DOCX/PDF/print as well as in-app preview).
+  if (d && (d.lesson_title || d.prompt_version === 11)) {
+    return buildV11PreviewHtml(d);
+  }
   const subjKey = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === d.subject);
   const scaff = (typeof SCAFFOLDS !== 'undefined' && SCAFFOLDS[subjKey]) ? SCAFFOLDS[subjKey] : {};
   const c = (typeof schoolBranding !== 'undefined' && schoolBranding.primaryColour) ? schoolBranding.primaryColour : cfg.colour;
