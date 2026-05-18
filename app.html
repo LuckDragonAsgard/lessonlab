@@ -839,8 +839,8 @@
 .pricing-desc{font-size:13px;color:#666;line-height:1.4}
 .pricing-features{list-style:none;padding:0;margin:4px 0;display:flex;flex-direction:column;gap:7px;flex:1}
 .pricing-features li{font-size:13px;color:#444;display:flex;align-items:flex-start;gap:8px}
-.pricing-features li::before{content:"✓";color:#4CAF50;font-weight:700;flex-shrink:0}
-.pricing-features li.no::before{content:"✗";color:#ddd}
+.pricing-features li::before{content:"";color:#4CAF50;font-weight:700;flex-shrink:0}
+.pricing-features li.no::before{content:"";color:#ddd}
 .pricing-features li.no{color:#bbb}
 .pricing-btn{width:100%;padding:13px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;margin-top:6px}
 .pricing-btn.free-btn{background:var(--light);color:#888;cursor:default}
@@ -1229,20 +1229,10 @@
     body.dark-mode #subjectsPanel .ll-section-heading div {
       background: var(--border) !important;
     }
-    body.dark-mode #subjectsPanel .ll-partner-teaser {
-      background: linear-gradient(135deg, #1a2744, #162038) !important;
-      border-color: #2d4a7a !important;
-    }
-    body.dark-mode #subjectsPanel .ll-partner-teaser .ll-pt-title {
-      color: #60a5fa !important;
-    }
-    body.dark-mode #subjectsPanel .ll-partner-teaser .ll-pt-desc {
-      color: #93c5fd !important;
-    }
-    body.dark-mode #subjectsPanel .ll-partner-teaser .ll-pt-link {
-      color: #60a5fa !important;
-    }
-  </style>
+
+
+
+</style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 
@@ -1280,9 +1270,9 @@
   </div>
   <div id="header-right" style="display:flex;gap:8px;align-items:center;">
     
-    <button class="settings-btn" id="darkModeToggle" style="display:none">🌙</button>
+    <button class="settings-btn" id="darkModeToggle" style="display:none"></button>
     <button class="settings-btn" style="display:none" id="uploadLessonBtn" title="Upload &amp; Convert Existing Lesson" onclick="showUploadLessonModal()">&#128228;</button>
-    <button class="settings-btn" id="settingsToggle" style="display:none">⚙ School Settings</button>
+    <button class="settings-btn" id="settingsToggle" style="display:none"> School Settings</button>
     <button class="settings-btn" id="helpBtn" style="display:none" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{key:'?',shiftKey:true}))" title="Keyboard shortcuts">?</button>
   </div>
 
@@ -1413,24 +1403,24 @@ document.addEventListener('click', function() {
 <div id="uploadLessonModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:12px;padding:28px;max-width:620px;width:90%;max-height:85vh;overflow-y:auto;position:relative;">
     <button id="uploadLessonClose" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#666;">×</button>
-    <h3 style="margin:0 0 16px;color:var(--pri);font-size:18px;">📨 Upload &amp; Convert Lessons</h3>
+    <h3 style="margin:0 0 16px;color:var(--pri);font-size:18px;"> Upload &amp; Convert Lessons</h3>
     <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:10px;">
-      <button id="singleUploadTabBtn" onclick="switchUploadTab('single')" style="padding:7px 16px;border-radius:20px;border:none;background:var(--pri);color:white;font-weight:600;cursor:pointer;font-size:13px;">📄 Single File</button>
-      <button id="bulkUploadTabBtn" onclick="switchUploadTab('bulk')" style="padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--text);cursor:pointer;font-size:13px;">📦 Bulk Import</button>
+      <button id="singleUploadTabBtn" onclick="switchUploadTab('single')" style="padding:7px 16px;border-radius:20px;border:none;background:var(--pri);color:white;font-weight:600;cursor:pointer;font-size:13px;"> Single File</button>
+      <button id="bulkUploadTabBtn" onclick="switchUploadTab('bulk')" style="padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--text);cursor:pointer;font-size:13px;"> Bulk Import</button>
     </div>
     <div id="singleUploadTab">
       <p style="color:#555;font-size:14px;margin:0 0 14px;">Upload a .docx or .txt lesson file and we'll extract the fields automatically.</p>
       <input type="file" id="uploadLessonFile" accept=".docx,.doc,.txt,.pptx,.ppt,.pdf" style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
       <div id="uploadLessonStatus" style="font-size:13px;color:#666;margin-bottom:10px;"></div>
       <div id="uploadLessonPreview" style="background:#f9f9f9;border-radius:8px;padding:14px;font-size:13px;color:#333;max-height:220px;overflow-y:auto;display:none;margin-bottom:14px;"></div>
-      <button id="applyParsedLessonBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;">✓ Apply Fields &amp; Close</button>
+      <button id="applyParsedLessonBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;"> Apply Fields &amp; Close</button>
     </div>
     <div id="bulkUploadTab" style="display:none;">
       <p style="color:#555;font-size:14px;margin:0 0 14px;">Select multiple lesson files to import them all at once.</p>
       <input type="file" id="bulkUploadFiles" accept=".docx,.doc,.txt,.pptx,.ppt,.pdf" multiple style="display:block;width:100%;margin-bottom:14px;font-size:14px;">
       <div id="bulkUploadStatus" style="font-size:13px;color:#666;margin-bottom:10px;"></div>
       <div id="bulkUploadResults" style="display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto;margin-bottom:14px;"></div>
-      <button id="bulkSaveAllBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;">💾 Save All to Library</button>
+      <button id="bulkSaveAllBtn" style="display:none;background:var(--pri);color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;width:100%;"> Save All to Library</button>
     </div>
   </div>
 </div>
@@ -1620,7 +1610,7 @@ document.addEventListener('click', function() {
     <div id="signupContent" class="auth-content">
       <div id="signupError"></div>
       <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:#1d4ed8;text-align:center;">
-        ✦ Your first lesson is AI-generated — free, no card needed
+         Your first lesson is AI-generated — free, no card needed
       </div>
       <form id="signupForm" style="display: flex; flex-direction: column; gap: 0;">
         <div class="auth-form-group">
@@ -1765,7 +1755,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   </div>
 
   <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);grid-column:1/-1;">
-  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;grid-column:1/-1;">📄 School Template Upload</div>
+  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;grid-column:1/-1;"> School Template Upload</div>
 
   <div class="form-group" style="background:#FFF8E1;border-radius:6px;padding:10px 12px;border-left:3px solid #F9A825;margin-bottom:8px;grid-column:1/-1;">
     <span style="font-size:12px;color:#555;">&#128274; <b>Requires a paid subscription.</b> Upload your school's DOCX lesson plan template and LessonLab will match your layout and sections.</span>
@@ -1784,7 +1774,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   </div>
 
   <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);grid-column:1/-1;">
-  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;grid-column:1/-1;">📋 Curriculum Scope Upload</div>
+  <div style="font-weight:700;color:var(--pri);margin-bottom:12px;font-size:14px;grid-column:1/-1;"> Curriculum Scope Upload</div>
 
   <div class="form-group" style="grid-column:1/-1;">
     <label>Yearly Curriculum Overview (XLSX or CSV)</label>
@@ -1802,7 +1792,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   <hr style="margin:16px 0;border:none;border-top:1px solid var(--border);grid-column:1/-1;">
 
   <div class="form-group" style="grid-column:1/-1;">
-    <button class="btn" id="saveAllSettingsBtn" style="width:100%;margin-top:8px;">💾 Save All Settings</button>
+    <button class="btn" id="saveAllSettingsBtn" style="width:100%;margin-top:8px;"> Save All Settings</button>
     <button class="btn btn-sec" id="resetSettingsBtn" style="width:100%;margin-top:8px;">Reset to Defaults</button>
   </div>
 </div>
@@ -1830,22 +1820,22 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     <!-- FEATURE STRIP -->
     <div class="ll-feature-strip" style="display:flex;gap:0;border-bottom:1px solid #e5e7eb;background:#f8fafc;">
       <div style="flex:1;padding:16px 12px;text-align:center;border-right:1px solid #e5e7eb;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">
-        <div style="font-size:1.4rem;margin-bottom:4px;">📅</div>
+        <div style="font-size:1.4rem;margin-bottom:4px;"></div>
         <div class="ll-feat-label" style="font-size:0.75rem;font-weight:700;color:#0f172a;">Year Planner</div>
         <div class="ll-feat-sub" style="font-size:0.67rem;color:#94a3b8;margin-top:2px;">Whole year mapped</div>
       </div>
       <div style="flex:1;padding:16px 12px;text-align:center;border-right:1px solid #e5e7eb;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">
-        <div style="font-size:1.4rem;margin-bottom:4px;">📋</div>
+        <div style="font-size:1.4rem;margin-bottom:4px;"></div>
         <div class="ll-feat-label" style="font-size:0.75rem;font-weight:700;color:#0f172a;">Term Planner</div>
         <div class="ll-feat-sub" style="font-size:0.67rem;color:#94a3b8;margin-top:2px;">Full term in minutes</div>
       </div>
       <div style="flex:1;padding:16px 12px;text-align:center;border-right:1px solid #e5e7eb;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">
-        <div style="font-size:1.4rem;margin-bottom:4px;">🧭</div>
+        <div style="font-size:1.4rem;margin-bottom:4px;"></div>
         <div class="ll-feat-label" style="font-size:0.75rem;font-weight:700;color:#0f172a;">Compass export</div>
         <div class="ll-feat-sub" style="font-size:0.67rem;color:#94a3b8;margin-top:2px;">One click</div>
       </div>
       <div style="flex:1;padding:16px 12px;text-align:center;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background=''">
-        <div style="font-size:1.4rem;margin-bottom:4px;">📊</div>
+        <div style="font-size:1.4rem;margin-bottom:4px;"></div>
         <div class="ll-feat-label" style="font-size:0.75rem;font-weight:700;color:#0f172a;">Slide decks</div>
         <div class="ll-feat-sub" style="font-size:0.67rem;color:#94a3b8;margin-top:2px;">Ready to display</div>
       </div>
@@ -1859,31 +1849,22 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
 
     <div class="subjects-grid" id="subjectsGrid" role="grid" aria-label="Subject selection"></div>
 
-    <!-- COMING SOON PARTNER TEASER -->
-    <div class="ll-partner-teaser" style="margin:20px 16px 4px;padding:14px 18px;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;border-radius:10px;display:flex;align-items:center;gap:14px;">
-      <div style="font-size:1.7rem;flex-shrink:0;">🏅</div>
-      <div>
-        <div class="ll-pt-title" style="font-size:0.78rem;font-weight:700;color:#0369a1;margin-bottom:2px;">Sport-specific &amp; partner units — coming soon</div>
-        <div class="ll-pt-desc" style="font-size:0.72rem;color:#0c4a6e;line-height:1.4;">AFL, Cricket, Netball, Beyond Blue, CSIRO and more — co-branded curriculum units landing in LessonLab. <span class="ll-pt-link" style="color:#0369a1;font-weight:600;">Watch this space.</span></div>
-      </div>
-    </div>
-
     <div id="landingStats" style="margin:12px 0 20px;text-align:center;color:#9ca3af;font-size:12px;"></div>
 
     <!-- LESSON PREVIEW -->
     <div style="margin:0 16px 20px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
       <div style="background:linear-gradient(135deg,#1565C0,#1976d2);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
         <div>
-          <div style="color:white;font-size:0.82rem;font-weight:700;">📄 Sample lesson — Health &amp; PE · Year 3/4 · Week 5</div>
+          <div style="color:white;font-size:0.82rem;font-weight:700;"> Sample lesson — Health &amp; PE · Year 3/4 · Week 5</div>
           <div style="color:rgba(255,255,255,0.6);font-size:0.7rem;margin-top:2px;">Sending &amp; Receiving — Chest Pass Fundamentals</div>
         </div>
         <div style="font-size:0.68rem;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.12);padding:3px 8px;border-radius:20px;">What you get</div>
       </div>
       <div style="padding:16px;background:white;">
         <div style="margin-bottom:12px;display:flex;gap:6px;flex-wrap:wrap;">
-          <span style="font-size:0.66rem;font-weight:700;color:#1d4ed8;background:#eff6ff;border-radius:20px;padding:3px 9px;">✓ Victorian Curriculum 2.0</span>
-          <span style="font-size:0.66rem;font-weight:700;color:#166534;background:#f0fdf4;border-radius:20px;padding:3px 9px;">✓ VTLM 2.0 Aligned</span>
-          <span style="font-size:0.66rem;font-weight:700;color:#92400e;background:#fffbeb;border-radius:20px;padding:3px 9px;">✓ Differentiation included</span>
+          <span style="font-size:0.66rem;font-weight:700;color:#1d4ed8;background:#eff6ff;border-radius:20px;padding:3px 9px;"> Victorian Curriculum 2.0</span>
+          <span style="font-size:0.66rem;font-weight:700;color:#166534;background:#f0fdf4;border-radius:20px;padding:3px 9px;"> VTLM 2.0 Aligned</span>
+          <span style="font-size:0.66rem;font-weight:700;color:#92400e;background:#fffbeb;border-radius:20px;padding:3px 9px;"> Differentiation included</span>
         </div>
         <div style="margin-bottom:12px;">
           <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:5px;">Learning Intention</div>
@@ -1892,9 +1873,9 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
         <div style="margin-bottom:12px;">
           <div style="font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:5px;">Success Criteria</div>
           <div style="display:flex;flex-direction:column;gap:4px;">
-            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;">✓</span>I can grip the ball with fingers spread and thumbs behind (W-grip)</div>
-            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;">✓</span>I can step forward with my opposite foot and push the ball from my chest</div>
-            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;">✓</span>I can "give" with my hands on receiving to safely cushion the ball</div>
+            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;"></span>I can grip the ball with fingers spread and thumbs behind (W-grip)</div>
+            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;"></span>I can step forward with my opposite foot and push the ball from my chest</div>
+            <div style="display:flex;gap:7px;align-items:flex-start;font-size:0.8rem;color:#374151;"><span style="color:#22c55e;font-weight:700;flex-shrink:0;"></span>I can "give" with my hands on receiving to safely cushion the ball</div>
           </div>
         </div>
         <div style="margin-bottom:12px;">
@@ -1923,18 +1904,18 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #f3f4f6;">
-          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📦 Basketballs × 1 per pair · cones × 10 · traffic light cards × 25 · mini whiteboards × 8</div>
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> Basketballs × 1 per pair · cones × 10 · traffic light cards × 25 · mini whiteboards × 8</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
-          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📋 VCHPEM082 · VCHPEM083</div>
-          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;">📤 Export DOCX · PDF · Compass · Slides</div>
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> VCHPEM082 · VCHPEM083</div>
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> Export DOCX · PDF · Compass · Slides</div>
         </div>
       </div>
     </div>
 
     <!-- TESTIMONIAL -->
     <div style="margin:0 16px 16px;padding:18px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:12px;">
-      <div style="font-size:1.1rem;color:#15803d;margin-bottom:8px;">★★★★★</div>
+      <div style="font-size:1.1rem;color:#15803d;margin-bottom:8px;"></div>
       <div style="font-size:0.9rem;color:#14532d;line-height:1.6;font-style:italic;margin-bottom:10px;">"I used to spend Sunday nights writing lesson plans. Now I spend 10 minutes on LessonLab and my whole week is sorted. The Term Planner alone is worth it."</div>
       <div style="font-size:0.75rem;font-weight:700;color:#166534;">Sarah M. &nbsp;·&nbsp; Grade 3/4 Teacher, Melbourne</div>
     </div>
@@ -1946,10 +1927,10 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
         <button onclick="openPricingModal()" style="background:#1565C0;color:white;font-size:0.78rem;font-weight:700;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">See pricing →</button>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;">
-        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;">✓ Year + Term + Cycle Planners included</span>
-        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;">✓ Exit tickets on every lesson</span>
-        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;">✓ DOCX, PDF &amp; Compass export</span>
-        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;">✓ School name on all exports</span>
+        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;"> Year + Term + Cycle Planners included</span>
+        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;"> Exit tickets on every lesson</span>
+        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;"> DOCX, PDF &amp; Compass export</span>
+        <span style="font-size:0.7rem;color:#3b82f6;background:#eff6ff;border-radius:6px;padding:3px 8px;"> School name on all exports</span>
       </div>
     </div>
 
@@ -2057,7 +2038,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     <a class="back-link" id="backToSubjectsFromYear">← Back to subjects</a>
     <div class="year-planner-section">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="color: var(--pri); margin:0;">📅 Year Planner</h2>
+        <h2 style="color: var(--pri); margin:0;"> Year Planner</h2>
         <div style="display:flex; gap:8px;">
           <button class="btn btn-sec" id="ypLoadBtn" title="Load saved year plan">Load Plan</button>
           <button class="btn btn-sec" id="ypSaveBtn" title="Save current year plan">Save Plan</button>
@@ -2096,7 +2077,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     <div class="year-planner-modal">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <h3 id="ypModalTitle" style="margin:0;color:var(--pri);">Edit Cell</h3>
-        <button onclick="document.getElementById('ypCellModal').classList.remove('show')" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;">✕</button>
+        <button onclick="document.getElementById('ypCellModal').classList.remove('show')" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;"></button>
       </div>
       <div style="margin-bottom:12px;">
         <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:4px;">Unit</label>
@@ -2123,7 +2104,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
 
     <div class="year-planner-section">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="color: var(--pri); margin:0;">🔄 2-Year Cycle Planner</h2>
+        <h2 style="color: var(--pri); margin:0;"> 2-Year Cycle Planner</h2>
         <div style="display:flex; gap:8px;">
           <button class="btn btn-sec" id="cpLoadBtn" title="Load saved cycle plan">Load Plan</button>
           <button class="btn btn-sec" id="cpSaveBtn" title="Save current cycle plan">Save Plan</button>
@@ -2146,9 +2127,9 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       </div>
 
       <div style="display:flex; gap:8px; align-items:center; margin:20px 0 8px; flex-wrap:wrap;">
-        <button class="cycle-tab active" id="cycleTabA">📅 Cycle A — Year 1</button>
-        <button class="cycle-tab" id="cycleTabB">📅 Cycle B — Year 2</button>
-        <button class="btn btn-sec" id="cpCheckCoverageBtn" style="margin-left:auto;">🔍 Check Coverage</button>
+        <button class="cycle-tab active" id="cycleTabA"> Cycle A — Year 1</button>
+        <button class="cycle-tab" id="cycleTabB"> Cycle B — Year 2</button>
+        <button class="btn btn-sec" id="cpCheckCoverageBtn" style="margin-left:auto;"> Check Coverage</button>
       </div>
 
       <p style="font-size:12px;color:#888;margin-bottom:8px;">
@@ -2199,23 +2180,23 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
     <div style="border-top:1px solid #eee;padding-top:18px;margin-top:4px;">
       <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#888;margin-bottom:10px;">Included with every paid subscription</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">📅 Year Planner</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">🔄 2-Year Cycle Planner</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">📋 Term Planner</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">✅ Unit prep checklists</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">🎯 Exit tickets</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">🧭 Compass export</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">📄 DOCX &amp; PDF export</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">🏫 School name on exports</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">💾 Save to cloud library</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">📐 Custom school template</div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;">📤 Upload &amp; convert your existing lessons</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Year Planner</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> 2-Year Cycle Planner</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Term Planner</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Unit prep checklists</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Exit tickets</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Compass export</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> DOCX &amp; PDF export</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> School name on exports</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Save to cloud library</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Custom school template</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 13px;font-size:12px;color:#166534;font-weight:600;"> Upload &amp; convert your existing lessons</div>
       </div>
       <!-- Optional upgrade -->
       <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#888;margin-bottom:10px;">Optional upgrades</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div id="addonCard_full_units" style="border:2px solid #e0e0e0;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
-          <div style="font-size:1.5rem;">📚</div>
+          <div style="font-size:1.5rem;"></div>
           <div style="flex:1;">
             <div style="font-weight:700;font-size:13px;">Full Units</div>
             <div style="font-size:11px;color:#888;margin-top:2px;">Complete full-length units — all weeks, deep content for your subject.</div>
@@ -2234,7 +2215,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
 <div id="subjectUpgradeModal" class="pricing-modal-overlay" style="display:none">
   <div class="pricing-modal" style="max-width:400px;text-align:center;">
     <button class="pricing-modal-close" onclick="document.getElementById('subjectUpgradeModal').style.display='none'">&times;</button>
-    <div style="font-size:3rem;margin-bottom:8px;" id="subjectUpgradeIcon">📚</div>
+    <div style="font-size:3rem;margin-bottom:8px;" id="subjectUpgradeIcon"></div>
     <h2 style="font-size:1.3rem;margin-bottom:6px;" id="subjectUpgradeTitle">Unlock this subject</h2>
     <p style="color:#666;font-size:14px;margin-bottom:20px;" id="subjectUpgradeDesc">Get full access to lesson generation, saving, and planning for this subject.</p>
     <div style="background:#f8f9ff;border-radius:12px;padding:16px;margin-bottom:20px;">
@@ -2314,7 +2295,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <span id="progressLabel" style="font-size:12px;color:#64748b;font-weight:500;">Generating lessons…</span>
-      <span id="aiIndicator" style="display:none;font-size:11px;font-weight:600;color:#3b6ef8;background:#eff6ff;padding:3px 10px;border-radius:100px;">✦ AI</span>
+      <span id="aiIndicator" style="display:none;font-size:11px;font-weight:600;color:#3b6ef8;background:#eff6ff;padding:3px 10px;border-radius:100px;"> AI</span>
     </div>
     <div class="progress-bar">
       <div class="progress-fill" id="progressFill" style="width:0%"></div>
@@ -2341,7 +2322,7 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       <button class="btn btn-pri" id="exportWordV11Btn" onclick="exportToWordV11()" title="Download v11 VTLM 2.0 lesson plan (per-subject template)">&#128196; v11 Word (VTLM)</button>
       <button class="btn btn-pri" id="printAllBtn">Print All</button>
       <button class="btn btn-pri" id="exportCompassBtn">Export to Compass</button>
-      <button class="btn btn-pri" id="generateSlidesBtn" title="Generate a PowerPoint slide deck for this term plan (Pro/School)">📊 Generate Slides</button>
+      <button class="btn btn-pri" id="generateSlidesBtn" title="Generate a PowerPoint slide deck for this term plan (Pro/School)"> Generate Slides</button>
       <button class="btn btn-sec" id="printCRTBtn">Print CRT Summaries</button>
       <button class="btn btn-sec" id="equipmentChecklistBtn">Equipment Checklist</button>
       <button class="btn btn-sec" id="emailDigestBtn">Email Digest</button>
@@ -2460,7 +2441,7 @@ const SUBJ_CFG = {
     full: 'Health & Physical Education',
     colour: '#1F3864',
     accent: '#2E74B5',
-    icon: '🏃',
+    icon: '',
     phases: ['Warm-up', 'Explicit Teaching', 'Practice / Explore', 'Game / Application', 'Pack Up & Reflect'],
     times: ['5–8 min', '10 min', '15 min', '15 min', '5 min'],
     entry: 'Line up outside → call in quietly → each student to their spot.',
@@ -2476,7 +2457,7 @@ const SUBJ_CFG = {
     full: 'Visual Arts',
     colour: '#7B3F00',
     accent: '#C0672B',
-    icon: '🎨',
+    icon: '',
     phases: ['Introduction', 'Explicit Teaching', 'Making / Studio Time', 'Share & Critique', 'Reflection'],
     times: ['5 min', '10 min', '20 min', '10 min', '5 min'],
     entry: 'Enter quietly → sit down → smock on.',
@@ -2492,7 +2473,7 @@ const SUBJ_CFG = {
     full: 'Music',
     colour: '#4A148C',
     accent: '#7B2D8B',
-    icon: '🎵',
+    icon: '',
     phases: ['Warm-up / Listening', 'Explicit Teaching', 'Explore / Rehearse', 'Performance Task', 'Reflection'],
     times: ['5 min', '10 min', '15 min', '15 min', '5 min'],
     entry: 'Enter quietly → sit in a circle or at seats.',
@@ -2508,7 +2489,7 @@ const SUBJ_CFG = {
     full: 'Drama',
     colour: '#4A1942',
     accent: '#7B2D8B',
-    icon: '🎭',
+    icon: '',
     phases: ['Warm-up / Energiser', 'Explicit Teaching', 'Explore / Rehearse', 'Performance', 'Reflection'],
     times: ['5–8 min', '10 min', '15 min', '15 min', '5 min'],
     entry: 'Enter quietly → find a space in the room.',
@@ -2524,7 +2505,7 @@ const SUBJ_CFG = {
     full: 'French',
     colour: '#003189',
     accent: '#C1002B',
-    icon: '🇫🇷',
+    icon: '',
     phases: ['Greeting / Warm-up', 'Explicit Teaching', 'Guided Practice', 'Communicative Task', 'Review & Exit'],
     times: ['5 min', '10 min', '15 min', '15 min', '5 min'],
     entry: 'Greet each student in French at the door.',
@@ -2540,7 +2521,7 @@ const SUBJ_CFG = {
     full: 'English / Literacy',
     colour: '#2E7D32',
     accent: '#43A047',
-    icon: '📖',
+    icon: '',
     phases: ['Warm-up / Review', 'Explicit Teaching', 'Guided Practice', 'Independent Practice', 'Share & Reflect'],
     times: ['5 min', '15 min', '15 min', '15 min', '5–10 min'],
     entry: 'Enter quietly → reading books out → silent reading for 2 minutes.',
@@ -2556,7 +2537,7 @@ const SUBJ_CFG = {
     full: 'Mathematics / Numeracy',
     colour: '#C62828',
     accent: '#E53935',
-    icon: '🔢',
+    icon: '',
     phases: ['Number Talk', 'Explicit Teaching', 'Guided Practice', 'Independent Practice', 'Reflection'],
     times: ['5–10 min', '15 min', '15 min', '15 min', '5 min'],
     entry: 'Enter quietly → maths warm-up on board → begin independently.',
@@ -2605,7 +2586,7 @@ const SUBJ_CFG = {
     full: 'Humanities and Social Sciences',
     colour: '#7D3C00',
     accent: '#A0522D',
-    icon: '🌏',
+    icon: '',
     phases: ['Connect', 'Investigate', 'Discuss & Analyse', 'Communicate', 'Reflect'],
     times: ['5 min', '15 min', '15 min', '10 min', '5 min'],
     entry: 'Enter quietly → retrieve HASS book → read the inquiry question on the board.',
@@ -2621,7 +2602,7 @@ const SUBJ_CFG = {
     full: 'Personal & Social Wellbeing',
     colour: '#1A5276',
     accent: '#2E86C1',
-    icon: '🧠',
+    icon: '',
     phases: ['Check In', 'Explore', 'Practise', 'Apply', 'Reflect'],
     times: ['5 min', '10 min', '15 min', '10 min', '10 min'],
     entry: 'Enter quietly → sit in circle/seats → begin mindful breathing.',
@@ -5745,7 +5726,7 @@ function initSubjects() {
   termCard.className = 'subject-card';
   termCard.style.color = '#1565C0';
   termCard.innerHTML = `
-    <div class="subject-icon">📋</div>
+    <div class="subject-icon"></div>
     <div class="subject-name">Term Planner</div>
     <div class="subject-phases">Plan all subjects across 10 weeks</div>
   `;
@@ -5756,7 +5737,7 @@ function initSubjects() {
   yearCard.className = 'subject-card';
   yearCard.style.color = '#2E7D32';
   yearCard.innerHTML = `
-    <div class="subject-icon">📅</div>
+    <div class="subject-icon"></div>
     <div class="subject-name">Year Planner</div>
     <div class="subject-phases">Plan all subjects across 4 terms</div>
   `;
@@ -5767,7 +5748,7 @@ function initSubjects() {
   cycleCard.className = 'subject-card';
   cycleCard.style.color = '#6A1B9A';
   cycleCard.innerHTML = `
-    <div class="subject-icon">🔄</div>
+    <div class="subject-icon"></div>
     <div class="subject-name">Cycle Planner</div>
     <div class="subject-phases">2-year curriculum for composite classes</div>
   `;
@@ -6317,14 +6298,14 @@ function getUnitPrepHTML(subjectKey, unitKey, startWeek) {
     <div id="unitPrepChecklist" style="background:${bgCol};border:1px solid ${borderCol};border-radius:10px;padding:16px 20px;margin-bottom:20px;">
       <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="var b=document.getElementById('unitPrepBody');b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.prep-toggle').textContent=b.style.display==='none'?'▶ Show':'▼ Hide';">
         <div>
-          <span style="font-size:15px;font-weight:700;color:${col};">📋 Unit Prep Checklist</span>
+          <span style="font-size:15px;font-weight:700;color:${col};"> Unit Prep Checklist</span>
           <span style="font-size:12px;color:#555;margin-left:10px;">Things to organise before this unit starts</span>
         </div>
         <span class="prep-toggle" style="font-size:12px;color:${col};font-weight:600;">▼ Hide</span>
       </div>
       <div id="unitPrepBody" style="margin-top:12px;">
         <ul style="list-style:none;margin:0;padding:0;">${items}</ul>
-        <p style="font-size:11px;color:#888;margin:10px 0 0;">📸 Screenshot or print this list at the start of term — so nothing catches you by surprise mid-unit.</p>
+        <p style="font-size:11px;color:#888;margin:10px 0 0;"> Screenshot or print this list at the start of term — so nothing catches you by surprise mid-unit.</p>
       </div>
     </div>`;
 }
@@ -6525,8 +6506,8 @@ function displayResults() {
               <button class="btn btn-sec" onclick="previewLesson(${lesson.globalIdx})">Preview</button>
               <button class="btn btn-sec" onclick="editLesson(${lesson.globalIdx})">Edit</button>
               <button class="btn btn-sec" onclick="downloadOne(${lesson.globalIdx})">Download</button>
-              <button class="btn btn-sec" onclick="generateLessonSlide(${lesson.globalIdx})" style="font-size:11px;" title="Generate a PowerPoint slide for this lesson">📊 Slides</button>
-              <button class="btn btn-sec" onclick="saveLessonToCloud(${lesson.globalIdx}, this)" style="font-size:11px;">💾 Save</button>
+              <button class="btn btn-sec" onclick="generateLessonSlide(${lesson.globalIdx})" style="font-size:11px;" title="Generate a PowerPoint slide for this lesson"> Slides</button>
+              <button class="btn btn-sec" onclick="saveLessonToCloud(${lesson.globalIdx}, this)" style="font-size:11px;"> Save</button>
               <button class="btn btn-sec" onclick="openTimer(${lesson.globalIdx})" style="font-size:11px;">Timer</button>
               <button class="btn btn-sec" onclick="printStudentTracker(${lesson.globalIdx})" style="font-size:11px;">Tracker</button>
               <button class="btn btn-sec" onclick="generateRubric(${lesson.globalIdx})" style="font-size:11px;">Rubric</button>
@@ -6582,7 +6563,7 @@ function displayResults() {
             <button class="btn btn-sec" onclick="previewLesson(${lesson.globalIdx})">Preview</button>
             <button class="btn btn-sec" onclick="editLesson(${lesson.globalIdx})">Edit</button>
             <button class="btn btn-sec" onclick="downloadOne(${lesson.globalIdx})">Download</button>
-            <button class="btn btn-sec" onclick="generateLessonSlide(${lesson.globalIdx})" style="font-size:11px;" title="Generate a PowerPoint slide for this lesson">📊 Slides</button>
+            <button class="btn btn-sec" onclick="generateLessonSlide(${lesson.globalIdx})" style="font-size:11px;" title="Generate a PowerPoint slide for this lesson"> Slides</button>
             <button class="btn btn-sec" onclick="openTimer(${lesson.globalIdx})" style="font-size:11px;">Timer</button>
             <button class="btn btn-sec" onclick="printStudentTracker(${lesson.globalIdx})" style="font-size:11px;">Tracker</button>
             <button class="btn btn-sec" onclick="generateRubric(${lesson.globalIdx})" style="font-size:11px;">Rubric</button>
@@ -6618,7 +6599,7 @@ function displayResults() {
           <button class="btn btn-sec" onclick="previewLesson(${idx})">Preview</button>
           <button class="btn btn-sec" onclick="editLesson(${idx})">Edit</button>
           <button class="btn btn-sec" onclick="downloadOne(${idx})">Download</button>
-          <button class="btn btn-sec" onclick="saveLessonToCloud(${idx}, this)" style="font-size:11px;">💾 Save</button>
+          <button class="btn btn-sec" onclick="saveLessonToCloud(${idx}, this)" style="font-size:11px;"> Save</button>
           <button class="btn btn-sec" onclick="openTimer(${idx})" style="font-size:11px;">Timer</button>
           <button class="btn btn-sec" onclick="printStudentTracker(${idx})" style="font-size:11px;">Tracker</button>
           <button class="btn btn-sec" onclick="generateRubric(${idx})" style="font-size:11px;">Rubric</button>
@@ -7374,14 +7355,14 @@ async function exportToWordV11() {
 
     if (btn) {
       btn.textContent = (n > 1)
-        ? ('✅ ' + n + ' lessons downloaded')
-        : '✅ v11 downloaded';
-      setTimeout(function(){ btn.textContent='📄 v11 Word (VTLM)'; btn.disabled = false; }, 2500);
+        ? (' ' + n + ' lessons downloaded')
+        : ' v11 downloaded';
+      setTimeout(function(){ btn.textContent=' v11 Word (VTLM)'; btn.disabled = false; }, 2500);
     }
   } catch (e) {
     console.error('v11 export failed', e);
     alert('v11 export failed: ' + e.message);
-    if (btn) { btn.textContent = '📄 v11 Word (VTLM)'; btn.disabled = false; }
+    if (btn) { btn.textContent = ' v11 Word (VTLM)'; btn.disabled = false; }
   }
 }
 
@@ -7552,7 +7533,7 @@ function saveEdit() {
 
   // Regenerate HTML
   const subjKey = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === d.subject) || Object.keys(SUBJ_CFG).find(k => k === d.subjectKey);
-  const cfg = SUBJ_CFG[subjKey] || { phases: ['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'], times: ['5 min','10 min','15 min','15 min','5 min'], colour: '#374151', accent: '#6B7280', icon: '📋', name: d.subject || 'Lesson' };
+  const cfg = SUBJ_CFG[subjKey] || { phases: ['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'], times: ['5 min','10 min','15 min','15 min','5 min'], colour: '#374151', accent: '#6B7280', icon: '', name: d.subject || 'Lesson' };
   const cds = (CD[subjKey] && CD[subjKey][d.year]) ? CD[subjKey][d.year] : [];
 
   lesson.html = buildHTML(d, cfg, cds);
@@ -7729,7 +7710,7 @@ function generateEquipmentChecklist() {
   html += '</style></head><body>';
   html += '<h1>Equipment Checklist — ' + (state.school || 'School') + '</h1>';
   html += '<h2>' + (state.term || 'Term') + ' — Generated by LessonLab</h2>';
-  html += '<table><thead><tr><th>Week</th><th>Subject</th><th>Equipment Needed</th><th class="check">✓</th></tr></thead><tbody>';
+  html += '<table><thead><tr><th>Week</th><th>Subject</th><th>Equipment Needed</th><th class="check"></th></tr></thead><tbody>';
 
   const weeks = Object.keys(byWeek).map(Number).sort((a,b) => a-b);
   weeks.forEach(w => {
@@ -7739,7 +7720,7 @@ function generateEquipmentChecklist() {
       if (i === 0) html += '<td class="week-num" rowspan="' + items.length + '">Week ' + w + '</td>';
       html += '<td class="subj">' + item.subject + '</td>';
       html += '<td>' + item.equipment + '</td>';
-      html += '<td class="check">☐</td>';
+      html += '<td class="check"></td>';
       html += '</tr>';
     });
   });
@@ -7999,14 +7980,14 @@ function showCompassExportOptions() {
           background:#2563eb;color:#fff;border:none;border-radius:9px;padding:13px 16px;
           font-size:14px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;
         ">
-          <span style="font-size:20px;">📄</span>
+          <span style="font-size:20px;"></span>
           <span><strong>Single CSV file</strong><br><span style="font-weight:400;opacity:.85;">All subjects in one file — most compatible with Compass</span></span>
         </button>
         <button id="compassZipBtn" style="
           background:#f3f4f6;color:#111827;border:1px solid #e5e7eb;border-radius:9px;padding:13px 16px;
           font-size:14px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;
         ">
-          <span style="font-size:20px;">🗂️</span>
+          <span style="font-size:20px;"></span>
           <span><strong>Per-subject ZIP</strong><br><span style="font-weight:400;color:#6b7280;">One CSV per subject, bundled in a ZIP</span></span>
         </button>
       </div>
@@ -8663,7 +8644,7 @@ function updateCurriculumCoverage() {
     });
 
     const codesText = cdCodes.length > 0 ? cdCodes.slice(0, 2).join(', ') + (cdCodes.length > 2 ? '...' : '') : 'N/A';
-    html += `<div style="${style}color:${color};font-size:12px;margin-bottom:6px;"><strong>${cfg.icon} ${cfg.name}</strong>: ${codesText} ${isCovered ? '✓' : ''}</div>`;
+    html += `<div style="${style}color:${color};font-size:12px;margin-bottom:6px;"><strong>${cfg.icon} ${cfg.name}</strong>: ${codesText} ${isCovered ? '' : ''}</div>`;
   });
 
   contentDiv.innerHTML = html;
@@ -9230,14 +9211,14 @@ function printStudentTracker(idx) {
 
   if (names.length > 0) {
     names.forEach(name => {
-      html += '<tr><td class="name">' + name + '</td><td>☐</td>';
-      sc.forEach(() => { html += '<td>☐</td>'; });
+      html += '<tr><td class="name">' + name + '</td><td></td>';
+      sc.forEach(() => { html += '<td></td>'; });
       html += '<td></td></tr>';
     });
   } else {
     for (let i = 0; i < 25; i++) {
-      html += '<tr><td class="name"></td><td>☐</td>';
-      sc.forEach(() => { html += '<td>☐</td>'; });
+      html += '<tr><td class="name"></td><td></td>';
+      sc.forEach(() => { html += '<td></td>'; });
       html += '<td></td></tr>';
     }
   }
@@ -9299,7 +9280,7 @@ function renderYearGrid() {
       if (data && data.unit) {
         td.style.background = cfg.colour + '0D';
         var _esc = function(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
-        td.innerHTML = '<div class="cell-topic">' + _esc(data.unit) + '</div><div class="cell-focus">' + _esc(data.focus || '') + '</div>' + (data.notes ? '<div class="cell-focus" style="margin-top:2px;color:#666;">📝 ' + _esc(data.notes) + '</div>' : '') + '<span class="cell-status">' + (data.generated ? '✅' : '') + '</span><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromYearCell(\'' + key + '\',\'' + term + '\')">Generate</button>';
+        td.innerHTML = '<div class="cell-topic">' + _esc(data.unit) + '</div><div class="cell-focus">' + _esc(data.focus || '') + '</div>' + (data.notes ? '<div class="cell-focus" style="margin-top:2px;color:#666;"> ' + _esc(data.notes) + '</div>' : '') + '<span class="cell-status">' + (data.generated ? '' : '') + '</span><button class="cell-gen-btn" onclick="event.stopPropagation();generateFromYearCell(\'' + key + '\',\'' + term + '\')">Generate</button>';
       } else {
         td.innerHTML = '<div class="cell-empty">+ Click to plan</div><button class="cell-gen-btn" onclick="event.stopPropagation();openYearCellEditor(\'' + key + '\',\'' + term + '\')">Set up</button>';
       }
@@ -9610,13 +9591,13 @@ function checkCycleCoverage() {
   const el = document.getElementById('cpCoverageWarning');
   if (totalPlanned === 0) {
     el.style.cssText = 'display:block;padding:12px 16px;background:#e3f2fd;border-radius:8px;border-left:4px solid #1565C0;margin-bottom:16px;font-size:13px;';
-    el.innerHTML = '<strong>ℹ️ Nothing planned yet.</strong> Add units to both cycles then check for overlaps.';
+    el.innerHTML = '<strong>ℹ Nothing planned yet.</strong> Add units to both cycles then check for overlaps.';
   } else if (warnings.length === 0) {
     el.style.cssText = 'display:block;padding:12px 16px;background:#e8f5e9;border-radius:8px;border-left:4px solid #4CAF50;margin-bottom:16px;font-size:13px;';
-    el.innerHTML = '<strong>✅ No overlaps found!</strong> Cycles A and B use different content. Students won’t repeat any units.';
+    el.innerHTML = '<strong> No overlaps found!</strong> Cycles A and B use different content. Students won’t repeat any units.';
   } else {
     el.style.cssText = 'display:block;padding:12px 16px;background:#fff3e0;border-radius:8px;border-left:4px solid #FF9800;margin-bottom:16px;font-size:13px;';
-    el.innerHTML = '<strong>⚠️ ' + warnings.length + ' overlap' + (warnings.length > 1 ? 's' : '') + ' found</strong> — students will repeat these units:<ul style="margin:8px 0 0 20px;">' + warnings.map(w => '<li style="margin-bottom:2px;">' + w + '</li>').join('') + '</ul>';
+    el.innerHTML = '<strong> ' + warnings.length + ' overlap' + (warnings.length > 1 ? 's' : '') + ' found</strong> — students will repeat these units:<ul style="margin:8px 0 0 20px;">' + warnings.map(w => '<li style="margin-bottom:2px;">' + w + '</li>').join('') + '</ul>';
   }
   renderCycleGrid();
 }
@@ -9696,7 +9677,7 @@ function exportCyclePlanCSV() {
 document.getElementById('darkModeToggle').onclick = () => {
   document.body.classList.toggle('dark-mode');
   const btn = document.getElementById('darkModeToggle');
-  btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+  btn.textContent = document.body.classList.contains('dark-mode') ? '' : '';
   localStorage.setItem('lessonlab_darkmode', document.body.classList.contains('dark-mode') ? '1' : '0');
 };
 
@@ -9805,7 +9786,7 @@ async function generateLessonSlideshow() {
     // Helper functions
     function getCfgForSlide(subjectName) {
       const k = Object.keys(SUBJ_CFG).find(k => SUBJ_CFG[k].name === subjectName);
-      return k ? SUBJ_CFG[k] : { name: subjectName, colour:'#374151', accent:'#6B7280', icon:'📋', phases:['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'], times:['10 min','10 min','10 min','15 min','5 min'] };
+      return k ? SUBJ_CFG[k] : { name: subjectName, colour:'#374151', accent:'#6B7280', icon:'', phases:['Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'], times:['10 min','10 min','10 min','15 min','5 min'] };
     }
     function hex(c) { return (c || '374151').replace('#', ''); }
     function trunc(s, n) { return s && s.length > n ? s.slice(0, n - 1) + '…' : (s || ''); }
@@ -9938,11 +9919,11 @@ async function generateLessonSlideshow() {
 
         // Left column: LI + SC
         const LX = 0.22, LW = 5.85, LY = 0.88;
-        slide.addText('📚  Learning Intention', { x: LX, y: LY, w: LW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
+        slide.addText('  Learning Intention', { x: LX, y: LY, w: LW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
         slide.addShape('rect', { x: LX, y: LY + 0.31, w: LW, h: 0.76, fill: { color: 'EFF6FF' }, line: { color: 'BFDBFE', pt: 0.8 } });
         slide.addText('Students will ' + trunc(d.li || '', 130), { x: LX + 0.1, y: LY + 0.34, w: LW - 0.2, h: 0.7, fontSize: 11, fontFace: 'Calibri', color: '1E40AF', italic: true, valign: 'middle' });
 
-        slide.addText('✅  Success Criteria', { x: LX, y: LY + 1.15, w: LW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
+        slide.addText('  Success Criteria', { x: LX, y: LY + 1.15, w: LW, h: 0.3, fontSize: 10, fontFace: 'Calibri', color: '6B7280', bold: true });
         const scBoxH = Math.min(sc.length * 0.54 + 0.22, 3.0);
         slide.addShape('rect', { x: LX, y: LY + 1.46, w: LW, h: scBoxH, fill: { color: 'F9FAFB' }, line: { color: 'E5E7EB', pt: 0.8 } });
         if (sc.length > 0) {
@@ -9979,13 +9960,13 @@ async function generateLessonSlideshow() {
 
     // Trigger download
     await pres.writeFile({ fileName: 'LessonLab_Term_Slides.pptx' });
-    showToast('📊 Slide deck downloaded!', 'success');
+    showToast(' Slide deck downloaded!', 'success');
   } catch (err) {
     console.error('Slide generator error:', err);
     showToast('Could not generate slides: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = '📊 Generate Slides';
+    btn.textContent = ' Generate Slides';
   }
 }
 
@@ -10029,7 +10010,7 @@ async function generateLessonSlide(idx) {
 
     // Header bar
     s1.addShape('rect', { x:0, y:0, w:10, h:0.8, fill:{color:colour}, line:{color:colour} });
-    s1.addText(`${cfg.icon || '📋'}  ${d.title || 'Lesson'}`, {
+    s1.addText(`${cfg.icon || ''}  ${d.title || 'Lesson'}`, {
       x:0.3, y:0, w:8, h:0.8,
       fontSize:20, fontFace:'Calibri', color:'FFFFFF', bold:true, valign:'middle'
     });
@@ -10039,7 +10020,7 @@ async function generateLessonSlide(idx) {
     });
 
     // Learning Intention
-    s1.addText('📚  Learning Intention', { x:0.3, y:0.95, w:9.4, h:0.3, fontSize:11, fontFace:'Calibri', color:'6B7280', bold:true });
+    s1.addText('  Learning Intention', { x:0.3, y:0.95, w:9.4, h:0.3, fontSize:11, fontFace:'Calibri', color:'6B7280', bold:true });
     s1.addShape('rect', { x:0.3, y:1.26, w:9.4, h:0.8, fill:{color:'EFF6FF'}, line:{color:'BFDBFE', pt:0.8} });
     s1.addText('Students will ' + (d.li || ''), {
       x:0.45, y:1.3, w:9.1, h:0.72,
@@ -10047,7 +10028,7 @@ async function generateLessonSlide(idx) {
     });
 
     // Success Criteria
-    s1.addText('✅  Success Criteria', { x:0.3, y:2.2, w:9.4, h:0.3, fontSize:11, fontFace:'Calibri', color:'6B7280', bold:true });
+    s1.addText('  Success Criteria', { x:0.3, y:2.2, w:9.4, h:0.3, fontSize:11, fontFace:'Calibri', color:'6B7280', bold:true });
     const scBoxH = Math.min(sc.length * 0.52 + 0.2, 2.4);
     s1.addShape('rect', { x:0.3, y:2.52, w:9.4, h:scBoxH, fill:{color:'F9FAFB'}, line:{color:'E5E7EB', pt:0.8} });
     if (sc.length) {
@@ -10080,7 +10061,7 @@ async function generateLessonSlide(idx) {
       s2.addText(times[i] || '', { x:0.52, y:py+0.44, w:2.5, h:0.3, fontSize:10, fontFace:'Calibri', color:'9CA3AF' });
       // Equipment hint for first phase only
       if (i === 0 && d.equipment) {
-        s2.addText('📦 ' + d.equipment.split('·')[0].trim(), {
+        s2.addText(' ' + d.equipment.split('·')[0].trim(), {
           x:3.2, y:py+0.06, w:6.3, h:0.72,
           fontSize:10, fontFace:'Calibri', color:'374151', valign:'middle'
         });
@@ -10094,7 +10075,7 @@ async function generateLessonSlide(idx) {
 
     const safeTitle = (d.title || 'Lesson').replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/ /g,'_');
     await pres.writeFile({ fileName: `LessonLab_Week${lesson.week || ''}_${safeTitle}.pptx` });
-    showToast('📊 Slides downloaded!', 'success');
+    showToast(' Slides downloaded!', 'success');
 
   } catch(e) {
     console.error('Lesson slide error:', e);
@@ -10150,16 +10131,16 @@ document.getElementById('templateUpload').onchange = async (e) => {
     const lines=extractedText.split('\n').map(l=>l.trim()).filter(Boolean);
     const headings=lines.filter(l=>l.length<60&&l.length>2&&(l===l.toUpperCase()||/^[A-Z][A-Za-z\s&\/]+:?$/.test(l)));
     schoolTemplate={name:file.name,size:file.size,type:file.name.endsWith('.pdf')?'pdf':'docx',placeholders:fp,sections:headings.slice(0,20),rawText:extractedText.substring(0,3000)};
-    status.textContent='✅ Template loaded: '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)'; status.style.color='#2E7D32';
+    status.textContent=' Template loaded: '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)'; status.style.color='#2E7D32';
     let info='';
     if(fp.length>0) info+='<b>'+fp.length+' placeholder fields:</b><br>'+fp.map(p=>'<code style="background:#E8F5E9;padding:2px 5px;border-radius:3px;font-size:11px;">'+p+'</code>').join(' ')+'<br><br>';
     if(headings.length>0) info+='<b>Sections detected ('+headings.length+'):</b><br>'+headings.slice(0,12).map(h=>'<span style="font-size:11px;color:#555;">&#9658; '+h+'</span>').join('<br>');
     if(!info) info='<span style="color:#E65100;">&#9888; No structure detected. Add headings or {PLACEHOLDER} fields.</span>';
     placeholders.innerHTML=info;
-    showToast('✅ School template loaded');
+    showToast(' School template loaded');
     var wordBtn = document.getElementById('exportWordBtn');
     if (wordBtn) wordBtn.textContent = '\uD83D\uDCC4 Download Word (Your Template)';
-  } catch(err) { status.textContent='⚠ Error: '+err.message; status.style.color='#E65100'; }
+  } catch(err) { status.textContent=' Error: '+err.message; status.style.color='#E65100'; }
 };
 
 // Curriculum upload handler
@@ -10189,7 +10170,7 @@ document.getElementById('curriculumUpload').onchange = (e) => {
 
         schoolCurriculum = { name: file.name, headers, rows };
 
-        status.textContent = '✅ Curriculum loaded: ' + rows.length + ' entries from ' + file.name;
+        status.textContent = ' Curriculum loaded: ' + rows.length + ' entries from ' + file.name;
         status.style.color = '#2E7D32';
 
         // Build preview table
@@ -10211,11 +10192,11 @@ document.getElementById('curriculumUpload').onchange = (e) => {
           status.textContent += ' — Ready for Term Planner auto-fill!';
         }
       } catch(err) {
-        status.textContent = '⚠ Error parsing CSV: ' + err.message;
+        status.textContent = ' Error parsing CSV: ' + err.message;
         status.style.color = '#C62828';
       }
     } else {
-      status.textContent = '⚠ XLSX support requires opening in browser. Try saving as CSV first.';
+      status.textContent = ' XLSX support requires opening in browser. Try saving as CSV first.';
       status.style.color = '#E65100';
       preview.textContent = 'For best results, save your spreadsheet as CSV and re-upload.';
     }
@@ -10251,15 +10232,15 @@ document.getElementById('uploadLessonFile').onchange = async (e) => {
   try {
     let extractedText = '';
     extractedText = await extractFileText(file).catch(function(){return '';});
-    if (!extractedText.trim()) { statusEl.textContent = '⚠ Could not extract text. Try .docx or .txt.'; statusEl.style.color = '#E65100'; return; }
+    if (!extractedText.trim()) { statusEl.textContent = ' Could not extract text. Try .docx or .txt.'; statusEl.style.color = '#E65100'; return; }
     const parsed = parseLessonText(extractedText);
-    statusEl.textContent = '✅ Extracted — review below then click Apply.'; statusEl.style.color = '#2E7D32';
+    statusEl.textContent = ' Extracted — review below then click Apply.'; statusEl.style.color = '#2E7D32';
     previewEl.innerHTML = Object.entries(parsed).filter(([,v])=>v)
       .map(([k,v])=>'<div style="margin:5px 0;"><b style="color:#1565C0;font-size:11px;text-transform:uppercase;">'+k+':</b><br><span style="font-size:12px;color:#333;">'+v.substring(0,180)+(v.length>180?'…':'')+'</span></div>')
       .join('<hr style="border:none;border-top:1px solid #eee;margin:4px 0;">');
     window._parsedLesson = parsed;
     document.getElementById('applyParsedLessonBtn').style.display = 'block';
-  } catch(err) { statusEl.textContent = '⚠ Error: '+err.message; statusEl.style.color = '#E65100'; }
+  } catch(err) { statusEl.textContent = ' Error: '+err.message; statusEl.style.color = '#E65100'; }
 };
 function parseLessonText(rawText) {
   const result = {
@@ -10406,7 +10387,7 @@ document.getElementById('applyParsedLessonBtn').addEventListener('click', () => 
   const p=window._parsedLesson; if(!p)return;
   [['liInput',p.learningIntention],['scInput',p.successCriteria],['eqInput',p.equipment]].forEach(([id,val])=>{const el=document.getElementById(id);if(el&&val)el.value=val;});
   document.getElementById('uploadLessonModal').style.display='none';
-  showToast('✅ Lesson fields pre-filled! Select a subject to generate.');
+  showToast(' Lesson fields pre-filled! Select a subject to generate.');
 })
 
   function switchUploadTab(tab) {
@@ -10534,9 +10515,9 @@ document.getElementById('saveAllSettingsBtn').onclick = () => {
   };
   try {
     localStorage.setItem('lessonlab_settings', JSON.stringify(settings));
-    alert('✅ Settings saved! They will persist when you reopen the app.');
+    alert(' Settings saved! They will persist when you reopen the app.');
   } catch(err) {
-    alert('⚠ Could not save settings: ' + err.message);
+    alert(' Could not save settings: ' + err.message);
   }
 };
 
@@ -10595,11 +10576,11 @@ document.getElementById('resetSettingsBtn').onclick = () => {
       logoData = saved.logo;
     }
     if (saved.template) {
-      document.getElementById('templateStatus').textContent = '📄 Previously loaded: ' + saved.template.name;
+      document.getElementById('templateStatus').textContent = ' Previously loaded: ' + saved.template.name;
       document.getElementById('templatePlaceholders').textContent = saved.template.placeholders?.length ? saved.template.placeholders.join(', ') : 'Re-upload template to restore full data';
     }
     if (saved.curriculum) {
-      document.getElementById('curriculumStatus').textContent = '📋 Previously loaded: ' + saved.curriculum.name + ' (' + saved.curriculum.rowCount + ' entries)';
+      document.getElementById('curriculumStatus').textContent = ' Previously loaded: ' + saved.curriculum.name + ' (' + saved.curriculum.rowCount + ' entries)';
       document.getElementById('curriculumUploadPreview').textContent = 'Re-upload curriculum file to restore full data';
     }
   } catch(e) { /* ignore parse errors */ }
@@ -10692,7 +10673,7 @@ document.getElementById('pickerNames').onblur = () => {
 // Restore dark mode on load
 if (localStorage.getItem('lessonlab_darkmode') === '1') {
   document.body.classList.add('dark-mode');
-  document.getElementById('darkModeToggle').textContent = '☀️';
+  document.getElementById('darkModeToggle').textContent = '';
 }
 
 // ============================================================================
@@ -11120,7 +11101,7 @@ function showFreeTrialExpiredModal() {
     <div class="pricing-modal" style="max-width:420px;padding:40px;text-align:center;position:relative;">
       <button onclick="document.getElementById('freeTrialExpiredModal').style.display='none'" 
         style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#999;">&times;</button>
-      <div style="font-size:3.5rem;margin-bottom:16px;">✨</div>
+      <div style="font-size:3.5rem;margin-bottom:16px;"></div>
       <h2 style="font-size:1.4rem;margin-bottom:10px;color:#0f172a;">You've seen what AI can do.</h2>
       <p style="color:#475569;margin-bottom:8px;line-height:1.6;">Your 3 free previews are done. Unlock your subject to get AI-generated lessons — unique every time, VC2.0 aligned, ready to teach.</p>
       <p style="color:#94a3b8;font-size:13px;margin-bottom:24px;">From $12/month. Cancel anytime.</p>
@@ -11128,7 +11109,7 @@ function showFreeTrialExpiredModal() {
         style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">
         Unlock AI lessons →
       </button>
-      <p style="margin-top:12px;font-size:12px;color:#94a3b8;">💳 Secure checkout via Stripe</p>
+      <p style="margin-top:12px;font-size:12px;color:#94a3b8;"> Secure checkout via Stripe</p>
     </div>`;
   document.body.appendChild(el);
   el.onclick = function(e) { if (e.target === el) el.style.display = 'none'; };
@@ -11172,19 +11153,19 @@ async function saveLessonToCloud(idx, btn) {
     equipment: d.equipment || '',
     lesson_data: d
   };
-  if (btn) { btn.textContent = '💾 Saving…'; btn.disabled = true; }
+  if (btn) { btn.textContent = ' Saving…'; btn.disabled = true; }
   const result = await api('/lessons', { method: 'POST', body: JSON.stringify(row) });
   if (result.error === 'monthly_limit_reached') {
-    if (btn) { btn.textContent = '💾 Save'; btn.disabled = false; }
+    if (btn) { btn.textContent = ' Save'; btn.disabled = false; }
     showToast('Monthly save limit reached — upgrade to annual for unlimited saves', 'error');
     openPricingModal(true); // true = open with annual tab highlighted
   } else if (result.error) {
     showToast('Save failed: ' + result.error, 'error');
-    if (btn) { btn.textContent = '💾 Save'; btn.disabled = false; }
+    if (btn) { btn.textContent = ' Save'; btn.disabled = false; }
   } else {
-    showToast('Lesson saved to library ✓', 'success');
+    showToast('Lesson saved to library ', 'success');
     lesson.savedId = result.id;
-    if (btn) { btn.textContent = '✓ Saved'; btn.style.background = '#22c55e'; btn.style.color = '#fff'; }
+    if (btn) { btn.textContent = ' Saved'; btn.style.background = '#22c55e'; btn.style.color = '#fff'; }
     monthlyUsage.count = (monthlyUsage.count || 0) + 1;
     if (monthlyUsage.remaining != null) monthlyUsage.remaining = Math.max(0, monthlyUsage.remaining - 1);
     updateUsageBadge();
@@ -11335,7 +11316,7 @@ function renderPricingIntervalToggle() {
         Annual <span style="background:#22c55e;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:4px;">Save 31%</span>
       </button>
     </div>
-    ${isAnnual ? '<p style="text-align:center;font-size:12px;color:#166534;background:#f0fdf4;border-radius:8px;padding:8px 16px;margin-bottom:12px;">🎉 Annual plan — <strong>unlimited</strong> saves + <strong>Full Units included free</strong></p>' : '<p style="text-align:center;font-size:12px;color:#666;margin-bottom:12px;">Monthly plan · 20 lesson saves/month · Full Units $8 one-time add-on</p>'}
+    ${isAnnual ? '<p style="text-align:center;font-size:12px;color:#166534;background:#f0fdf4;border-radius:8px;padding:8px 16px;margin-bottom:12px;"> Annual plan — <strong>unlimited</strong> saves + <strong>Full Units included free</strong></p>' : '<p style="text-align:center;font-size:12px;color:#666;margin-bottom:12px;">Monthly plan · 20 lesson saves/month · Full Units $8 one-time add-on</p>'}
   `;
 }
 
@@ -11373,10 +11354,10 @@ function renderSubjectPricingGrid() {
     const card = document.createElement('div');
     card.style.cssText = `border:2px solid ${owned ? '#4CAF50' : '#e0e0e0'};border-radius:12px;padding:14px 10px;text-align:center;background:${owned ? '#f0fff4' : '#fff'};`;
     card.innerHTML = `
-      <div style="font-size:1.6rem;margin-bottom:4px;">${cfg.icon || '📖'}</div>
+      <div style="font-size:1.6rem;margin-bottom:4px;">${cfg.icon || ''}</div>
       <div style="font-weight:700;font-size:12px;color:#333;">${cfg.name}</div>
       ${owned
-        ? '<div style="color:#4CAF50;font-size:12px;margin-top:6px;font-weight:600;">✓ Active</div>'
+        ? '<div style="color:#4CAF50;font-size:12px;margin-top:6px;font-weight:600;"> Active</div>'
         : `<div style="font-size:11px;color:#888;margin:4px 0 2px;">${priceLabel}</div>${priceNote ? `<div style="font-size:10px;color:#aaa;margin-bottom:6px;">${priceNote}</div>` : '<div style="margin-bottom:6px;"></div>'}<button class="pricing-btn pro-btn" onclick="showSubjectUpgradeModal('${key}','${cfg.name}')" style="padding:6px 8px;font-size:11px;width:100%;">Unlock</button>`
       }
     `;
@@ -11393,20 +11374,20 @@ function renderAddonButtons() {
     const card = document.getElementById('addonCard_' + addon);
     if (!btn) return;
     const owned = myAddons.includes(addon);
-    // Full Units is included with annual — show as "Included with Annual" not "✓ Active"
+    // Full Units is included with annual — show as "Included with Annual" not " Active"
     const includedWithAnnual = addon === 'full_units' && annual && !owned;
     if (!btn.getAttribute('data-default')) btn.setAttribute('data-default', btn.textContent);
     if (owned) {
       btn.disabled = true;
-      btn.textContent = '✓ Active';
+      btn.textContent = ' Active';
       btn.style.background = '#22c55e'; btn.style.color = '#fff';
     } else if (includedWithAnnual) {
       btn.disabled = true;
-      btn.textContent = '✓ Included';
+      btn.textContent = ' Included';
       btn.style.background = '#22c55e'; btn.style.color = '#fff';
     } else if (_pricingInterval === 'year' && addon === 'full_units') {
       btn.disabled = true;
-      btn.textContent = '✓ Included with Annual';
+      btn.textContent = ' Included with Annual';
       btn.style.background = '#22c55e'; btn.style.color = '#fff';
     } else {
       btn.disabled = false;
@@ -11433,7 +11414,7 @@ function showSubjectUpgradeModal(subjKey, displayName) {
     ? (isFirst ? 'Annual · unlimited saves · Full Units included' : 'Annual · additional subject')
     : (isFirst ? 'Monthly · 20 saves/month · more subjects $5/mo' : 'Monthly · additional subject · first subject $12/mo');
   const cfg = (typeof SUBJ_CFG !== 'undefined') ? Object.entries(SUBJ_CFG).find(([k]) => k === subjKey) : null;
-  const icon = cfg ? cfg[1].icon : '📖';
+  const icon = cfg ? cfg[1].icon : '';
   document.getElementById('subjectUpgradeIcon').textContent = icon;
   document.getElementById('subjectUpgradeTitle').textContent = `Unlock ${displayName}`;
   document.getElementById('subjectUpgradeDesc').textContent = `Full lesson generation, saving, and planning for ${displayName}.`;
@@ -11461,7 +11442,7 @@ function showAddonUpgradeModal(addonKey, displayName, price) {
   if (!currentUser) { showAuthModal('signup'); return; }
   _pendingSubjectCheckout = null;
   // Repurpose the subject upgrade modal for addons
-  document.getElementById('subjectUpgradeIcon').textContent = addonKey === 'year_planner' ? '📅' : addonKey === 'cycle_planner' ? '🔄' : '📚';
+  document.getElementById('subjectUpgradeIcon').textContent = addonKey === 'year_planner' ? '' : addonKey === 'cycle_planner' ? '' : '';
   document.getElementById('subjectUpgradeTitle').textContent = `Unlock ${displayName}`;
   document.getElementById('subjectUpgradeDesc').textContent = `Add ${displayName} to your LessonLab subscription.`;
   document.getElementById('subjectUpgradePrice').innerHTML = price.replace('/mo', '<span style="font-size:1rem;font-weight:500;color:#888;">/mo</span>').replace(' one-time', '<span style="font-size:0.8rem;font-weight:400;color:#888;"> one-time</span>');
@@ -11528,18 +11509,18 @@ async function startCheckout(tier) {
 
 async function openBillingPortal() {
   var btn = document.getElementById('manageSubBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '⚙️ Loading...'; }
+  if (btn) { btn.disabled = true; btn.textContent = ' Loading...'; }
   try {
     var data = await api('/stripe/portal', { method: 'POST' });
     if (data.url) {
       window.location.href = data.url;
     } else {
       showToast(data.error || 'Could not open billing portal.', 'error');
-      if (btn) { btn.disabled = false; btn.textContent = '⚙️ Manage subscription & billing →'; }
+      if (btn) { btn.disabled = false; btn.textContent = ' Manage subscription & billing →'; }
     }
   } catch(e) {
     showToast('Network error. Please try again.', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = '⚙️ Manage subscription & billing →'; }
+    if (btn) { btn.disabled = false; btn.textContent = ' Manage subscription & billing →'; }
   }
 }
 
@@ -12013,7 +11994,7 @@ async function saveAccountSettings() {
         const subjKey = subjects[subjects.length - 1];
         const cfg = (typeof SUBJ_CFG !== 'undefined' && SUBJ_CFG[subjKey]) ? SUBJ_CFG[subjKey] : null;
         const name = cfg ? cfg.name : subjKey;
-        showToast('✅ ' + name + ' is now unlocked! Happy teaching.', 'success');
+        showToast(' ' + name + ' is now unlocked! Happy teaching.', 'success');
         updateSubjectLocking();
       }
     }, 3500);
@@ -12124,7 +12105,7 @@ function rateLessonAI(idx, rating, btn) {
     body: JSON.stringify({ rating: rating })
   }).then(function(res) {
     if (res && res.success) {
-      showToast(rating === 1 ? '👍 Thanks! Helps us improve.' : '👎 Noted. We’ll improve this.', 'success');
+      showToast(rating === 1 ? ' Thanks! Helps us improve.' : ' Noted. We’ll improve this.', 'success');
     }
   }).catch(function() {
     btn.disabled = false;
@@ -12171,7 +12152,7 @@ function rateLessonAI(idx, rating, btn) {
   <div style="background:white;border-radius:0.75rem;padding:2rem;max-width:460px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
       <h2 style="margin:0;font-size:1.25rem;font-weight:700;color:#1f2937;">My Account</h2>
-      <button onclick="closeAccountSettings()" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:#6b7280;line-height:1;">✕</button>
+      <button onclick="closeAccountSettings()" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:#6b7280;line-height:1;"></button>
     </div>
 
     <!-- Account info card -->
@@ -12182,13 +12163,13 @@ function rateLessonAI(idx, rating, btn) {
       </div>
       <!-- Upgrade CTA for free users -->
       <div id="acctUpgradeCta" style="display:none;margin-top:0.625rem;padding:0.625rem 0.875rem;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:0.375rem;cursor:pointer;" onclick="closeAccountSettings();showPricingModal();">
-        <div style="font-size:0.8rem;font-weight:700;color:white;">✨ Upgrade to Pro</div>
+        <div style="font-size:0.8rem;font-weight:700;color:white;"> Upgrade to Pro</div>
         <div style="font-size:0.72rem;color:#ddd6fe;margin-top:0.1rem;">Unlock all 9 subjects + slide generator</div>
       </div>
       <!-- Manage subscription for paid users -->
       <div id="acctManageSubscription" style="display:none;margin-top:0.625rem;">
         <button id="manageSubBtn" onclick="openBillingPortal()" style="width:100%;padding:0.5rem 0.875rem;background:transparent;border:1px solid #d1d5db;border-radius:0.375rem;font-size:0.8rem;font-weight:500;color:#374151;cursor:pointer;text-align:left;display:flex;align-items:center;gap:0.5rem;">
-          <span>⚙️</span> Manage subscription &amp; billing →
+          <span></span> Manage subscription &amp; billing →
         </button>
       </div>
     </div>
@@ -12449,7 +12430,7 @@ function rateLessonAI(idx, rating, btn) {
         '<div class="fkctxl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>',
         '<span id="fkctxtxt" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span></div>',
         '<button id="fkbulkbtn" onclick="fkBulkGenerate()" style="display:none;">Generate all weeks</button>',
-        '<button onclick="fkClearChat()" style="background:none;border:none;color:#94a3b8;font-size:11px;cursor:pointer;padding:2px 6px;white-space:nowrap;flex-shrink:0;" title="Clear chat">✕</button>',
+        '<button onclick="fkClearChat()" style="background:none;border:none;color:#94a3b8;font-size:11px;cursor:pointer;padding:2px 6px;white-space:nowrap;flex-shrink:0;" title="Clear chat"></button>',
       '</div>',
       '<div id="fkm"></div>',
       '<div id="fklib">',
@@ -12575,10 +12556,10 @@ function rateLessonAI(idx, rating, btn) {
       chips.push({label: 'More detail', hot: false, action: function() { fkChip('Make it longer and more detailed'); }});
       chips.push({label: 'Copy lesson', hot: false, action: function() { fkCopyLesson(); }});
       chips.push({label: 'Share link', hot: false, action: function() { fkShareLesson(); }});
-      chips.push({label: '📋 Sub plan', hot: false, action: function() { fkSubPlan(); }});
-      chips.push({label: '🏃 Warm-up ideas', hot: false, action: function() { fkWarmups(); }});
-      chips.push({label: '⚠️ Risk assess', hot: false, action: function() { fkRiskAssess(); }});
-      chips.push({label: '📰 Newsletter', hot: false, action: function() { fkNewsletter(); }});
+      chips.push({label: ' Sub plan', hot: false, action: function() { fkSubPlan(); }});
+      chips.push({label: ' Warm-up ideas', hot: false, action: function() { fkWarmups(); }});
+      chips.push({label: ' Risk assess', hot: false, action: function() { fkRiskAssess(); }});
+      chips.push({label: ' Newsletter', hot: false, action: function() { fkNewsletter(); }});
       chips.forEach(function(c) {
         var b = document.createElement('button'); b.className = 'fc' + (c.hot ? ' fchot' : '');
         b.textContent = c.label; b.onclick = c.action; scDiv.appendChild(b);
@@ -13175,7 +13156,7 @@ function rateLessonAI(idx, rating, btn) {
         all.forEach(function(ls) {
           var s = ls.subject||'other'; var w = parseInt(ls.week)||0; if (!w) return;
           if (!termMap[s]) termMap[s] = {};
-          termMap[s][w] = ls.title||(ls.lesson_data&&ls.lesson_data.title)||'✓';
+          termMap[s][w] = ls.title||(ls.lesson_data&&ls.lesson_data.title)||'';
         });
         var termSubjs = Object.keys(termMap).sort();
         if (termSubjs.length) {
@@ -13189,7 +13170,7 @@ function rateLessonAI(idx, rating, btn) {
             tbl += '<tr><td class="fktermsub">'+s.toUpperCase()+'</td>';
             allWeeks.forEach(function(w) {
               var t = termMap[s][w];
-              tbl += t ? '<td class="fktermcell done" title="'+t+'">✓</td>' : '<td class="fktermcell">·</td>';
+              tbl += t ? '<td class="fktermcell done" title="'+t+'"></td>' : '<td class="fktermcell">·</td>';
             });
             tbl += '</tr>';
           });
@@ -13243,8 +13224,8 @@ function rateLessonAI(idx, rating, btn) {
       var r = localStorage.getItem('fk_rate_'+key) || '';
       var up = r==='up' ? ' fkrateactive' : '';
       var dn = r==='down' ? ' fkrateactive' : '';
-      return '<button class="fkratebtn'+up+'" onclick="fkRate('+JSON.stringify(String(key))+',\'up\',this)" title="Good lesson">👍</button>'+
-             '<button class="fkratebtn'+dn+'" onclick="fkRate('+JSON.stringify(String(key))+',\'down\',this)" title="Needs work">👎</button>';
+      return '<button class="fkratebtn'+up+'" onclick="fkRate('+JSON.stringify(String(key))+',\'up\',this)" title="Good lesson"></button>'+
+             '<button class="fkratebtn'+dn+'" onclick="fkRate('+JSON.stringify(String(key))+',\'down\',this)" title="Needs work"></button>';
     }
     window.fkRate = function(key, val, btn) {
       var prev = localStorage.getItem('fk_rate_'+key);
@@ -13350,7 +13331,7 @@ function rateLessonAI(idx, rating, btn) {
       var note = localStorage.getItem('fk_note_'+key)||'';
       var has = note.length > 0;
       return '<button class="fknotebtn'+(has?' fknoteon':'')+'" onclick="fkNoteOpen('+JSON.stringify(String(key))+')" title="'+(has?'View note':'Add note')+'">'+
-        (has?'📝':'+ Note')+'</button>';
+        (has?'':'+ Note')+'</button>';
     }
     window.fkNoteOpen = function(key) {
       var existing = localStorage.getItem('fk_note_'+key)||'';
@@ -13432,7 +13413,7 @@ function rateLessonAI(idx, rating, btn) {
           addMsg(lessonCard(sub), 'fm fl', true);
           if (sub.sub_notes) {
             var notes = Array.isArray(sub.sub_notes) ? sub.sub_notes : [sub.sub_notes];
-            addMsg('<div style="background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:12.5px;margin-top:2px;"><div style="font-weight:600;color:#92400e;margin-bottom:6px;">📋 Sub notes</div>'+notes.map(function(n){return'<div style="color:#78350f;margin-bottom:3px;">• '+n+'</div>';}).join('')+'</div>', 'fb', true);
+            addMsg('<div style="background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:12.5px;margin-top:2px;"><div style="font-weight:600;color:#92400e;margin-bottom:6px;"> Sub notes</div>'+notes.map(function(n){return'<div style="color:#78350f;margin-bottom:3px;">• '+n+'</div>';}).join('')+'</div>', 'fb', true);
           }
           addMsg('Sub plan ready. Download as Word to print for your relief teacher.', 'fb');
           if (lastParams) autoSave(sub, lastParams, null);
@@ -13483,7 +13464,7 @@ function rateLessonAI(idx, rating, btn) {
         warmupResults = wus;
         var saved = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
         var savedTitles = saved.map(function(w){ return w.title; });
-        var card = '<div class="fkwucard"><h4>🏃 Warm-up ideas — ' + (lastLesson.title||'this lesson') + '</h4>' +
+        var card = '<div class="fkwucard"><h4> Warm-up ideas — ' + (lastLesson.title||'this lesson') + '</h4>' +
           wus.map(function(wu, i) {
             var isSaved = savedTitles.indexOf(wu.title) >= 0;
             return '<div class="fkwuitem">'+
@@ -13492,7 +13473,7 @@ function rateLessonAI(idx, rating, btn) {
                 '<div class="fkwudesc">'+wu.description+'</div>'+
                 '<div class="fkwumeta">'+(wu.duration||'')+(wu.equipment?' · '+wu.equipment:'')+(wu.skills&&wu.skills.length?' · '+wu.skills.join(', '):'')+'</div>'+
               '</div>'+
-              '<button class="fkwusave'+(isSaved?' saved':'')+'" onclick="fkSaveWarmup('+i+',this)">'+(isSaved?'✓ Saved':'Save')+'</button>'+
+              '<button class="fkwusave'+(isSaved?' saved':'')+'" onclick="fkSaveWarmup('+i+',this)">'+(isSaved?' Saved':'Save')+'</button>'+
             '</div>';
           }).join('') +
           '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">'+
@@ -13509,7 +13490,7 @@ function rateLessonAI(idx, rating, btn) {
       var bank = JSON.parse(localStorage.getItem('fk_warmup_bank')||'[]');
       var exists = bank.some(function(w){ return w.title === wu.title; });
       if (!exists) { bank.push(Object.assign({}, wu, {saved_at: new Date().toISOString(), source_lesson: lastLesson&&lastLesson.title})); localStorage.setItem('fk_warmup_bank', JSON.stringify(bank)); }
-      if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); }
+      if (btn) { btn.textContent = ' Saved'; btn.classList.add('saved'); }
     };
 
     window.fkSaveAllWarmups = function() {
@@ -13520,7 +13501,7 @@ function rateLessonAI(idx, rating, btn) {
         if (savedTitles.indexOf(wu.title) < 0) { bank.push(Object.assign({}, wu, {saved_at: new Date().toISOString(), source_lesson: lastLesson&&lastLesson.title})); added++; }
       });
       localStorage.setItem('fk_warmup_bank', JSON.stringify(bank));
-      document.querySelectorAll('.fkwusave').forEach(function(b){ b.textContent='✓ Saved'; b.classList.add('saved'); });
+      document.querySelectorAll('.fkwusave').forEach(function(b){ b.textContent=' Saved'; b.classList.add('saved'); });
       addMsg('Saved ' + added + ' warm-ups to your bank. Total: ' + bank.length + '.', 'fb');
     };
 
@@ -13536,13 +13517,13 @@ function rateLessonAI(idx, rating, btn) {
             '<div class="fkwudesc">'+wu.description+'</div>'+
             '<div class="fkwumeta">'+(wu.duration||'')+(wu.equipment?' · '+wu.equipment:'')+'</div>'+
           '</div>'+
-          '<button onclick="fkDeleteWarmup('+i+')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;padding:4px;" title="Remove">✕</button>'+
+          '<button onclick="fkDeleteWarmup('+i+')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;padding:4px;" title="Remove"></button>'+
         '</div>';
       }).join('') : '<p style="color:#94a3b8;font-size:13px;text-align:center;padding:20px 0;">No warm-ups saved yet. Generate a lesson and use the warm-up ideas chip.</p>';
       modal.innerHTML = '<div style="background:#fff;border-radius:12px;padding:20px;width:380px;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);">'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
-          '<div style="font-weight:700;font-size:14px;color:#1e293b;">🏃 Warmup Bank ('+bank.length+')</div>'+
-          '<button onclick="fkWarmupBankClose()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#94a3b8;">✕</button>'+
+          '<div style="font-weight:700;font-size:14px;color:#1e293b;"> Warmup Bank ('+bank.length+')</div>'+
+          '<button onclick="fkWarmupBankClose()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#94a3b8;"></button>'+
         '</div>'+
         '<div id="fkwubankitems">'+content+'</div>'+
         '<div style="margin-top:12px;border-top:1px solid #f1f5f9;padding-top:12px;display:flex;gap:8px;">'+
@@ -13563,7 +13544,7 @@ function rateLessonAI(idx, rating, btn) {
       if (!bank.length) return;
       var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Warmup Bank</title>'+
         '<style>body{font-family:Arial,sans-serif;max-width:700px;margin:32px auto;color:#1e293b;font-size:13px;}h1{font-size:20px;border-bottom:2px solid #1e293b;padding-bottom:8px;margin-bottom:16px;}.wu{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}.wut{font-weight:700;font-size:14px;margin-bottom:4px;}.wud{color:#374151;line-height:1.5;}.wum{font-size:11px;color:#94a3b8;margin-top:4px;}@media print{body{margin:10px;}}</style></head><body>'+
-        '<h1>🏃 Warmup Bank ('+bank.length+')</h1>'+
+        '<h1> Warmup Bank ('+bank.length+')</h1>'+
         bank.map(function(wu){ return '<div class="wu"><div class="wut">'+wu.title+'</div><div class="wud">'+wu.description+'</div><div class="wum">'+(wu.duration||'')+(wu.equipment?' · Equipment: '+wu.equipment:'')+'</div></div>'; }).join('')+
         '</body></html>';
       var w2 = window.open('','_blank'); w2.document.write(html); w2.document.close(); w2.onload = function(){ w2.focus(); w2.print(); };
@@ -13583,7 +13564,7 @@ function rateLessonAI(idx, rating, btn) {
           return '<span class="'+(levels[l]||'rmed')+'">'+l+'</span>';
         };
         var card = '<div class="fkrisk">'+
-          '<h4>⚠️ Risk Assessment — '+(lastLesson.title||'')+'</h4>'+
+          '<h4> Risk Assessment — '+(lastLesson.title||'')+'</h4>'+
           (ra.activity?'<p style="font-size:12px;color:#475569;margin:0 0 8px;"><strong>Activity:</strong> '+ra.activity+'</p>':'')+
           (ra.space?'<p style="font-size:12px;color:#475569;margin:0 0 4px;"><strong>Space:</strong> '+ra.space+'</p>':'')+
           (ra.supervision?'<p style="font-size:12px;color:#475569;margin:0 0 8px;"><strong>Supervision:</strong> '+ra.supervision+'</p>':'')+
@@ -13605,7 +13586,7 @@ function rateLessonAI(idx, rating, btn) {
       var rl = function(l){ var c={Low:'#16a34a',Medium:'#ca8a04',High:'#dc2626'}; return '<span style="color:'+(c[l]||'#ca8a04')+';font-weight:700;">'+l+'</span>'; };
       var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Risk Assessment</title>'+
         '<style>body{font-family:Arial,sans-serif;max-width:750px;margin:32px auto;color:#1e293b;font-size:13px;}h1{font-size:18px;border-bottom:2px solid #1e293b;padding-bottom:8px;}p{margin:4px 0;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#1e293b;color:#fff;padding:7px 10px;text-align:left;font-size:12px;}td{padding:7px 10px;border-bottom:1px solid #e2e8f0;font-size:12px;vertical-align:top;}@media print{body{margin:10px;}}</style></head><body>'+
-        '<h1>⚠️ Risk Assessment — '+(lastLesson&&lastLesson.title||'')+'</h1>'+
+        '<h1> Risk Assessment — '+(lastLesson&&lastLesson.title||'')+'</h1>'+
         '<p><strong>Activity:</strong> '+(ra.activity||'')+'</p>'+
         '<p><strong>Space:</strong> '+(ra.space||'')+'</p>'+
         '<p><strong>Supervision:</strong> '+(ra.supervision||'')+'</p>'+
@@ -13643,7 +13624,7 @@ function rateLessonAI(idx, rating, btn) {
         t.remove();
         var text = reply.replace(/^["']|["']$/g,'').trim();
         var card = '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;font-size:13px;color:#1e293b;line-height:1.6;">'+
-          '<div style="font-weight:600;color:#15803d;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;">📰 Newsletter snippet</div>'+
+          '<div style="font-weight:600;color:#15803d;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;"> Newsletter snippet</div>'+
           '<p id="fknewstext" style="margin:0;font-style:italic;">'+text+'</p>'+
           '<div style="margin-top:10px;display:flex;gap:6px;">'+
             '<button style="padding:5px 11px;border:none;border-radius:6px;font-size:12px;cursor:pointer;background:#15803d;color:#fff;font-family:inherit;" onclick="fkNewsletterCopy()">Copy text</button>'+
@@ -13676,7 +13657,7 @@ function rateLessonAI(idx, rating, btn) {
             if (lastParams) autoSave(lastLesson, lastParams, lastAiId);
           }
           var card = '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#1e293b;">'+
-            '<div style="font-weight:700;color:#1d4ed8;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;">📚 Vic Curriculum 2.0 Alignment</div>'+
+            '<div style="font-weight:700;color:#1d4ed8;margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;"> Vic Curriculum 2.0 Alignment</div>'+
             (tags.length?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">'+tags.map(function(t){return'<span style="background:#fff;border:1px solid #bfdbfe;border-radius:10px;padding:2px 8px;font-size:11px;color:#1d4ed8;font-weight:500;">'+t+'</span>';}).join('')+'</div>':'')+
             descs.map(function(d){ return '<div style="margin-bottom:6px;"><span style="font-weight:700;color:#1d4ed8;">'+d.code+'</span> <span style="color:#374151;">'+d.description+'</span></div>'; }).join('')+
           '</div>';
