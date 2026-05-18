@@ -3,710 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LessonLab — AI lesson plans for Victorian teachers</title>
-<meta name="description" content="AI-powered lesson planning for Victorian F–6 teachers. Unique lessons every time, VC2.0 aligned, Compass export ready. Stop planning on Sundays.">
-<meta property="og:title" content="LessonLab — AI lesson plans for Victorian teachers">
-<meta property="og:description" content="AI-powered lesson planning for Victorian F–6 teachers. Unique lessons every time, VC2.0 aligned, Compass export ready.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.lessonlab.com.au/">
-<meta property="og:image" content="https://www.lessonlab.com.au/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.lessonlab.com.au/og-image.png">
-<link rel="canonical" href="https://www.lessonlab.com.au/">
-<script defer data-domain="lessonlab.com.au" src="https://plausible.io/js/script.js"></script>
+<title>LessonLab — Private beta</title>
+<meta name="description" content="LessonLab is in private beta. Public launch coming soon.">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="googlebot" content="noindex,nofollow,noarchive">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --navy:    #08112b;
-  --navy2:   #0f1e42;
-  --blue:    #3b6ef8;
-  --blue-l:  #6b93fa;
-  --green:   #22c55e;
-  --amber:   #f59e0b;
-  --text:    #0f172a;
-  --muted:   #64748b;
-  --border:  #e2e8f0;
-  --surface: #f8fafc;
-  --white:   #ffffff;
-  --radius:  14px;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-  color: var(--text);
-  background: var(--white);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── NAV ── */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(8,17,43,0.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  padding: 0 32px;
-  height: 62px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 10px;
-  text-decoration: none; color: #fff;
-  font-weight: 800; font-size: 19px; letter-spacing: -0.4px;
-}
-.nav-logo-mark {
-  width: 32px; height: 32px; flex-shrink: 0;
-  background: linear-gradient(135deg, #3b6ef8 0%, #6b93fa 100%);
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 4px 12px rgba(59,110,248,0.4);
-}
-.nav-logo-mark svg { width: 18px; height: 18px; }
-.nav-links { display: flex; align-items: center; gap: 2px; }
-.nav-links a {
-  padding: 7px 14px; border-radius: 8px;
-  font-size: 14px; font-weight: 500;
-  color: rgba(255,255,255,0.65);
-  text-decoration: none;
-  transition: color .15s, background .15s;
-}
-.nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
-.nav-actions { display: flex; align-items: center; gap: 10px; }
-.nav-login {
-  font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.65);
-  text-decoration: none; padding: 8px 14px; border-radius: 8px;
-  transition: color .15s, background .15s;
-}
-.nav-login:hover { color: #fff; background: rgba(255,255,255,0.08); }
-.nav-cta {
-  background: var(--blue);
-  color: #fff; font-size: 14px; font-weight: 600;
-  padding: 9px 18px; border-radius: 9px;
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(59,110,248,0.4);
-  transition: background .15s, transform .1s, box-shadow .15s;
-  display: flex; align-items: center; gap: 5px;
-}
-.nav-cta:hover { background: #2a5ae8; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,110,248,0.5); }
-
-/* ── HERO ── */
-.hero {
-  background: var(--navy);
-  background-image:
-    radial-gradient(ellipse 800px 600px at 70% 50%, rgba(59,110,248,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 400px at 20% 80%, rgba(107,147,250,0.08) 0%, transparent 60%);
-  padding: 90px 32px 80px;
-  overflow: hidden;
-}
-.hero-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 64px; align-items: center;
-}
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(59,110,248,0.15);
-  border: 1px solid rgba(59,110,248,0.3);
-  color: var(--blue-l); font-size: 13px; font-weight: 600;
-  padding: 6px 14px; border-radius: 100px;
-  margin-bottom: 28px;
-  letter-spacing: 0.02em;
-}
-.hero-badge-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--blue-l);
-  box-shadow: 0 0 6px var(--blue-l);
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-.hero h1 {
-  font-size: clamp(38px, 5vw, 58px);
-  font-weight: 900; line-height: 1.08;
-  color: #fff; letter-spacing: -1.5px;
-  margin-bottom: 20px;
-}
-.hero h1 em { font-style: normal; color: var(--blue-l); }
-.hero-sub {
-  font-size: 18px; color: rgba(255,255,255,0.6);
-  line-height: 1.6; margin-bottom: 36px; max-width: 440px;
-}
-.hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 40px; }
-.btn-hero-primary {
-  background: var(--blue);
-  color: #fff; font-size: 16px; font-weight: 700;
-  padding: 14px 28px; border-radius: 11px;
-  text-decoration: none;
-  box-shadow: 0 4px 20px rgba(59,110,248,0.5);
-  transition: all .15s;
-  display: inline-flex; align-items: center; gap: 8px;
-}
-.btn-hero-primary:hover { background: #2a5ae8; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(59,110,248,0.55); }
-.btn-hero-ghost {
-  color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 500;
-  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-  transition: color .15s;
-}
-.btn-hero-ghost:hover { color: #fff; }
-.btn-hero-ghost svg { width: 16px; height: 16px; }
-.hero-trust { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.hero-trust-item {
-  display: flex; align-items: center; gap: 7px;
-  color: rgba(255,255,255,0.45); font-size: 13px; font-weight: 500;
-}
-.hero-trust-item svg { width: 14px; height: 14px; color: var(--green); flex-shrink: 0; }
-
-/* ── LESSON CARD MOCKUP ── */
-.hero-visual { position: relative; display: flex; justify-content: center; }
-.lesson-card {
-  background: #fff; border-radius: 16px;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
-  width: 100%; max-width: 440px; overflow: hidden;
-  transform: perspective(1200px) rotateY(-6deg) rotateX(2deg);
-  transition: transform .3s ease;
-}
-.hero-visual:hover .lesson-card { transform: perspective(1200px) rotateY(-2deg) rotateX(1deg); }
-.lc-header {
-  background: linear-gradient(135deg, #1d4ed8, #3b6ef8);
-  padding: 16px 20px;
-  display: flex; align-items: flex-start; justify-content: space-between;
-}
-.lc-week { color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600; }
-.lc-title { color: #fff; font-size: 15px; font-weight: 700; margin: 3px 0; }
-.lc-meta { color: rgba(255,255,255,0.6); font-size: 11px; }
-.lc-badge { background: rgba(255,255,255,0.2); color: #fff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; white-space: nowrap; }
-.lc-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
-.lc-section-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
-.lc-li-box { background: #eff6ff; border-left: 3px solid #3b6ef8; border-radius: 0 8px 8px 0; padding: 10px 13px; }
-.lc-li-box p { font-size: 13px; color: #1e40af; font-style: italic; line-height: 1.5; }
-.lc-sc { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.lc-sc li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: #374151; line-height: 1.4; }
-.lc-sc li::before { content: ''; color: #22c55e; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-.lc-phases { display: flex; flex-direction: column; gap: 5px; }
-.lc-phase { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; }
-.lc-phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.lc-phase-name { font-size: 12px; font-weight: 600; color: #374151; flex: 1; }
-.lc-phase-time { font-size: 11px; color: #94a3b8; font-weight: 500; }
-.lc-footer { padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
-.lc-footer-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
-.lc-export { display: flex; gap: 6px; }
-.lc-export-btn { font-size: 11px; padding: 4px 10px; border-radius: 6px; border: 1px solid #e2e8f0; color: #64748b; background: #fff; font-weight: 500; }
-.hero-glow { position: absolute; top: -60px; right: -80px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(59,110,248,0.15) 0%, transparent 70%); pointer-events: none; }
-
-/* ── STAT BAR ── */
-.stat-bar { background: var(--navy2); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 20px 32px; }
-.stat-bar-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; }
-.stat-item { text-align: center; }
-.stat-num { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -0.5px; line-height: 1; }
-.stat-label { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 500; margin-top: 3px; letter-spacing: 0.05em; text-transform: uppercase; }
-.stat-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.1); }
-
-/* ── SECTIONS ── */
-.section { padding: 88px 32px; }
-.section.alt { background: var(--surface); }
-.container { max-width: 1160px; margin: 0 auto; }
-.section-label { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
-.section-title { font-size: clamp(30px, 3.5vw, 44px); font-weight: 900; color: var(--text); letter-spacing: -0.8px; line-height: 1.12; margin-bottom: 16px; }
-.section-sub { font-size: 17px; color: var(--muted); max-width: 520px; line-height: 1.6; }
-.centered { text-align: center; }
-.centered .section-sub { margin: 0 auto; }
-
-/* ── STEPS ── */
-.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 56px; }
-.step { padding: 36px 32px; background: #fff; border: 1px solid var(--border); border-radius: 18px; transition: box-shadow .2s, transform .2s; }
-.step:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.08); transform: translateY(-3px); }
-.step-num { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #3b6ef8, #6b93fa); color: #fff; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(59,110,248,0.35); }
-.step h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 10px; letter-spacing: -0.2px; }
-.step p { font-size: 15px; color: var(--muted); line-height: 1.6; }
-
-/* ── SUBJECTS ── */
-.subjects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 56px; }
-.subject-chip { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; transition: all .2s; text-decoration: none; }
-.subject-chip:hover { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,110,248,0.1), 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
-.subject-chip-icon { font-size: 32px; margin-bottom: 10px; display: block; }
-.subject-chip-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.subject-chip-band { font-size: 11px; color: var(--muted); margin-top: 3px; }
-
-/* ── FEATURES ── */
-.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 56px; }
-.feature-card { padding: 32px 28px; border-radius: 18px; border: 1px solid var(--border); background: #fff; transition: box-shadow .2s, transform .2s; }
-.feature-card:hover { box-shadow: 0 10px 36px rgba(0,0,0,0.08); transform: translateY(-2px); }
-.feature-icon { width: 48px; height: 48px; border-radius: 14px; font-size: 22px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
-.feature-card h3 { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 10px; letter-spacing: -0.2px; }
-.feature-card p { font-size: 14.5px; color: var(--muted); line-height: 1.65; }
-
-/* ── TESTIMONIAL ── */
-.testimonial-section { background: linear-gradient(135deg, #08112b 0%, #0f1e42 100%); padding: 88px 32px; }
-.testimonial-inner { max-width: 780px; margin: 0 auto; text-align: center; }
-.stars { font-size: 22px; margin-bottom: 28px; letter-spacing: 3px; }
-.quote { font-size: clamp(20px, 2.5vw, 28px); color: #fff; line-height: 1.5; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 32px; }
-.quote-author { display: flex; align-items: center; justify-content: center; gap: 14px; }
-.quote-avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #3b6ef8, #6b93fa); color: #fff; font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 3px rgba(59,110,248,0.3); }
-.quote-name { color: #fff; font-weight: 700; font-size: 15px; text-align: left; }
-.quote-role { color: rgba(255,255,255,0.5); font-size: 13px; text-align: left; }
-
-/* ── PRICING ── */
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; align-items: start; }
-.pricing-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; position: relative; transition: all .2s; }
-.pricing-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.1); transform: translateY(-3px); }
-.pricing-card.featured { border: 2px solid var(--blue); box-shadow: 0 8px 32px rgba(59,110,248,0.2); }
-.featured-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--blue); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .04em; padding: 5px 16px; border-radius: 100px; white-space: nowrap; box-shadow: 0 4px 12px rgba(59,110,248,0.4); }
-.pricing-tier { font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
-.pricing-price { font-size: 48px; font-weight: 900; color: var(--text); letter-spacing: -1px; line-height: 1; margin-bottom: 8px; }
-.pricing-price sup { font-size: 24px; vertical-align: super; font-weight: 700; }
-.pricing-price span { font-size: 16px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
-.pricing-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
-.pricing-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 28px; }
-.pricing-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text); line-height: 1.4; }
-.pricing-features li.dim { color: var(--muted); }
-.pricing-features li svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
-.pricing-features li:not(.dim) svg { color: var(--green); }
-.pricing-features li.dim svg { color: #cbd5e1; }
-.pricing-cta { display: block; width: 100%; text-align: center; padding: 13px; border-radius: 11px; font-size: 15px; font-weight: 700; text-decoration: none; transition: all .15s; }
-.pricing-cta.primary { background: var(--blue); color: #fff; box-shadow: 0 4px 14px rgba(59,110,248,0.35); }
-.pricing-cta.primary:hover { background: #2a5ae8; box-shadow: 0 6px 20px rgba(59,110,248,0.45); }
-.pricing-cta.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-.pricing-cta.secondary:hover { background: #f1f5f9; }
-.pricing-note { text-align: center; font-size: 13px; color: var(--muted); margin-top: 28px; }
-
-/* ── FAQ ── */
-.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 56px; }
-.faq-item { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px 26px; }
-.faq-item h4 { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
-.faq-item p { font-size: 14.5px; color: var(--muted); line-height: 1.65; }
-
-/* ── CTA BAND ── */
-.cta-band { background: linear-gradient(135deg, #1d4ed8 0%, #3b6ef8 50%, #6b93fa 100%); padding: 80px 32px; text-align: center; }
-.cta-band h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 900; color: #fff; letter-spacing: -0.8px; margin-bottom: 14px; }
-.cta-band p { font-size: 18px; color: rgba(255,255,255,0.75); margin-bottom: 36px; }
-.cta-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-.btn-white { background: #fff; color: #1d4ed8; font-size: 16px; font-weight: 800; padding: 15px 32px; border-radius: 12px; text-decoration: none; box-shadow: 0 8px 28px rgba(0,0,0,0.2); transition: all .15s; }
-.btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,0.25); }
-.btn-white-outline { background: transparent; color: #fff; font-size: 15px; font-weight: 600; padding: 14px 28px; border-radius: 12px; text-decoration: none; border: 2px solid rgba(255,255,255,0.4); transition: all .15s; }
-.btn-white-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
-
-/* ── FOOTER ── */
-footer { background: var(--navy); padding: 32px; text-align: center; }
-.footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
-.footer-links a { color: rgba(255,255,255,0.4); font-size: 14px; text-decoration: none; transition: color .15s; }
-.footer-links a:hover { color: rgba(255,255,255,0.8); }
-footer p { color: rgba(255,255,255,0.25); font-size: 13px; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
-  .lesson-card { transform: none !important; }
-  .steps-grid, .features-grid { grid-template-columns: 1fr 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 56px auto 0; }
-  .faq-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 600px) {
-  nav { padding: 0 16px; }
-  .nav-links { display: none; }
-  .hero { padding: 64px 20px 56px; }
-  .section { padding: 64px 20px; }
-  .steps-grid, .features-grid { grid-template-columns: 1fr; }
-  .stat-bar-inner { gap: 28px; }
-  .stat-divider { display: none; }
-  .stat-num { font-size: 20px !important; }
-  .stat-label { font-size: 10px !important; }
-  .hero-visual { display: none; }
-}
-@media (max-width: 375px) {
-  nav { padding: 0 12px; height: 54px; }
-  .nav-cta { font-size: 13px !important; padding: 8px 14px !important; }
-  .hero h1 { font-size: 28px !important; letter-spacing: -0.5px !important; }
-  .hero-sub { font-size: 15px !important; }
-  .btn-hero-primary { font-size: 14px !important; padding: 12px 20px !important; }
-  .section-title { font-size: 24px !important; }
-  .step, .feature-card, .pricing-card { padding: 24px 20px !important; }
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:    #08112b;
+    --navy2:   #0f1e42;
+    --blue:    #3b6ef8;
+    --blue-l:  #6b93fa;
+    --text:    #ffffff;
+    --muted:   rgba(255,255,255,0.62);
+    --border:  rgba(255,255,255,0.1);
+  }
+  html, body { min-height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    background: var(--navy);
+    background-image:
+      radial-gradient(ellipse 900px 600px at 70% 30%, rgba(59,110,248,0.14) 0%, transparent 70%),
+      radial-gradient(ellipse 700px 500px at 20% 80%, rgba(107,147,250,0.08) 0%, transparent 70%);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .frame {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+  }
+  .card {
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+  }
+  .mark {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #3b6ef8 0%, #6b93fa 100%);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 28px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 12px 28px rgba(59,110,248,0.35);
+  }
+  .mark svg { width: 30px; height: 30px; }
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    margin-bottom: 14px;
+  }
+  .pill {
+    display: inline-block;
+    background: rgba(59,110,248,0.18);
+    color: var(--blue-l);
+    border: 1px solid rgba(59,110,248,0.35);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 28px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  p.lead {
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 440px;
+    margin: 0 auto 32px;
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(59,110,248,0.4);
+    transition: background .15s, transform .1s;
+  }
+  .cta:hover { background: #2a5ae8; transform: translateY(-1px); }
+  .link {
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 6px;
+  }
+  .link:hover { color: #fff; }
+  .meta {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 20px 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+  .meta strong { color: rgba(255,255,255,0.78); font-weight: 600; }
+  @media (max-width: 480px) {
+    h1 { font-size: 28px; }
+    p.lead { font-size: 15px; }
+  }
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-logo-mark">
-      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 2C7.5 2 3 3.5 3 6.5V16C6 14 8.5 13 10 13C11.5 13 14 14 17 16V6.5C17 3.5 12.5 2 10 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
-        <line x1="10" y1="2" x2="10" y2="13" stroke="white" stroke-width="1.8"/>
-        <line x1="4" y1="7.5" x2="8.5" y2="6.5" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
-        <line x1="4" y1="10.5" x2="8.5" y2="9.5" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
-        <line x1="11.5" y1="6.5" x2="16" y2="7.5" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
-        <line x1="11.5" y1="9.5" x2="16" y2="10.5" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
-      </svg>
+  <main class="frame">
+    <div class="card">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h10"></path>
+        </svg>
+      </div>
+      <span class="pill">Private beta</span>
+      <h1>LessonLab</h1>
+      <p class="lead">AI lesson planning for Victorian teachers. We're tightening the bolts before opening doors more widely &mdash; thanks for your patience.</p>
+      <div class="actions">
+        <a class="cta" href="mailto:hello@lessonlab.com.au?subject=LessonLab%20early%20access">Request early access</a>
+        <a class="link" href="/app">Already invited? Sign in &rarr;</a>
+      </div>
     </div>
-    LessonLab
-  </a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#subjects">Subjects</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#pricing">Pricing</a>
+  </main>
+  <div class="meta">
+    Luck Dragon Pty Ltd &middot; Melbourne, Australia &middot; <strong>hello@lessonlab.com.au</strong>
   </div>
-  <div class="nav-actions">
-    <a href="/app" class="nav-login">Log in</a>
-    <a href="/app" class="nav-cta">Get started free →</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="hero-badge-dot"></span>
-        AI-Powered · Victorian Curriculum 2.0 · F–6 · All subjects
-      </div>
-      <h1>Every lesson<br>is <em>different.</em><br>Yours is next.</h1>
-      <p class="hero-sub">Tell LessonLab what you're teaching. Our AI builds a complete, unique lesson plan in seconds — learning intention, success criteria, phases, differentiation, slides, and Compass export. Built for your class. Never repeated.</p>
-      <div class="hero-actions">
-        <a href="/app" class="btn-hero-primary">Try free — no card needed →</a>
-        <a href="#how-it-works" class="btn-hero-ghost">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16 10,8" fill="currentColor" stroke="none"/></svg>
-          See how it works
-        </a>
-      </div>
-      <div class="hero-trust">
-        <div class="hero-trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-          No credit card required
-        </div>
-        <div class="hero-trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-          VC2.0 aligned
-        </div>
-        <div class="hero-trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-          Built for Australian teachers
-        </div>
-      </div>
-    </div>
-
-    <!-- LESSON CARD MOCKUP -->
-    <div class="hero-visual">
-            <div class="hero-glow"></div>
-      <div class="lesson-card" style="background:#fff; border-radius:14px; box-shadow:0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08); width:100%; max-width:500px; overflow:hidden; transform:perspective(1400px) rotateY(-4deg) rotateX(1.5deg); transition:transform .3s ease; font-size:11px; color:#1f2937;">
-        <!-- ===== PAGE 1 ===== -->
-        <div style="background:#e7e6e6; padding:6px 12px; font-size:10px; color:#6b7280; font-weight:600; border-bottom:1px solid #d1d5db; display:flex; justify-content:space-between;">
-          <span>Page 1 of 3 · CRT</span><span style="color:#9ca3af;">LessonLab · v11 · VTLM 2.0</span>
-        </div>
-        <div style="display:grid; grid-template-columns: 1.2fr 1fr; background:#e7e6e6; padding:10px 12px; gap:10px;"><div><div style="font-size:11px; font-style:italic; color:#b22222; font-weight:700;">[School Name]</div><div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:2px;">PE — Lesson Plan</div></div><div style="text-align:right;"><div style="font-size:11px; font-weight:700;">Year level: Foundation</div><div style="font-size:10px; color:#4b5563;">Term 2 · Week 1 · Mon 20 Apr</div></div></div>
-        <div style="background:#fff2cc; padding:8px 12px; text-align:center; font-size:10px;"><span style="font-weight:800;">FOR CRT — READ THIS PAGE ONLY.</span><span style="color:#4b5563;"> The specialist has planned it — follow each step.</span></div>
-        <div style="display:grid; grid-template-columns: 1.1fr 1.1fr 0.9fr;"><div style="background:#fff2cc; padding:6px 10px; font-size:10px; font-weight:800; border-right:1px solid #d1d5db; border-bottom:1px solid #d1d5db;">TODAY</div><div style="background:#fff2cc; padding:6px 10px; font-size:10px; font-weight:800; border-right:1px solid #d1d5db; border-bottom:1px solid #d1d5db;">SUCCESS CRITERIA</div><div style="background:#fff2cc; padding:6px 10px; font-size:10px; font-weight:800; border-bottom:1px solid #d1d5db;">CUE WORDS</div><div style="padding:8px 10px; border-right:1px solid #e5e7eb; border-bottom:1px solid #e5e7eb;"><div style="font-weight:800; font-size:11px;">Running safely & stopping on a signal</div><div style="color:#6b7280; font-size:9px; margin-top:2px;">VC2HPFM01 · VC2HPFM02 · VC2HPFP01</div></div><div style="padding:8px 10px; border-right:1px solid #e5e7eb; border-bottom:1px solid #e5e7eb;"><div style="font-size:10px;">• I can run with eyes up, looking for space.</div><div style="font-size:10px;">• I can change direction to avoid others.</div><div style="font-size:10px;">• I can stop within 3 steps on the signal.</div></div><div style="padding:8px 10px; text-align:center; border-bottom:1px solid #e5e7eb;"><div style="font-weight:800; color:#b22222; font-size:11px;">Eyes up</div><div style="font-weight:800; color:#b22222; font-size:11px;">Find space</div><div style="font-weight:800; color:#b22222; font-size:11px;">3-step stop</div></div></div>
-        <div style="background:#fff2cc; padding:6px 12px; text-align:center; font-size:10px;"><span style="font-weight:800;">SIGNAL: </span><span style="font-weight:800; color:#b22222;">1 whistle = FREEZE</span><span style="color:#4b5563;"> · </span><span style="font-weight:800; color:#b22222;">2 whistles = come in</span></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr;"><div style="background:#e7e6e6; padding:5px 10px; font-size:9px; font-weight:800; border-right:1px solid #d1d5db; border-bottom:1px solid #d1d5db;">EQUIPMENT</div><div style="background:#e7e6e6; padding:5px 10px; font-size:9px; font-weight:800; border-right:1px solid #d1d5db; border-bottom:1px solid #d1d5db;">ENTRY</div><div style="background:#e7e6e6; padding:5px 10px; font-size:9px; font-weight:800; border-bottom:1px solid #d1d5db;">EXIT</div><div style="padding:6px 10px; border-right:1px solid #e5e7eb; border-bottom:1px solid #e5e7eb;"><div style="font-size:9px;">• 20 witches hats</div><div style="font-size:9px;">• 10 floor spots</div><div style="font-size:9px;">• 4 coloured bibs</div><div style="font-size:9px;">• 1 whistle</div></div><div style="padding:6px 10px; border-right:1px solid #e5e7eb; border-bottom:1px solid #e5e7eb;"><div style="font-size:9px;">• Two lines outside, roll order</div><div style="font-size:9px;">• Call to floor spots</div><div style="font-size:9px;">• Silence before teaching</div></div><div style="padding:6px 10px; border-bottom:1px solid #e5e7eb;"><div style="font-size:9px;">• Whistle stop → spots to bin</div><div style="font-size:9px;">• Two lines, walk back</div><div style="font-size:9px;">• Roll stays with CT</div></div></div>
-        <div style="display:grid; grid-template-columns: repeat(5, 1fr); border-bottom:1px solid #d1d5db;"><div style="background:#deebf7; padding:5px 4px; font-size:8.5px; font-weight:800; text-align:center; border-right:1px solid #b6cfe6;">1. WARM-UP</div><div style="background:#deebf7; padding:5px 4px; font-size:8.5px; font-weight:800; text-align:center; border-right:1px solid #b6cfe6;">2. EXPLICIT</div><div style="background:#deebf7; padding:5px 4px; font-size:8.5px; font-weight:800; text-align:center; border-right:1px solid #b6cfe6;">3. WE DO</div><div style="background:#deebf7; padding:5px 4px; font-size:8.5px; font-weight:800; text-align:center; border-right:1px solid #b6cfe6;">4. YOU DO</div><div style="background:#deebf7; padding:5px 4px; font-size:8.5px; font-weight:800; text-align:center;">5. PACK UP</div><div style="padding:5px 4px; font-size:11px; font-weight:800; color:#b22222; text-align:center; border-right:1px solid #e5e7eb;">6 min</div><div style="padding:5px 4px; font-size:11px; font-weight:800; color:#b22222; text-align:center; border-right:1px solid #e5e7eb;">10 min</div><div style="padding:5px 4px; font-size:11px; font-weight:800; color:#b22222; text-align:center; border-right:1px solid #e5e7eb;">15 min</div><div style="padding:5px 4px; font-size:11px; font-weight:800; color:#b22222; text-align:center; border-right:1px solid #e5e7eb;">15 min</div><div style="padding:5px 4px; font-size:11px; font-weight:800; color:#b22222; text-align:center;">4 min</div></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr;"><div style="background:#e7e6e6; padding:5px 10px; font-size:9px; font-weight:800; border-right:1px solid #d1d5db; border-bottom:1px solid #d1d5db;">IF BEHAVIOUR</div><div style="background:#e7e6e6; padding:5px 10px; font-size:9px; font-weight:800; border-right:1px solid #d1d5db; border-bottom:1px solid #d1d5db;">IF IT'S NOT WORKING</div><div style="background:#e7e6e6; padding:5px 10px; font-size:9px; font-weight:800; border-bottom:1px solid #d1d5db;">NOTES FOR CT</div><div style="padding:6px 10px;"><div style="font-size:9px;">• Whistle → name what you saw</div><div style="font-size:9px;">• Re-model + restart</div><div style="font-size:9px;">• Repeat → 1 min sit out</div></div><div style="padding:6px 10px;"><div style="font-size:9px;">• Bigger boundary — spread apart</div><div style="font-size:9px;">• Walking only, no jogging</div><div style="font-size:9px;">• Re-demo with 2 students</div></div><div style="padding:6px 10px;"><div style="font-size:9px;">• Leave this sheet on PE desk</div><div style="font-size:9px;">• Note incidents on back</div><div style="font-size:9px;">• Two lines, walking back</div></div></div>
-        <div style="background:#f8fafc; padding:5px 10px; border-top:1px solid #e5e7eb; font-size:8.5px; color:#94a3b8; display:flex; justify-content:space-between;"><span>[School] · PE · Foundation T2W1 · VC2.0 · VTLM 2.0</span><span>Page 1 of 3 · AI Generated</span></div>
-        <!-- ===== PAGE 2 ===== -->
-        <div style="height:8px; background:#1f2937;"></div>
-        <div style="background:#e7e6e6; padding:6px 12px; font-size:10px; color:#6b7280; font-weight:600; border-bottom:1px solid #d1d5db; display:flex; justify-content:space-between;">
-          <span>Page 2 of 3 · VTLM 2.0 Specialist Detail</span>
-          <span style="color:#9ca3af;">LessonLab · v11 · PE/F/T2W1</span>
-        </div>
-        <div style="padding:10px 12px; background:#fff;">
-          <div style="font-weight:800; font-size:11px; color:#0f172a; margin-bottom:6px;">VTLM 2.0 SPECIALIST DETAIL — PE · Foundation · T2W1</div>
-          <div style="font-size:9.5px; font-weight:700; color:#1e40af; margin-bottom:4px;">4 ELEMENTS OF LEARNING — how this lesson activates each</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; margin-bottom:8px;">
-            <div style="background:#e2efda; padding:5px; border-radius:3px; font-size:8px;"><div style="font-weight:800; font-size:8.5px;">Knowledge & memory</div><div>☑ Chunked teaching</div><div>☑ Worked example</div><div>☑ Vocab tiers</div></div>
-            <div style="background:#e2efda; padding:5px; border-radius:3px; font-size:8px;"><div style="font-weight:800; font-size:8.5px;">Retention & recall</div><div>☑ Cue words repeated</div><div>☑ Freeze x 3</div><div>☑ Re-test W3 + W6</div></div>
-            <div style="background:#e2efda; padding:5px; border-radius:3px; font-size:8px;"><div style="font-weight:800; font-size:8.5px;">Mastery & application</div><div>☑ Spaced practice</div><div>☑ Game = transfer</div><div>☑ Tier 1/2/3 choice</div></div>
-            <div style="background:#e2efda; padding:5px; border-radius:3px; font-size:8px;"><div style="font-weight:800; font-size:8.5px;">Attention & focus</div><div>☑ Routines</div><div>☑ Clear LI/SC</div><div>☑ Distractions minimised</div></div>
-          </div>
-          <div style="font-size:9.5px; font-weight:800; color:#1e40af; margin:6px 0 3px;">ELEMENT 1 — PLANNING</div>
-          <div style="display:grid; grid-template-columns: 0.9fr 1.4fr; gap:4px 8px; font-size:9px; margin-bottom:4px;"><div style="font-weight:700;">Lesson focus</div><div>Running safely and stopping on a signal</div><div style="font-weight:700;">Curriculum (VC2.0)</div><div>VC2HPFM01 · VC2HPFM02 · VC2HPFP01 — Fundamental movement skills · Moving with control</div><div style="font-weight:700;">Where students are at</div><div>Term 1 covered moving safely + responding to whistle. Most can walk/jog inside boundary.</div><div style="font-weight:700;">Sequence (term)</div><div>W1 today · W2 same · W3 direction change · W4 partner · W5 small game</div></div>
-          <div style="font-size:9.5px; font-weight:800; color:#1e40af; margin:6px 0 3px;">ELEMENT 2 — ENABLING LEARNING</div>
-          <div style="font-size:9px; margin-bottom:3px;"><b>Learning Intention:</b> We are learning to run with control in shared space and stop safely on a signal.</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:9px; margin-bottom:4px;"><div><div style="font-weight:700;">Vocabulary (3 tiers)</div><div>• Tier 1: run, stop, walk, listen</div><div>• Tier 2: freeze, signal, boundary</div><div>• Tier 3: 3-step stop, spatial awareness</div></div><div><div style="font-weight:700;">Self-regulation prompts</div><div>• "What helps you remember 3-step stop?"</div><div>• "How will you know you’re safe?"</div><div>• "What if body wants to go faster than eyes?"</div></div></div>
-          <div style="font-size:9.5px; font-weight:800; color:#1e40af; margin:6px 0 3px;">ELEMENT 3 — EXPLICIT TEACHING (I DO)</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:9px;"><div><div style="font-weight:700;">Modelling (chunked)</div><div>Chunk 1 (3m): Safe running demo — eyes up, arms bent.</div><div>Chunk 2 (3m): Unsafe demo — "what was wrong?"</div><div>Chunk 3 (4m): Teach 3-step stop — plant · bend · small step.</div></div><div><div style="font-weight:700;">Sentence stems</div><div>• "I noticed … because …"</div><div>• "A safe runner has … and …"</div><div>• "My 3-step stop is … · … · …"</div><div style="background:#fff2cc; padding:3px 5px; margin-top:4px; font-size:8.5px;"><b>CFU 1:</b> "Show me with your feet — what does a 3-step stop look like?"</div></div></div>
-        </div>
-        <div style="background:#f8fafc; padding:5px 10px; border-top:1px solid #e5e7eb; font-size:8.5px; color:#94a3b8; display:flex; justify-content:space-between;"><span>[School] · PE · Foundation T2W1 · VC2.0 · VTLM 2.0</span><span>Page 2 of 3</span></div>
-        <!-- ===== PAGE 3 ===== -->
-        <div style="height:8px; background:#1f2937;"></div>
-        <div style="background:#e7e6e6; padding:6px 12px; font-size:10px; color:#6b7280; font-weight:600; border-bottom:1px solid #d1d5db; display:flex; justify-content:space-between;"><span>Page 3 of 3 · Application & Inclusive Practice</span><span style="color:#9ca3af;">LessonLab · v11 · PE/F/T2W1</span></div>
-        <div style="padding:10px 12px; background:#fff;">
-          <div style="font-size:9.5px; font-weight:800; color:#1e40af; margin-bottom:4px;">ELEMENT 4 — SUPPORTED APPLICATION (WE DO → YOU DO)</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-bottom:6px;">
-            <div style="background:#fef3c7; padding:5px 7px; border-radius:3px; font-size:8.5px;"><div style="font-weight:800; font-size:9px; color:#92400e;">TIER 1 — modified</div><div>• Walk-only Traffic Lights</div><div>• Smaller boundary</div><div>• Paired with adult/strong peer</div><div>• 3-step stop only</div></div>
-            <div style="background:#dbeafe; padding:5px 7px; border-radius:3px; font-size:8.5px;"><div style="font-weight:800; font-size:9px; color:#1e40af;">CORE — main</div><div>• Full Traffic Lights as scripted</div><div>• Jog · walk · freeze in 3 steps</div><div>• Eyes up + change direction</div><div>• Take a turn as caller</div></div>
-            <div style="background:#d1fae5; padding:5px 7px; border-radius:3px; font-size:8.5px;"><div style="font-weight:800; font-size:9px; color:#065f46;">TIER 3 — extension</div><div>• Freeze in balanced shape</div><div>• Lead as colour caller</div><div>• Mirror partner’s speed</div><div>• Call own colour first</div></div>
-          </div>
-          <div style="background:#fff2cc; padding:5px 8px; border-radius:3px; margin-bottom:6px; font-size:8.5px;"><b>CFU 2 (mid-practice):</b> "Hands up if you stopped in 3 steps. Hands up if you needed more." Adjust before continuing.</div>
-          <div style="font-size:9.5px; font-weight:800; color:#1e40af; margin:6px 0 3px;">REFLECTION · METACOGNITION · EXIT</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:9px; margin-bottom:6px;"><div><div style="font-weight:700;">Self-check vs SC (thumbs)</div><div>• SC1 eyes up — up/middle/down</div><div>• SC2 change direction — up/middle/down</div><div>• SC3 3-step stop — up/middle/down</div></div><div><div style="font-weight:700;">Metacognitive prompts</div><div>• "What helped you most today?"</div><div>• "What was tricky? Try next time?"</div><div>• "Which cue word did you use?"</div></div></div>
-          <div style="font-size:9.5px; font-weight:800; color:#1e40af; margin:6px 0 3px;">INCLUSIVE PRACTICE — PRIORITY COHORTS</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:8.5px; margin-bottom:6px;">
-            <div style="background:#f1f5f9; padding:5px 7px; border-radius:3px;"><div style="font-weight:800; font-size:9px;">EAL/D</div><div>☑ Visual cue cards on belt</div><div>☑ Sentence stems pre-shared</div><div>☑ Pair with bilingual buddy</div><div>☑ Demonstrate, don’t only describe</div></div>
-            <div style="background:#f1f5f9; padding:5px 7px; border-radius:3px;"><div style="font-weight:800; font-size:9px;">Koorie students</div><div>☑ Connect to community/sport</div><div>☑ Yarn circle for reflection</div><div>☑ Acknowledge family knowledge</div><div>☑ Strength-based language</div></div>
-            <div style="background:#f1f5f9; padding:5px 7px; border-radius:3px;"><div style="font-weight:800; font-size:9px;">Students with disability</div><div>☑ Reduce sensory load</div><div>☑ Equipment provided</div><div>☑ Scribed SC self-check</div><div>☑ Movement break option</div><div>☑ IEP adjustments applied</div></div>
-            <div style="background:#f1f5f9; padding:5px 7px; border-radius:3px;"><div style="font-weight:800; font-size:9px;">Students experiencing disadvantage</div><div>☑ No-cost game variants</div><div>☑ Predictable routine = safety</div><div>☑ Strength noticed and named</div><div>☑ No own-kit requirement</div></div>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:9px;"><div><div style="font-weight:800; color:#1e40af; font-size:9.5px; margin-bottom:2px;">ASSESSMENT (formative)</div><div>• Observe SC1–3 during practice + game</div><div>• Tally column on roll sheet</div><div>• Note for class teacher: who still developing</div></div><div><div style="font-weight:800; color:#b22222; font-size:9.5px; margin-bottom:2px;">MISCONCEPTIONS TO WATCH FOR</div><div>• Eyes down on the ball/feet (not "eyes up")</div><div>• Skidding stop (not 3 controlled steps)</div><div>• Bumping = "didn’t see" (cue Find Space)</div></div></div>
-        </div>
-        <div style="background:#f8fafc; padding:5px 10px; border-top:1px solid #e5e7eb; font-size:8.5px; color:#94a3b8; display:flex; justify-content:space-between;"><span>[School] · PE · Foundation T2W1 · VC2.0 · VTLM 2.0</span><span>Page 3 of 3</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- STAT BAR -->
-<div class="stat-bar">
-  <div class="stat-bar-inner">
-    <div class="stat-item"><div class="stat-num">&lt;60s</div><div class="stat-label">To a complete lesson</div></div>
-    <div class="stat-divider"></div>
-    <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">Subjects covered</div></div>
-    <div class="stat-divider"></div>
-    <div class="stat-item"><div class="stat-num">F–6</div><div class="stat-label">Every year level</div></div>
-    <div class="stat-divider"></div>
-    <div class="stat-item"><div class="stat-num">VC2.0</div><div class="stat-label">Curriculum aligned</div></div>
-    <div class="stat-divider"></div>
-    <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Clicks to done</div></div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section class="section" id="how-it-works">
-  <div class="container">
-    <div class="section-head">
-      <div class="section-label">How it works</div>
-      <h2 class="section-title">Three clicks.<br>A lesson no one else has.</h2>
-      <p class="section-sub">No blank page. No trawling VCAA. No adapting someone else's template at 9pm on a Sunday.</p>
-    </div>
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Pick your class</h3>
-        <p>Choose subject, year level, unit, and week. Ten seconds. LessonLab knows the curriculum — you just tell it what you're teaching.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>AI builds your lesson</h3>
-        <p>Our AI generates a complete, unique lesson — VC2.0 learning intention, success criteria, 5-phase teaching sequence, equipment, differentiation, and exit ticket. Built for your class, not anyone else’s.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Export and teach</h3>
-        <p>Download as Word, PDF, or PowerPoint. Export directly to Compass. Save to your library. Done before your coffee gets cold.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SUBJECTS -->
-<section class="section alt" id="subjects">
-  <div class="container">
-    <div class="section-head centered">
-      <div class="section-label">Subjects</div>
-      <h2 class="section-title">Every subject you teach.</h2>
-      <p class="section-sub">Foundation through Year 6. Victorian Curriculum 2.0 across every learning area.</p>
-    </div>
-    <div class="subjects-grid">
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#3b82f6;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Lit</span><div class="subject-chip-name">Literacy</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#10b981;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Num</span><div class="subject-chip-name">Numeracy</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#8b5cf6;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Sci</span><div class="subject-chip-name">Science</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#ef4444;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">PE</span><div class="subject-chip-name">Health & PE</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#f59e0b;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Art</span><div class="subject-chip-name">Visual Arts</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#ec4899;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Mus</span><div class="subject-chip-name">Music</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#a855f7;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Per</span><div class="subject-chip-name">Performing Arts</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#0ea5e9;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">Fr</span><div class="subject-chip-name">French</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#475569;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">DT</span><div class="subject-chip-name">Digital Tech</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#84cc16;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">HSS</span><div class="subject-chip-name">HASS</div><div class="subject-chip-band">F–6</div></a>
-      <a href="/app" class="subject-chip"><span class="subject-chip-icon" style="background:#14b8a6;color:#fff;font-weight:800;font-size:14px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">WB</span><div class="subject-chip-name">Wellbeing</div><div class="subject-chip-band">F–6</div></a>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="section" id="features">
-  <div class="container">
-    <div class="section-head centered">
-      <div class="section-label">What you get</div>
-      <h2 class="section-title">Not a template.<br>Your lesson. Built by AI.</h2>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#eff6ff;color:#1e40af;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;">AI</div>
-        <h3>Never the same lesson twice</h3>
-        <p>Every lesson is AI-generated fresh for your class — different activities, different teaching sequences, different equipment choices. No two teachers get the same lesson.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#eff6ff;"></div>
-        <h3>VC2.0 aligned, every time</h3>
-        <p>Every lesson maps to Victorian Curriculum 2.0 achievement standards. The curriculum checking is already done before you open the page.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#f0fdf4;"></div>
-        <h3>Built for your year level</h3>
-        <p>Foundation and Year 6 lessons look nothing alike — language, expectations, and differentiation are written specifically for your cohort, not a generic class.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fef9c3;"></div>
-        <h3>Full term plans</h3>
-        <p>Generate a complete 10-week unit sequence in one go. See the whole term arc, not just this week's lesson.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fdf4ff;"></div>
-        <h3>Slides, ready to display</h3>
-        <p>One click generates a PowerPoint with learning intention, success criteria, and phase breakdown — formatted and ready to go on the board.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fff1f2;"></div>
-        <h3>Compass export</h3>
-        <p>Export directly in Compass format. No copy-pasting, no reformatting, no extra steps — it lands exactly where you need it.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#f0fdfa;"></div>
-        <h3>Your personal library</h3>
-        <p>Every lesson you generate is saved. Come back next term, reuse what worked, and build up a library that's actually yours — not someone else's generic templates.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIAL -->
-<section class="testimonial-section">
-  <div class="testimonial-inner">
-    <div class="stars">⭐⭐⭐⭐⭐</div>
-    <p class="quote">"I used to spend 3–4 hours on Sunday afternoons planning. Now I get it done in 20 minutes on Friday and actually have a weekend. LessonLab is the only EdTech tool I've paid for that I'd actually miss."</p>
-    <div class="quote-author">
-      <div class="quote-avatar">S</div>
-      <div>
-        <div class="quote-name">Sarah M.</div>
-        <div class="quote-role">Year 3/4 Teacher · Melbourne Primary School</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="section alt" id="pricing">
-  <div class="container">
-    <div class="section-head centered">
-      <div class="section-label">Pricing</div>
-      <h2 class="section-title">Simple, honest pricing.</h2>
-      <p class="section-sub">Pay only for the subjects you teach. No lock-in, cancel anytime. All prices in AUD.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <div class="pricing-tier">Free</div>
-        <div class="pricing-price">$0</div>
-        <p class="pricing-desc">Try it with no commitment. No card needed.</p>
-        <ul class="pricing-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Generate and preview lessons</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Victorian Curriculum 2.0 aligned</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Preview sample lessons in all 11 subjects</li>
-          <li class="dim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Save lessons to library</li>
-          <li class="dim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>DOCX / PDF / Compass export</li>
-          <li class="dim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Slide generation</li>
-        </ul>
-        <a class="pricing-cta secondary" href="/app">Start for free</a>
-      </div>
-
-      <div class="pricing-card featured">
-        <div class="featured-badge">Most popular</div>
-        <div class="pricing-tier">Monthly</div>
-        <div class="pricing-price"><sup>$</sup>12<span>/mo</span></div>
-        <p class="pricing-desc">First subject. Add more subjects for $5/mo each.</p>
-        <ul class="pricing-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Save 20 lessons/month</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>DOCX, PDF & Compass export</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>PowerPoint slide generation</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Year & Cycle Planner included</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Full lesson library</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Cancel anytime</li>
-        </ul>
-        <a class="pricing-cta primary" href="/app">Get started — $12/mo →</a>
-      </div>
-
-      <div class="pricing-card">
-        <div class="pricing-tier">Annual</div>
-        <div class="pricing-price"><sup>$</sup>99<span>/yr</span></div>
-        <p class="pricing-desc">First subject. Save 31%. Extra subjects $45/yr.</p>
-        <ul class="pricing-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Everything in Monthly</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><strong>Unlimited</strong> lesson saves</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><strong>Full Units included free</strong></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>31% cheaper than monthly</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Matches the school year</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Cancel anytime</li>
-        </ul>
-        <a class="pricing-cta secondary" href="/app">Get Annual — $99/yr →</a>
-      </div>
-    </div>
-    <p class="pricing-note">All prices AUD · Secure checkout via Stripe · Cancel anytime</p>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="section">
-  <div class="container">
-    <div class="section-head centered">
-      <div class="section-label">FAQ</div>
-      <h2 class="section-title">Common questions</h2>
-    </div>
-    <div class="faq-grid">
-      <div class="faq-item">
-        <h4>Which curriculum does LessonLab follow?</h4>
-        <p>Victorian Curriculum 2.0 — the updated version. All learning intentions and success criteria are written to the current achievement standards, Foundation through Year 6.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Can I edit the lessons after generating?</h4>
-        <p>Yes. Every lesson is fully editable. Adjust the learning intention, success criteria, teaching notes, and any other field before saving or exporting.</p>
-      </div>
-      <div class="faq-item">
-        <h4>What formats can I export to?</h4>
-        <p>Word document (DOCX), PDF, PowerPoint slides, and Compass-compatible format. One click, already formatted.</p>
-      </div>
-      <div class="faq-item">
-        <h4>What's the difference between Monthly and Annual?</h4>
-        <p>Annual costs 31% less, gives you unlimited lesson saves (monthly caps at 20/month), and includes Full Units free. It also matches the school year so you're not thinking about billing mid-term.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Do I need to install anything?</h4>
-        <p>Nothing. LessonLab runs entirely in your browser. Open the app, sign in, and start generating — no download required.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Can I cancel my subscription?</h4>
-        <p>Yes, anytime. Cancel from your account settings with one click. You keep access until the end of your billing period.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA BAND -->
-<div class="cta-band">
-  <h2>Get your Sundays back.</h2>
-  <p>Your class, your subject, your year level — a complete lesson in seconds. Join Australian teachers who plan in 20 minutes on Friday and actually have a weekend.</p>
-  <div class="cta-actions">
-    <a class="btn-white" href="/app">Try free — no card needed</a>
-    <a class="btn-white-outline" href="/app">Get Annual — $99/year →</a>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-links">
-    <a href="/app">Open app</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#how-it-works">How it works</a>
-    <a href="#subjects">Subjects</a>
-    <a href="mailto:hello@lessonlab.com.au?subject=LessonLab%20enquiry">hello@lessonlab.com.au</a>
-  </div>
-  <div class="footer-links" style="margin-bottom:12px">
-    <a href="/privacy">Privacy Policy</a>
-    <a href="/terms">Terms of Service</a>
-    <a href="/refund">Refund Policy</a>
-  </div>
-  <p><strong style="color:rgba(255,255,255,0.5);">LessonLab</strong> · Built for Australian teachers · Victorian Curriculum 2.0 &nbsp;·&nbsp; © 2026</p>
-  <p style="margin-top:6px">Luck Dragon Pty Ltd &nbsp;·&nbsp; ABN 64 697 434 898</p>
-</footer>
-
 </body>
 </html>
