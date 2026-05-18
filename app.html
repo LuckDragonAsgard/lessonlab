@@ -2442,6 +2442,7 @@ const SUBJ_CFG = {
     colour: '#1F3864',
     accent: '#2E74B5',
     icon: '',
+    band: 'both',
     phases: ['Warm-up', 'Explicit Teaching', 'Practice / Explore', 'Game / Application', 'Pack Up & Reflect'],
     times: ['5–8 min', '10 min', '15 min', '15 min', '5 min'],
     entry: 'Line up outside → call in quietly → each student to their spot.',
@@ -2613,6 +2614,93 @@ const SUBJ_CFG = {
     expectations: 'Respect all feelings. Keep stories confidential. Listen without judgement. Be kind.',
     behaviour: 'Gentle redirect → validate feelings → re-focus on activity → restorative conversation if needed.'
   }
+,
+  'maths': {
+    name: 'Mathematics',
+    full: 'Mathematics',
+    colour: '#B91C1C',
+    accent: '#DC2626',
+    icon: '',
+    band: 'secondary',
+    phases: ['Problem of the day', 'Explicit Teaching', 'Worked Example + Guided Practice', 'Independent Practice', 'Reflection & Exit'],
+    times: ['8 min', '12 min', '15 min', '20 min', '5 min'],
+    entry: 'Enter quietly, starter on board, begin attempt.',
+    exit: 'Pack away, share one strategy or sticking point, line up.',
+    entSay: 'Come in, start the problem on the board.',
+    exSay: 'Pack up. Share one strategy you used or one you got stuck on.',
+    signal: 'Hand up = silence. Countdown 5-4-3-2-1 = eyes on teacher.',
+    expectations: 'Show your working. Try before you ask. Explain your reasoning. Use materials carefully.',
+    behaviour: 'Redirect, re-model worked example, if persistent simplified parallel task with teacher check-in.'
+  },
+  'english-sec': {
+    name: 'English',
+    full: 'English (Secondary)',
+    colour: '#15803D',
+    accent: '#16A34A',
+    icon: '',
+    band: 'secondary',
+    phases: ['Hook', 'Modelled Reading / Writing', 'Guided Analysis (PEEL/TEEL)', 'Independent Practice', 'Share & Reflect'],
+    times: ['5 min', '15 min', '15 min', '20 min', '5 min'],
+    entry: 'Enter quietly, silent reading or starter on board, begin.',
+    exit: 'Pack away, 30-second oral share, line up.',
+    entSay: 'Come in, get your book or device, start the hook on the board.',
+    exSay: 'Pack up. Share one sentence you wrote or one quote you marked.',
+    signal: 'Hand up = silence. Pause-and-listen on cue word.',
+    expectations: 'Engage with the text. Use evidence. Respect each others readings. Edit your own work.',
+    behaviour: 'Redirect with text reference, re-model the move, if persistent paired-reading scaffold.'
+  },
+  'biology': {
+    name: 'Biology / Science',
+    full: 'Biology and General Science (Y7-10)',
+    colour: '#047857',
+    accent: '#10B981',
+    icon: '',
+    band: 'secondary',
+    phases: ['Engage / Hook', 'Explicit Teaching', 'Investigate (Practical)', 'Discuss & Apply', 'Pack-up & Reflect'],
+    times: ['5 min', '12 min', '25 min', '10 min', '8 min'],
+    entry: 'Enter quietly, sit at lab tables, check equipment and safety glasses.',
+    exit: 'Equipment away, wash hands, exit ticket, line up.',
+    entSay: 'Come in, sit at your station, glasses on, check your equipment.',
+    exSay: 'Equipment away. Wash hands. Hand me your exit ticket on the way out.',
+    signal: 'Hand up = silence. Lab bell = stop, hands off equipment.',
+    expectations: 'Follow safety procedures. Record observations as you go. Control your variables. Cooperate at your station.',
+    behaviour: 'Redirect, restate safety rule, equipment privilege paused if misused.'
+  },
+  'history': {
+    name: 'History',
+    full: 'History (Y7-10)',
+    colour: '#7C2D12',
+    accent: '#9A3412',
+    icon: '',
+    band: 'secondary',
+    phases: ['Hook (Source of the day)', 'Explicit Teaching', 'Source Analysis (Guided)', 'Independent Inquiry', 'Reflection & Exit'],
+    times: ['8 min', '12 min', '15 min', '20 min', '5 min'],
+    entry: 'Enter quietly, source of the day on board, write one observation in book.',
+    exit: 'Pack away, state one cause and one consequence from today, line up.',
+    entSay: 'Come in, look at the source, write one observation.',
+    exSay: 'Pack up. Tell me one cause and one consequence before you leave.',
+    signal: 'Hand up = silence. Count 5-4-3-2-1 = eyes on teacher.',
+    expectations: 'Use evidence from sources. Distinguish fact from interpretation. Respect multiple perspectives. Cite where it comes from.',
+    behaviour: 'Redirect, re-anchor to the source, if persistent structured worksheet with sentence starters.'
+  },
+  'geography': {
+    name: 'Geography',
+    full: 'Geography (Y7-10)',
+    colour: '#0E7490',
+    accent: '#0891B2',
+    icon: '',
+    band: 'secondary',
+    phases: ['Hook (Place / Map of the day)', 'Explicit Teaching', 'Spatial Inquiry (Guided)', 'Independent Application', 'Reflection & Exit'],
+    times: ['7 min', '13 min', '15 min', '20 min', '5 min'],
+    entry: 'Enter quietly, map or image of the day on board, write one question about it.',
+    exit: 'Pack away, state one spatial pattern noticed today, line up.',
+    entSay: 'Come in, look at the map, write one question.',
+    exSay: 'Pack up. Name one spatial pattern from today before you leave.',
+    signal: 'Hand up = silence. Count 5-4-3-2-1 = eyes on teacher.',
+    expectations: 'Use spatial language (location, scale, pattern, distribution). Read maps carefully. Cite data sources. Cooperate in fieldwork.',
+    behaviour: 'Redirect, re-anchor to the map, if persistent paired map-reading with sentence stems.'
+  }
+
 };
 
 const SCAFFOLDS = {
@@ -3094,7 +3182,20 @@ const CD = {
       {code:'VC2HP6M01', strand:'Movement and Physical Activity', desc:'Practise specialised movement skills and apply them in a variety of movement sequences, activities and games'},
       {code:'VC2HP6M02', strand:'Movement and Physical Activity', desc:'Design and perform movement sequences and combine movement concepts and strategies in physical activities and games'}
     ]
-  },
+  ,
+    'Years 7-8': [
+      {code:'VC2HP8P01', strand:'Personal, Social and Community Health', desc:'investigate how identity, relationships and respectful behaviour change in adolescence and impact health and wellbeing'},
+      {code:'VC2HP8P02', strand:'Personal, Social and Community Health', desc:'apply decision-making and help-seeking strategies to manage health, safety and wellbeing in everyday situations'},
+      {code:'VC2HP8M01', strand:'Movement and Physical Activity', desc:'perform and refine specialised movement skills in a range of physical activities, applying movement concepts and strategies'},
+      {code:'VC2HP8M02', strand:'Movement and Physical Activity', desc:'evaluate and modify movement skills, tactics and strategies to improve individual and team performance in games and sports'}
+    ],
+    'Years 9-10': [
+      {code:'VC2HP10P01', strand:'Personal, Social and Community Health', desc:'evaluate factors influencing health behaviours and design strategies that promote personal and community health and wellbeing'},
+      {code:'VC2HP10P02', strand:'Personal, Social and Community Health', desc:'analyse how respectful relationships, consent and inclusive behaviour are developed and maintained across diverse contexts'},
+      {code:'VC2HP10M01', strand:'Movement and Physical Activity', desc:'apply and adapt advanced movement and tactical skills across complex physical activities, leading others and reflecting on performance'},
+      {code:'VC2HP10M02', strand:'Movement and Physical Activity', desc:'design, implement and evaluate movement plans (e.g. fitness, training) that meet identified personal goals and community needs'}
+    ]
+},
 
   literacy: {
     'Foundation': [
@@ -3187,9 +3288,95 @@ const CD = {
       {code:'VC2LF6U01', strand:'Understanding Language', desc:'Understand and apply knowledge of French language patterns, features and rules in new contexts'}
     ]
   }
+,
+  maths: {
+    'Years 7-8': [
+      {code:'VC2M8N01', strand:'Number', desc:'recognise, represent and order rational numbers including fractions, decimals, percentages and integers'},
+      {code:'VC2M8N02', strand:'Number', desc:'use efficient strategies and digital tools to solve problems involving the four operations with rational numbers'},
+      {code:'VC2M8A01', strand:'Algebra', desc:'create algebraic expressions, identify equivalent expressions, and solve linear equations using inverse operations'},
+      {code:'VC2M8M01', strand:'Measurement', desc:'solve problems involving the perimeter, area and volume of common shapes and prisms'},
+      {code:'VC2M8SP01', strand:'Space', desc:'identify and reason geometric properties of polygons and circles, including angle relationships'},
+      {code:'VC2M8ST01', strand:'Statistics', desc:'collect, organise, analyse and report on numerical data using mean, median, mode and range'},
+      {code:'VC2M8P01', strand:'Probability', desc:'identify complementary events and use sample spaces to assign probabilities of events'}
+    ],
+    'Years 9-10': [
+      {code:'VC2M10N01', strand:'Number', desc:'apply index laws and operations with surds and rational and irrational numbers to solve problems'},
+      {code:'VC2M10A01', strand:'Algebra', desc:'expand, factorise and simplify algebraic expressions; solve quadratic equations and simultaneous linear equations'},
+      {code:'VC2M10A02', strand:'Algebra', desc:'sketch and interpret linear, quadratic and exponential functions, including using digital tools'},
+      {code:'VC2M10M01', strand:'Measurement', desc:'solve problems involving surface area and volume of composite solids, including using Pythagoras and trigonometry'},
+      {code:'VC2M10SP01', strand:'Space', desc:'apply similarity, congruence and trigonometric ratios to solve geometric problems'},
+      {code:'VC2M10ST01', strand:'Statistics', desc:'describe bivariate numerical data; calculate and interpret measures of spread including IQR and standard deviation'},
+      {code:'VC2M10P01', strand:'Probability', desc:'use two-way tables, tree diagrams and Venn diagrams to analyse conditional probability'}
+    ]
+  },
+  'english-sec': {
+    'Years 7-8': [
+      {code:'VC2E8LA01', strand:'Language', desc:'understand and analyse how language choices including sentence structures, modality and tense shape meaning in texts'},
+      {code:'VC2E8LE01', strand:'Literature', desc:'compare how language features, ideas and viewpoints are presented in literary texts across cultures and contexts'},
+      {code:'VC2E8LY01', strand:'Literacy', desc:'plan, draft, edit and publish analytical, persuasive and imaginative texts using accurate grammar and structure'},
+      {code:'VC2E8LY02', strand:'Literacy', desc:'use PEEL/TEEL structures to construct evidence-based paragraphs in analytical and persuasive writing'},
+      {code:'VC2E8LY03', strand:'Literacy', desc:'listen, speak and present using register, pace and structure appropriate to purpose and audience'}
+    ],
+    'Years 9-10': [
+      {code:'VC2E10LA01', strand:'Language', desc:'analyse and evaluate how language patterns and rhetorical devices are used to position readers and shape interpretation'},
+      {code:'VC2E10LE01', strand:'Literature', desc:'analyse representations of ideas, identities and cultural contexts across literary and multimodal texts'},
+      {code:'VC2E10LE02', strand:'Literature', desc:'evaluate intertextual references, themes and stylistic choices across paired or comparative texts'},
+      {code:'VC2E10LY01', strand:'Literacy', desc:'plan, draft and refine extended analytical, persuasive and creative responses using cohesive paragraphing and academic register'},
+      {code:'VC2E10LY02', strand:'Literacy', desc:'evaluate the credibility, purpose and bias of sources and integrate evidence ethically when constructing arguments'}
+    ]
+  },
+  biology: {
+    'Years 7-8': [
+      {code:'VC2S8H01', strand:'Science as a Human Endeavour', desc:'examine how scientific knowledge has changed over time and how it is influenced by social, cultural and economic factors'},
+      {code:'VC2S8U01', strand:'Science Understanding (Biology)', desc:'describe and classify cells as the basic unit of living things, and the structure and function of organelles in plant and animal cells'},
+      {code:'VC2S8U02', strand:'Science Understanding (Biology)', desc:'explain how multicellular organisms have hierarchical structural organisation from cells to organ systems'},
+      {code:'VC2S8I01', strand:'Science Inquiry', desc:'identify questions and design a fair test, identifying variables (independent, dependent, controlled) and a method appropriate for the question'},
+      {code:'VC2S8I02', strand:'Science Inquiry', desc:'record, represent and analyse data using tables, graphs and digital tools; draw evidence-based conclusions and identify sources of error'}
+    ],
+    'Years 9-10': [
+      {code:'VC2S10H01', strand:'Science as a Human Endeavour', desc:'analyse how scientific knowledge informs personal and community decision-making, including ethical considerations'},
+      {code:'VC2S10U01', strand:'Science Understanding (Biology)', desc:'explain the structure and function of the nervous and endocrine systems and how they coordinate body responses to stimuli'},
+      {code:'VC2S10U02', strand:'Science Understanding (Biology)', desc:'describe how the transmission of heritable characteristics from one generation to the next involves DNA and genes'},
+      {code:'VC2S10U03', strand:'Science Understanding (Biology)', desc:'describe how natural selection explains diversity and the evolution of populations, supported by evidence'},
+      {code:'VC2S10I01', strand:'Science Inquiry', desc:'plan and conduct controlled investigations, justifying choice of method, repeats and digital data-capture tools'},
+      {code:'VC2S10I02', strand:'Science Inquiry', desc:'evaluate the validity, reliability and accuracy of data; propose improvements to method and account for outliers'}
+    ]
+  },
+  history: {
+    'Years 7-8': [
+      {code:'VC2HH8K01', strand:'Knowledge and Understanding', desc:'examine the key features of an ancient or medieval society and how they shaped peoples lives'},
+      {code:'VC2HH8K02', strand:'Knowledge and Understanding', desc:'investigate continuities and changes in technology, beliefs and daily life across a period of history'},
+      {code:'VC2HH8S01', strand:'Concepts and Skills', desc:'analyse and interpret primary and secondary sources, including assessing their origin, purpose, perspective and reliability'},
+      {code:'VC2HH8S02', strand:'Concepts and Skills', desc:'use historical terms and concepts (continuity, change, cause, effect, perspectives, empathy, significance)'},
+      {code:'VC2HH8S03', strand:'Concepts and Skills', desc:'construct historical arguments supported by evidence from a range of sources, acknowledging different perspectives'}
+    ],
+    'Years 9-10': [
+      {code:'VC2HH10K01', strand:'Knowledge and Understanding', desc:'analyse causes, course and consequences of a 20th-century conflict and its impact on Australian society'},
+      {code:'VC2HH10K02', strand:'Knowledge and Understanding', desc:'examine experiences and contributions of Aboriginal and Torres Strait Islander Peoples and migrant communities in shaping modern Australia'},
+      {code:'VC2HH10S01', strand:'Concepts and Skills', desc:'evaluate sources for origin, purpose, audience, reliability and contestability when constructing historical interpretations'},
+      {code:'VC2HH10S02', strand:'Concepts and Skills', desc:'analyse cause and effect, continuity and change, and significance across the period studied'},
+      {code:'VC2HH10S03', strand:'Concepts and Skills', desc:'construct extended historical arguments using evidence from a range of sources, acknowledging multiple perspectives'}
+    ]
+  },
+  geography: {
+    'Years 7-8': [
+      {code:'VC2HG8K01', strand:'Knowledge and Understanding', desc:'examine the characteristics of water as a resource, including how water connects places and influences environmental, economic and social outcomes'},
+      {code:'VC2HG8K02', strand:'Knowledge and Understanding', desc:'investigate the causes and consequences of urbanisation and how liveability of places is shaped by location, services and peoples perceptions'},
+      {code:'VC2HG8S01', strand:'Concepts and Skills', desc:'apply geographical concepts (place, space, environment, interconnection, sustainability, scale, change) to investigations'},
+      {code:'VC2HG8S02', strand:'Concepts and Skills', desc:'collect, represent and interpret geographic data using maps (at a range of scales), graphs, fieldwork, and digital tools including GIS'},
+      {code:'VC2HG8S03', strand:'Concepts and Skills', desc:'communicate findings using geographical terminology and propose responses to a geographic issue, justified with evidence'}
+    ],
+    'Years 9-10': [
+      {code:'VC2HG10K01', strand:'Knowledge and Understanding', desc:'analyse biomes and food security: how human use of biomes affects ecosystems and food production at local and global scales'},
+      {code:'VC2HG10K02', strand:'Knowledge and Understanding', desc:'examine geographies of human wellbeing, including spatial variations in wellbeing within and between countries and contributing factors'},
+      {code:'VC2HG10S01', strand:'Concepts and Skills', desc:'apply geographical concepts to evaluate the influence of environmental and human processes on places at a range of scales'},
+      {code:'VC2HG10S02', strand:'Concepts and Skills', desc:'plan and conduct fieldwork (or virtual fieldwork) using digital tools and GIS to gather, represent and analyse primary data'},
+      {code:'VC2HG10S03', strand:'Concepts and Skills', desc:'evaluate proposals or responses to a geographic challenge, considering economic, environmental and social factors'}
+    ]
+  }
 };
 
-const YEAR_LEVELS = ['Foundation', 'Years 1-2', 'Years 3-4', 'Years 5-6'];
+const YEAR_LEVELS = ['Foundation', 'Years 1-2', 'Years 3-4', 'Years 5-6', 'Years 7-8', 'Years 9-10'];
 
 // ============================================================================
 // STATE
@@ -5785,7 +5972,16 @@ function initPlanner() {
 
   const pills = document.getElementById('yearPills');
   pills.innerHTML = '';
-  YEAR_LEVELS.forEach(yl => {
+  // Sprint 1: filter year-level pills by subject band. Primary subjects show F/1-2/3-4/5-6.
+  // Secondary subjects show 7-8/9-10. 'both' (e.g. Health & PE) shows all.
+  const subjBand = (cfg && cfg.band) || 'primary';
+  const SECONDARY_LEVELS = ['Years 7-8', 'Years 9-10'];
+  const visibleYearLevels = YEAR_LEVELS.filter(function(yl) {
+    if (subjBand === 'both') return true;
+    if (subjBand === 'secondary') return SECONDARY_LEVELS.indexOf(yl) !== -1;
+    return SECONDARY_LEVELS.indexOf(yl) === -1;
+  });
+  visibleYearLevels.forEach(yl => {
     const pill = document.createElement('button');
     pill.className = 'pill';
     pill.textContent = yl;
