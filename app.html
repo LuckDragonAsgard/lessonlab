@@ -6563,6 +6563,7 @@ function displayResults() {
           ${versionBadge}
           <div class="result-title">${lesson.title}</div>
           <div class="result-li">${lesson.li}</div>
+          ${v11BadgeStrip(lesson)}
           <div class="result-actions">
             <button class="btn btn-sec" onclick="previewLesson(${lesson.globalIdx})">Preview</button>
             <button class="btn btn-sec" onclick="editLesson(${lesson.globalIdx})">Edit</button>
@@ -6599,6 +6600,7 @@ function displayResults() {
         ${versionBadge}
         <div class="result-title">${lesson.title}</div>
         <div class="result-li">${lesson.li}</div>
+        ${v11BadgeStrip(lesson)}
         <div class="result-actions">
           <button class="btn btn-sec" onclick="previewLesson(${idx})">Preview</button>
           <button class="btn btn-sec" onclick="editLesson(${idx})">Edit</button>
@@ -6619,6 +6621,21 @@ function displayResults() {
   // Show filter after results are built
   document.getElementById('resultsFilter').style.display = 'block';
   document.getElementById('filterInput').value = '';
+}
+
+function v11BadgeStrip(lesson) {
+  const d = (lesson && (lesson.data || lesson)) || {};
+  if (!(d.lesson_title || d.prompt_version === 11)) return '';
+  const cues = [d.cue_1, d.cue_2, d.cue_3].filter(Boolean);
+  const dur = [d.warm_up_min, d.explicit_min, d.practice_min, d.app_min, d.packup_min].filter(Boolean).reduce((a,b)=>a+(parseInt(b,10)||0), 0);
+  const vc = (d.vc_codes || '').split(' \u2014 ')[0] || '';
+  const esc = s => String(s==null?'':s).replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
+  const badges = [];
+  if (vc) badges.push('<span style=\"background:#eff6ff;color:#1e40af;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;\">' + esc(vc) + '</span>');
+  if (cues.length) badges.push('<span style=\"background:#fef2f2;color:#b22222;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;\">' + esc(cues.join(' \u00b7 ')) + '</span>');
+  if (dur) badges.push('<span style=\"background:#f1f5f9;color:#475569;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;\">' + dur + ' min</span>');
+  badges.push('<span style=\"background:#ecfdf5;color:#065f46;font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:6px;\">v11 \u00b7 3-page</span>');
+  return '<div class=\"result-v11-badges\" style=\"display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px;\">' + badges.join('') + '</div>';
 }
 
 function buildV11PreviewHtml(d) {
