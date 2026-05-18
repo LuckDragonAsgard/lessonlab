@@ -6720,6 +6720,12 @@ function buildV11PreviewHtml(d) {
   out += '<div class="tier t3"><div style="font-weight:800;color:#065f46;margin-bottom:4px;">TIER 3 \u2014 extension</div>'+tier3.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div></div>';
   out += '<p style="background:#fff2cc;padding:8px 11px;border-radius:5px;margin:6px 14px 12px;font-size:12px;"><b>CFU 2 (mid-practice):</b> '+esc(d.cfu_2||'')+'</p>';
   out += '<h2 class="elem-head">REFLECTION \u00b7 METACOGNITION \u00b7 EXIT</h2><div class="body"><p><b>Self-check vs SC:</b></p>'+sc.map(s=>'<p>\u2022 '+esc(s)+' \u2014 thumbs up/middle/down</p>').join('')+'<p style="margin-top:6px;"><b>Metacognitive prompts:</b></p>'+meta.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('')+'</div>';
+  out += '<h2 class="elem-head" style="background:#fef3c7;">WELLBEING DIMENSION \u00b7 SEL THREADED</h2>';
+  out += '<div class="body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11.5px;">';
+  out += '<div style="background:#fffbeb;padding:8px 11px;border-radius:5px;border-left:3px solid #d97706;"><div style="font-weight:800;color:#92400e;margin-bottom:3px;">Wellbeing link</div>'+esc(d.wellbeing_link||'')+'</div>';
+  out += '<div style="background:#ecfdf5;padding:8px 11px;border-radius:5px;border-left:3px solid #059669;"><div style="font-weight:800;color:#065f46;margin-bottom:3px;">SEL moment</div>'+esc(d.sel_moment||'')+'</div>';
+  out += '<div style="background:#eff6ff;padding:8px 11px;border-radius:5px;border-left:3px solid #2563eb;"><div style="font-weight:800;color:#1e40af;margin-bottom:3px;">Help-seeking prompt</div>'+esc(d.help_seeking_prompt||'')+'</div>';
+  out += '</div>';
   out += '<h2 class="elem-head">INCLUSIVE PRACTICE \u2014 PRIORITY COHORTS</h2><div class="body" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
   out += '<div class="cohort"><h4>EAL/D</h4>'+eald.map(s=>'<div>\u2611 '+esc(s)+'</div>').join('')+'</div>';
   out += '<div class="cohort"><h4>Koorie students</h4>'+koorie.map(s=>'<div>\u2611 '+esc(s)+'</div>').join('')+'</div>';
