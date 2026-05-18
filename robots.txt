@@ -1,4 +1,3 @@
+# Private beta — no public indexing while we finish building.
 User-agent: *
-Allow: /
-
-Sitemap: https://www.lessonlab.com.au/sitemap.xml
+Disallow: /
