@@ -6617,10 +6617,105 @@ function displayResults() {
   document.getElementById('filterInput').value = '';
 }
 
+function buildV11PreviewHtml(d) {
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  const eq=[d.equipment_1,d.equipment_2,d.equipment_3,d.equipment_4,d.equipment_5].filter(Boolean);
+  const ent=[d.entry_1,d.entry_2,d.entry_3].filter(Boolean);
+  const ex=[d.exit_1,d.exit_2,d.exit_3].filter(Boolean);
+  const sc=[d.sc_1,d.sc_2,d.sc_3].filter(Boolean);
+  const cues=[d.cue_1,d.cue_2,d.cue_3].filter(Boolean);
+  const beh=[d.behaviour_1,d.behaviour_2,d.behaviour_3,d.behaviour_4].filter(Boolean);
+  const res=[d.rescue_1,d.rescue_2,d.rescue_3].filter(Boolean);
+  const ctn=[d.ct_note_1,d.ct_note_2,d.ct_note_3].filter(Boolean);
+  const prior=[d.prior_1,d.prior_2,d.prior_3].filter(Boolean);
+  const tier1=Array.isArray(d.tier1_tasks)?d.tier1_tasks:[];
+  const core=[d.core_task_1,d.core_task_2,d.core_task_3,d.core_task_4].filter(Boolean);
+  const tier3=Array.isArray(d.tier3_tasks)?d.tier3_tasks:[];
+  const eald=[d.eald_1,d.eald_2,d.eald_3,d.eald_4].filter(Boolean);
+  const koorie=[d.koorie_1,d.koorie_2,d.koorie_3,d.koorie_4].filter(Boolean);
+  const dis=[d.disability_1,d.disability_2,d.disability_3,d.disability_4].filter(Boolean);
+  const disadv=[d.disadv_1,d.disadv_2,d.disadv_3,d.disadv_4].filter(Boolean);
+  const mis=[d.misconception_1,d.misconception_2,d.misconception_3].filter(Boolean);
+  const meta=[d.metacog_1,d.metacog_2,d.metacog_3].filter(Boolean);
+  const lf=[d.lookfor_1,d.lookfor_2,d.lookfor_3].filter(Boolean);
+  const stems=[d.practice_stem_1,d.practice_stem_2].filter(Boolean);
+  const chunks=Array.isArray(d.explicit_chunks)?d.explicit_chunks:[];
+  const school=esc(d.school_name||'[School Name]');
+  const subj=esc(d.subject_name||d.subject||'PE');
+  const yl=esc(d.year_level||'');
+  const term=esc(d.term||'');
+  const week=esc(d.week||'');
+  const css='*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f1f5f9;color:#1f2937;padding:20px;}.page{background:#fff;max-width:780px;margin:0 auto 24px;border:1px solid #d1d5db;border-radius:8px;overflow:hidden;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.05);}.tag{background:#e7e6e6;padding:8px 14px;font-size:12px;color:#6b7280;font-weight:600;border-bottom:1px solid #d1d5db;display:flex;justify-content:space-between;}.hdr{display:grid;grid-template-columns:1.2fr 1fr;background:#e7e6e6;padding:12px 14px;gap:10px;}.crt{background:#fff2cc;padding:10px 14px;text-align:center;font-size:12px;font-weight:600;}.grid3{display:grid;grid-template-columns:1.1fr 1.1fr .9fr;}.grid3-eq{display:grid;grid-template-columns:1fr 1fr 1fr;}.lbl-yellow{background:#fff2cc;padding:8px 12px;font-size:12px;font-weight:800;border-right:1px solid #d1d5db;border-bottom:1px solid #d1d5db;}.lbl-grey{background:#e7e6e6;padding:7px 12px;font-size:11px;font-weight:800;border-right:1px solid #d1d5db;border-bottom:1px solid #d1d5db;}.cell{padding:10px 12px;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;}.cell-end{border-right:none;}.signal{background:#fff2cc;padding:8px 14px;text-align:center;font-size:13px;font-weight:700;}.red{color:#b22222;}.phase-strip{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #d1d5db;}.phase-h{background:#deebf7;padding:7px 4px;font-size:10px;font-weight:800;text-align:center;border-right:1px solid #b6cfe6;}.phase-t{padding:7px 4px;font-size:13px;font-weight:800;color:#b22222;text-align:center;border-right:1px solid #e5e7eb;}.foot{background:#f8fafc;padding:8px 14px;border-top:1px solid #e5e7eb;font-size:11px;color:#94a3b8;display:flex;justify-content:space-between;}h2.elem-head{background:#e2efda;padding:8px 14px;font-size:13px;font-weight:800;color:#1f2937;margin-top:12px;}.body{padding:14px;}.body p{margin-bottom:6px;}.tier{background:#fef3c7;padding:8px 11px;border-radius:5px;font-size:12px;}.tier.core{background:#dbeafe;}.tier.t3{background:#d1fae5;}.cohort{background:#f1f5f9;padding:8px 11px;border-radius:5px;font-size:11.5px;}.cohort h4{font-weight:800;font-size:12px;margin-bottom:3px;}b{font-weight:700;}.elem-grid{display:grid;grid-template-columns:.9fr 1.4fr;gap:6px 12px;font-size:12px;padding:0 14px 8px;}';
+  function row(yellow, cells) {
+    let h='<div class="grid3-eq">';
+    for (let i=0;i<3;i++) h += '<div class="'+(yellow?'lbl-yellow':'lbl-grey')+'"'+(i===2?' style="border-right:none;"':'')+'>'+yellow[i]+'</div>';
+    return h;
+  }
+  let out = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'+css+'</style></head><body>';
+  // PAGE 1
+  out += '<div class="page"><div class="tag"><span>Page 1 of 3 \u00b7 CRT</span><span>LessonLab \u00b7 v11 \u00b7 VTLM 2.0</span></div>';
+  out += '<div class="hdr"><div><div style="font-style:italic;color:#b22222;font-weight:700;">'+school+'</div><div style="font-size:15px;font-weight:800;margin-top:2px;">'+subj+' \u2014 Lesson Plan</div></div><div style="text-align:right;"><div style="font-weight:700;">Year level: '+yl+'</div><div style="color:#4b5563;font-size:12px;">Term '+term+' \u00b7 Week '+week+'</div></div></div>';
+  out += '<div class="crt"><b>FOR CRT \u2014 READ THIS PAGE ONLY.</b> Everything you need is on this page. The specialist has planned it \u2014 follow each step in order.</div>';
+  out += '<div class="grid3"><div class="lbl-yellow">TODAY</div><div class="lbl-yellow">SUCCESS CRITERIA</div><div class="lbl-yellow" style="border-right:none;">CUE WORDS</div>';
+  out += '<div class="cell"><div style="font-weight:800;">'+esc(d.lesson_title||'')+'</div><div style="color:#6b7280;font-size:11px;margin-top:3px;">'+esc(d.vc_codes||'')+'</div></div>';
+  out += '<div class="cell">'+sc.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cell cell-end" style="text-align:center;">'+cues.map(c=>'<div class="red" style="font-weight:800;">'+esc(c)+'</div>').join('')+'</div></div>';
+  out += '<div class="signal">'+esc(d.signal_text||'')+'</div>';
+  out += '<div class="grid3-eq"><div class="lbl-grey">EQUIPMENT</div><div class="lbl-grey">ENTRY</div><div class="lbl-grey" style="border-right:none;">EXIT</div>';
+  out += '<div class="cell">'+eq.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cell">'+ent.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cell cell-end">'+ex.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div></div>';
+  out += '<div class="phase-strip"><div class="phase-h">1. WARM-UP</div><div class="phase-h">2. EXPLICIT</div><div class="phase-h">3. WE DO</div><div class="phase-h">4. YOU DO</div><div class="phase-h" style="border-right:none;">5. PACK UP</div>';
+  out += '<div class="phase-t">'+esc(d.warm_up_min||'')+' min</div><div class="phase-t">'+esc(d.explicit_min||'')+' min</div><div class="phase-t">'+esc(d.practice_min||'')+' min</div><div class="phase-t">'+esc(d.app_min||'')+' min</div><div class="phase-t" style="border-right:none;">'+esc(d.packup_min||'')+' min</div></div>';
+  out += '<div class="grid3-eq"><div class="lbl-grey">IF BEHAVIOUR</div><div class="lbl-grey">IF IT IS NOT WORKING</div><div class="lbl-grey" style="border-right:none;">NOTES FOR CT</div>';
+  out += '<div class="cell">'+beh.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cell">'+res.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cell cell-end">'+ctn.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div></div>';
+  out += '<div class="foot"><span>'+school+' \u00b7 '+subj+' \u00b7 '+yl+' '+term+'W'+week+' \u00b7 VC2.0 \u00b7 VTLM 2.0</span><span>Page 1 of 3 \u00b7 AI Generated</span></div></div>';
+  // PAGE 2
+  out += '<div class="page"><div class="tag"><span>Page 2 of 3 \u00b7 VTLM 2.0 Specialist Detail</span><span>LessonLab \u00b7 v11</span></div>';
+  out += '<h2 class="elem-head">ELEMENT 1 \u2014 PLANNING</h2>';
+  out += '<div class="elem-grid"><div><b>Lesson focus</b></div><div>'+esc(d.lesson_title||'')+'</div><div><b>Curriculum (VC2.0)</b></div><div>'+esc(d.vc_codes||'')+'</div><div><b>Where students are at</b></div><div>'+prior.map(esc).join(' ')+'</div><div><b>Sequence (term)</b></div><div>'+esc(d.sequence_text||'')+'</div><div><b>Resources prepared</b></div><div>'+esc(d.resources_prepared||'')+'</div></div>';
+  out += '<h2 class="elem-head">ELEMENT 2 \u2014 ENABLING LEARNING</h2><div class="body">';
+  out += '<p><b>Learning intention:</b> '+esc(d.learning_intention||'')+'</p>';
+  out += '<p><b>Why this matters:</b> '+esc(d.why_this_matters||'')+'</p>';
+  out += '<p><b>Vocabulary (Tier 1 / everyday):</b> '+esc(d.vocab_tier_1||'')+'</p>';
+  out += '<p><b>Vocabulary (Tier 2 / lesson):</b> '+esc(d.vocab_tier_2||'')+'</p>';
+  out += '<p><b>Vocabulary (Tier 3 / subject):</b> '+esc(d.vocab_tier_3||'')+'</p>';
+  out += '<p><b>Self-regulation prompts:</b></p>'+meta.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('')+'</div>';
+  out += '<h2 class="elem-head">ELEMENT 3 \u2014 EXPLICIT TEACHING (I DO)</h2><div class="body">';
+  out += '<p><b>Focus the learning:</b> '+esc(d.focus_the_learning||'')+'</p>';
+  out += '<p><b>Chunked teaching:</b></p>'+chunks.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('');
+  out += '<p><b>Cue words:</b> '+esc(d.explicit_cues||cues.join(' \u00b7 '))+'</p>';
+  out += '<p><b>Sentence stems:</b></p>'+stems.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('');
+  out += '<p style="background:#fff2cc;padding:8px 11px;border-radius:5px;margin-top:6px;"><b>CFU 1:</b> '+esc(d.cfu_1||'')+'</p></div>';
+  out += '<div class="foot"><span>'+school+' \u00b7 '+subj+' \u00b7 '+yl+' '+term+'W'+week+'</span><span>Page 2 of 3</span></div></div>';
+  // PAGE 3
+  out += '<div class="page"><div class="tag"><span>Page 3 of 3 \u00b7 Application & Inclusive Practice</span><span>LessonLab \u00b7 v11</span></div>';
+  out += '<h2 class="elem-head">ELEMENT 4 \u2014 SUPPORTED APPLICATION (WE DO \u2192 YOU DO)</h2>';
+  out += '<div class="body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">';
+  out += '<div class="tier"><div style="font-weight:800;color:#92400e;margin-bottom:4px;">TIER 1 \u2014 modified</div>'+tier1.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="tier core"><div style="font-weight:800;color:#1e40af;margin-bottom:4px;">CORE \u2014 main</div>'+core.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="tier t3"><div style="font-weight:800;color:#065f46;margin-bottom:4px;">TIER 3 \u2014 extension</div>'+tier3.map(s=>'<div>\u2022 '+esc(s)+'</div>').join('')+'</div></div>';
+  out += '<p style="background:#fff2cc;padding:8px 11px;border-radius:5px;margin:6px 14px 12px;font-size:12px;"><b>CFU 2 (mid-practice):</b> '+esc(d.cfu_2||'')+'</p>';
+  out += '<h2 class="elem-head">REFLECTION \u00b7 METACOGNITION \u00b7 EXIT</h2><div class="body"><p><b>Self-check vs SC:</b></p>'+sc.map(s=>'<p>\u2022 '+esc(s)+' \u2014 thumbs up/middle/down</p>').join('')+'<p style="margin-top:6px;"><b>Metacognitive prompts:</b></p>'+meta.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('')+'</div>';
+  out += '<h2 class="elem-head">INCLUSIVE PRACTICE \u2014 PRIORITY COHORTS</h2><div class="body" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+  out += '<div class="cohort"><h4>EAL/D</h4>'+eald.map(s=>'<div>\u2611 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cohort"><h4>Koorie students</h4>'+koorie.map(s=>'<div>\u2611 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cohort"><h4>Students with disability</h4>'+dis.map(s=>'<div>\u2611 '+esc(s)+'</div>').join('')+'</div>';
+  out += '<div class="cohort"><h4>Students experiencing disadvantage</h4>'+disadv.map(s=>'<div>\u2611 '+esc(s)+'</div>').join('')+'</div></div>';
+  out += '<div class="body" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><b style="color:#1e40af;">ASSESSMENT (formative)</b><p>'+esc(d.assessment_notes||'')+'</p>'+lf.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('')+'</div><div><b style="color:#b22222;">MISCONCEPTIONS TO WATCH FOR</b>'+mis.map(s=>'<p>\u2022 '+esc(s)+'</p>').join('')+'</div></div>';
+  out += '<div class="foot"><span>'+school+' \u00b7 '+subj+' \u00b7 '+yl+' '+term+'W'+week+'</span><span>Page 3 of 3</span></div></div>';
+  out += '</body></html>';
+  return out;
+}
+
 function previewLesson(idx) {
   const lesson = state.lessons[idx];
-  document.getElementById('previewTitle').textContent = `Week ${lesson.week}: ${lesson.title}`;
-  document.getElementById('previewFrame').srcdoc = lesson.html;
+  const d = lesson.data || lesson;
+  const isV11 = !!(d.lesson_title || d.prompt_version === 11 || lesson.lesson_title);
+  document.getElementById('previewTitle').textContent = `Week ${lesson.week}: ${lesson.title || d.lesson_title || ''}`;
+  document.getElementById('previewFrame').srcdoc = isV11 ? buildV11PreviewHtml(d) : lesson.html;
   document.getElementById('previewModal').classList.add('show');
 }
 
