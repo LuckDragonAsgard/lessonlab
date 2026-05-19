@@ -1849,6 +1849,11 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
       <div style="flex:1;height:1px;background:#e5e7eb;"></div>
     </div>
 
+    <div class="band-toggle" id="bandToggle" role="tablist" aria-label="Subject band filter" style="display:flex;gap:6px;margin:0 0 14px;justify-content:center;flex-wrap:wrap;">
+      <button class="band-btn active" data-band="all" role="tab" aria-selected="true" style="padding:6px 14px;border:1px solid var(--border, #e2e8f0);border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:#0f172a;cursor:pointer;">All subjects</button>
+      <button class="band-btn" data-band="primary" role="tab" aria-selected="false" style="padding:6px 14px;border:1px solid var(--border, #e2e8f0);border-radius:999px;background:#fff;font-size:13px;font-weight:500;color:#475569;cursor:pointer;">Primary (F–6)</button>
+      <button class="band-btn" data-band="secondary" role="tab" aria-selected="false" style="padding:6px 14px;border:1px solid var(--border, #e2e8f0);border-radius:999px;background:#fff;font-size:13px;font-weight:500;color:#475569;cursor:pointer;">Secondary (7–10)</button>
+    </div>
     <div class="subjects-grid" id="subjectsGrid" role="grid" aria-label="Subject selection"></div>
 
     <div id="landingStats" style="margin:12px 0 20px;text-align:center;color:#9ca3af;font-size:12px;"></div>
@@ -5892,6 +5897,19 @@ initBuildWorker();
 // UI FUNCTIONS
 // ============================================================================
 
+// Band toggle click handler — wires once on first call to initSubjects() via a module-level guard
+let __bandToggleWired = false;
+function wireBandToggle() {
+  if (__bandToggleWired) return; __bandToggleWired = true;
+  const bar = document.getElementById('bandToggle');
+  if (!bar) return;
+  bar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.band-btn');
+    if (!btn) return;
+    localStorage.setItem('ll_band_filter', btn.dataset.band);
+    initSubjects();
+  });
+}
 function goPanel(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById(name + 'Panel').classList.add('active');
@@ -5901,9 +5919,25 @@ function goPanel(name) {
 }
 
 function initSubjects() {
+  wireBandToggle();
   const grid = document.getElementById('subjectsGrid');
   grid.innerHTML = '';
+  // Band filter: read saved preference, default 'all'
+  const currentBand = localStorage.getItem('ll_band_filter') || 'all';
+  // Sync the toggle visual state
+  document.querySelectorAll('#bandToggle .band-btn').forEach(b => {
+    const active = b.dataset.band === currentBand;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active ? 'true' : 'false');
+    b.style.background = active ? '#3b6ef8' : '#fff';
+    b.style.color = active ? '#fff' : (active ? '#fff' : '#475569');
+    b.style.fontWeight = active ? '700' : '500';
+  });
   Object.entries(SUBJ_CFG).forEach(([key, cfg]) => {
+    const band = cfg.band || 'primary';
+    // Filter: 'all' shows everything; 'primary' shows primary+both; 'secondary' shows secondary+both
+    if (currentBand === 'primary' && band === 'secondary') return;
+    if (currentBand === 'secondary' && band === 'primary') return;
     const card = document.createElement('div');
     card.className = 'subject-card';
     card.innerHTML = `
