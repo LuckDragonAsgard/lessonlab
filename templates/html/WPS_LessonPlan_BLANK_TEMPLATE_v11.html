@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPS Lesson Plan — Blank Template</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    background: #e0e0e0;
+    color: #1a1a1a;
+    font-size: 10pt;
+    line-height: 1.35;
+    /* Ensure page-wrapper can scroll horizontally if narrower than A4 */
+    min-width: 226mm; /* 210mm page + 16px*2 padding */
+  }
+
+  /* ── GLOBAL TEXT WRAPPING ── */
+  /* All text wraps naturally — no overflow on single lines */
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /* ── PRINT BAR (hidden on print) ── */
+  #print-bar {
+    background: #1F3864;
+    color: white;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 11pt;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  #print-bar button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 4px;
+    font-size: 11pt;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #print-bar button:hover { background: #388E3C; }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 30px;
+    gap: 24px;
+    /* Let pages scroll horizontally if viewport is narrower than A4 */
+    overflow-x: auto;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    padding: 8mm 8mm 14mm 8mm; /* extra bottom for footer */
+    position: relative;
+    /* Hard overflow wall */
+    overflow: hidden;
+    /* Don't shrink below A4 width in flex */
+    flex-shrink: 0;
+  }
+
+  /* ── CONTENTEDITABLE STYLING ── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 2px;
+    transition: background 0.15s;
+    /* Text always wraps — never overflows sideways */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-height: 1em;
+  }
+  [contenteditable="true"]:hover {
+    background: rgba(100,150,255,0.07) !important;
+  }
+  [contenteditable="true"]:focus {
+    background: rgba(100,150,255,0.13) !important;
+    outline: 1.5px dashed #5b8def;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PAGE 1 – CRT ONE-PAGER
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Header ── */
+  .p1-header {
+    background: #1F3864;
+    color: white;
+    padding: 5px 8px 4px;
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .p1-header-left h1 {
+    font-size: 13.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .p1-header-left p {
+    font-size: 8.5pt;
+    opacity: 0.88;
+    margin-top: 1px;
+  }
+  .p1-header-right {
+    text-align: right;
+    font-size: 8.5pt;
+    opacity: 0.88;
+    line-height: 1.5;
+  }
+  .p1-header-right strong {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  /* ── Badge bar ── */
+  .badge-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 4px;
+    padding: 3px 0;
+  }
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 8pt;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+  }
+  .badge-vc  { background: #1B6B2A; }
+  .badge-yr  { background: #0277BD; }
+  .badge-dur { background: #6A1B9A; }
+  .badge-eq  { background: #BF360C; }
+  .badge-set { background: #455A64; }
+
+  /* ── CRT label ── */
+  .crt-label {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #1F3864;
+    border-bottom: 1.5px solid #1F3864;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Lesson overview row ── */
+  .overview-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.2fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .overview-cell {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 2px 4px;
+  }
+  .overview-cell .oc-label {
+    font-size: 7pt;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .overview-cell .oc-val {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #1F3864;
+  }
+
+  /* ── Learning intention ── */
+  .li-box {
+    background: #EBF4FB;
+    border-left: 3px solid #1F3864;
+    padding: 2px 5px;
+    margin-bottom: 4px;
+    border-radius: 0 2px 2px 0;
+    font-size: 9pt;
+  }
+  .li-box .li-label {
+    font-size: 7pt;
+    font-weight: 700;
+    color: #1F3864;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Phase strip (CRT page) ── */
+  .phase-strip {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 3px;
+    align-items: stretch;
+  }
+  .phase-sidebar {
+    width: 16px;
+    border-radius: 2px 0 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .phase-sidebar span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .phase-body {
+    flex: 1;
+    border: 0.5px solid #ddd;
+    border-radius: 0 2px 2px 0;
+    padding: 2px 4px;
+  }
+  .phase-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1px;
+  }
+  .phase-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: inherit;
+  }
+  .phase-time-badge {
+    font-size: 7.5pt;
+    color: white;
+    padding: 0px 5px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .phase-focus {
+    font-size: 8pt;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 2px;
+  }
+
+  /* Numbered step */
+  .step-row {
+    display: flex;
+    gap: 3px;
+    align-items: flex-start;
+    margin-bottom: 1px;
+  }
+  .step-num {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 0.5px;
+  }
+  .step-text {
+    font-size: 8.5pt;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  /* Note / CFU / Transition boxes */
+  .note-box {
+    background: #EBF4FB;
+    border-left: 2px solid #1E88E5;
+    padding: 1.5px 4px;
+    margin: 2px 0;
+    font-size: 8pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .note-box .nb-label {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #1565C0;
+  }
+  .cfu-box {
+    background: #FFFDE7;
+    border-left: 2px solid #F9A825;
+    padding: 1.5px 4px;
+    margin: 2px 0;
+    font-size: 8pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .cfu-box .nb-label {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #E65100;
+  }
+  .trans-line {
+    font-size: 8pt;
+    color: #1B5E20;
+    font-style: italic;
+    margin: 1px 0;
+    padding-left: 4px;
+  }
+
+  /* ── Phase colours ── */
+  .wu-sidebar  { background: #1565C0; }
+  .wu-title    { color: #1565C0; }
+  .wu-step-num { background: #1565C0; }
+  .wu-time     { background: #1565C0; }
+
+  .et-sidebar  { background: #6A1B9A; }
+  .et-title    { color: #6A1B9A; }
+  .et-step-num { background: #6A1B9A; }
+  .et-time     { background: #6A1B9A; }
+
+  .wd-sidebar  { background: #2E7D32; }
+  .wd-title    { color: #2E7D32; }
+  .wd-step-num { background: #2E7D32; }
+  .wd-time     { background: #2E7D32; }
+
+  .yd-sidebar  { background: #BF360C; }
+  .yd-title    { color: #BF360C; }
+  .yd-step-num { background: #BF360C; }
+  .yd-time     { background: #BF360C; }
+
+  .pu-sidebar  { background: #455A64; }
+  .pu-title    { color: #455A64; }
+  .pu-step-num { background: #455A64; }
+  .pu-time     { background: #455A64; }
+
+  /* ── Resources & Safety ── */
+  .res-safety {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-top: 3px;
+  }
+  .res-box {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 2px 4px;
+  }
+  .res-box .rb-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #555;
+    margin-bottom: 1px;
+  }
+  .res-box ul {
+    list-style: disc;
+    padding-left: 12px;
+    font-size: 8.5pt;
+    line-height: 1.4;
+  }
+
+  /* ── Page footer ── */
+  .page-footer {
+    position: absolute;
+    bottom: 5mm;
+    left: 8mm;
+    right: 8mm;
+    font-size: 5.5pt;
+    color: #999;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PAGES 2 & 3 – FULL DETAIL
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Full header ── */
+  .full-header {
+    background: #1F3864;
+    color: white;
+    padding: 6px 9px 5px;
+    border-radius: 3px 3px 0 0;
+    margin-bottom: 4px;
+  }
+  .full-header h1 { font-size: 14pt; font-weight: 700; }
+  .full-header .fh-sub { font-size: 9pt; opacity: 0.88; margin-top: 1px; }
+  .fh-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .fh-meta {
+    text-align: right;
+    font-size: 9pt;
+    opacity: 0.88;
+    line-height: 1.6;
+  }
+
+  /* ── Achievement standard ── */
+  .ach-box {
+    background: #E8F5E9;
+    border-left: 3px solid #1B6B2A;
+    padding: 3px 6px;
+    margin-bottom: 5px;
+    border-radius: 0 2px 2px 0;
+    font-size: 9pt;
+  }
+  .ach-box .ab-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #1B6B2A;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Two-col fields ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .field-box {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 3px 5px;
+    min-height: 28px;
+  }
+  .field-box .fb-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #1F3864;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+  }
+  .field-box .fb-val {
+    font-size: 9pt;
+    line-height: 1.35;
+  }
+
+  /* ── Element banner ── */
+  .elem-banner {
+    background: #D5F5E3;
+    border-left: 4px solid #1B6B2A;
+    padding: 3px 6px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .elem-banner h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1B6B2A;
+  }
+  .elem-badge {
+    background: #1B6B2A;
+    color: white;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Full phase block (pages 2-3) ── */
+  .full-phase {
+    border: 0.5px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  .full-phase-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    color: white;
+    font-size: 10.5pt;
+    font-weight: 700;
+  }
+  .full-phase-header .fph-time {
+    font-size: 8.5pt;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-left: auto;
+  }
+  .full-phase-header .fph-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13pt;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .full-phase-body {
+    padding: 4px 6px;
+  }
+  .full-phase-body .phase-focus {
+    margin-bottom: 3px;
+  }
+
+  .full-step-row {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    margin-bottom: 2px;
+  }
+  .full-step-num {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .full-step-text {
+    font-size: 9.5pt;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .full-note-box {
+    background: #EBF4FB;
+    border-left: 2.5px solid #1E88E5;
+    padding: 2px 6px;
+    margin: 2px 0;
+    font-size: 9pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .full-note-box .nb-label {
+    font-weight: 700;
+    font-size: 8pt;
+    color: #1565C0;
+  }
+  .full-cfu-box {
+    background: #FFFDE7;
+    border-left: 2.5px solid #F9A825;
+    padding: 2px 6px;
+    margin: 2px 0;
+    font-size: 9pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .full-cfu-box .nb-label {
+    font-weight: 700;
+    font-size: 8pt;
+    color: #E65100;
+  }
+  .full-trans-line {
+    font-size: 9pt;
+    color: #1B5E20;
+    font-style: italic;
+    margin: 2px 0;
+    padding-left: 6px;
+    border-left: 2px dotted #1B5E20;
+  }
+
+  /* Phase bg colours */
+  .wu-bg { background: #1565C0; }
+  .et-bg { background: #6A1B9A; }
+  .wd-bg { background: #2E7D32; }
+  .yd-bg { background: #BF360C; }
+  .pu-bg { background: #455A64; }
+
+  /* ── Tier table ── */
+  .tier-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0;
+    font-size: 9pt;
+  }
+  .tier-table th {
+    color: white;
+    padding: 4px 6px;
+    text-align: left;
+    font-size: 8.5pt;
+    font-weight: 700;
+  }
+  .tier-t1 { background: #C62828; }
+  .tier-core { background: #1565C0; }
+  .tier-t3 { background: #2E7D32; }
+  .tier-table td {
+    border: 0.5px solid #ddd;
+    padding: 3px 5px;
+    vertical-align: top;
+    line-height: 1.35;
+  }
+  .tier-t1-bg { background: #FFEBEE; }
+  .tier-core-bg { background: #EBF5FB; }
+  .tier-t3-bg { background: #EAFAF1; }
+
+  /* ── Wellbeing SEL 3-col ── */
+  .wellbeing-banner {
+    background: #FCE4EC;
+    border-left: 4px solid #C2185B;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #880E4F;
+  }
+  .wellbeing-col { border: 0.5px solid #F48FB1; border-radius: 2px; padding: 3px 5px; }
+  .wellbeing-col .wc-label { font-size: 7.5pt; font-weight: 700; color: #880E4F; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+
+  /* ── Inclusive practice 2×2 ── */
+  .inclusive-banner {
+    background: #E8EAF6;
+    border-left: 4px solid #3949AB;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1A237E;
+  }
+  .incl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .incl-cell {
+    border: 0.5px solid #9FA8DA;
+    border-radius: 2px;
+    padding: 3px 5px;
+    min-height: 28px;
+  }
+  .incl-cell .ic-label { font-size: 7.5pt; font-weight: 700; color: #3949AB; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+
+  /* ── Assessment ── */
+  .assess-banner {
+    background: #FFF8E1;
+    border-left: 4px solid #F9A825;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #E65100;
+  }
+
+  /* ── Reflection ── */
+  .reflect-banner {
+    background: #E0F7FA;
+    border-left: 4px solid #00838F;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #006064;
+  }
+  .reflect-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  /* ── VTLM element sub-fields ── */
+  .vtlm-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+  .vtlm-full {
+    margin-bottom: 3px;
+  }
+
+
+  /* ══════════════════════════════════════════════════════
+     FILL-PAGE — content always stretches to full A4 height
+  ══════════════════════════════════════════════════════ */
+
+  /* All pages are flex columns so children can grow */
+  .page {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  /* ── Page 1 (CRT): phase strips grow equally ── */
+  #page1 .phase-strip {
+    flex: 1 1 0;
+    min-height: 55px;
+  }
+  /* Resources/safety box fixed at bottom */
+  #page1 .res-safety {
+    flex-shrink: 0;
+  }
+
+  /* ── Pages 2 & 3: full-phase blocks grow ── */
+  .full-phase {
+    flex: 1 1 0;
+    min-height: 70px;
+  }
+
+  /* ── Field boxes in grids: grow to fill their cell ── */
+  .field-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .field-box .fb-val {
+    flex: 1;
+  }
+
+  /* ── Wellbeing & inclusive cols: fill their cell ── */
+  .wellbeing-col,
+  .incl-cell {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* ── Tier table cells: stretch ── */
+  .tier-table { height: 100%; }
+
+  /* ── Grids fill their allotted space ── */
+  .two-col, .three-col, .vtlm-fields, .reflect-grid, .incl-grid {
+    align-items: stretch;
+  }
+
+  /* Fix elements that MUST NOT grow (structural/headers) */
+  .p1-header, .badge-bar, .crt-label, .overview-row, .li-box,
+  .full-header, .ach-box, .elem-banner, .wellbeing-banner,
+  .inclusive-banner, .assess-banner, .reflect-banner,
+  .phase-header-row, .full-phase-header, .phase-focus,
+  .fh-row, .fh-meta, .fh-sub {
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PRINT STYLES
+  ══════════════════════════════════════════════════════ */
+  @media print {
+    #print-bar { display: none !important; }
+    body { background: white; }
+    .page-wrapper { padding: 0; gap: 0; }
+    .page {
+      box-shadow: none;
+      page-break-after: always;
+      width: 210mm;
+      height: 297mm;
+      min-height: 0;
+      max-height: 297mm;
+      overflow: hidden !important;
+      margin: 0;
+    }
+    .page:last-child { page-break-after: auto; }
+    [contenteditable="true"]:hover,
+    [contenteditable="true"]:focus {
+      background: transparent !important;
+      outline: none !important;
+    }
+  }
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- PRINT BAR -->
+<div id="print-bar">
+  <span>✏️ Click any field to edit &nbsp;|&nbsp; 🖨️ Print / Save as PDF &nbsp;|&nbsp; 📋 Blank template — works for any subject</span>
+  <button onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<div class="page-wrapper">
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 1 – CRT ONE-PAGER
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page1">
+
+  <!-- Header -->
+  <div class="p1-header">
+    <div class="p1-header-left">
+      <h1>📋 <span contenteditable="true">[Subject]</span> Lesson Plan <span style="font-size:8pt;font-weight:400;opacity:0.85;">— CRT Quick Reference</span></h1>
+      <p contenteditable="true">Westbourne Park School &nbsp;|&nbsp; [Subject]</p>
+    </div>
+    <div class="p1-header-right">
+      <strong contenteditable="true">[Year Level]</strong><br>
+      <span contenteditable="true">[Term] Week [X] — [Year]</span><br>
+      <span contenteditable="true">[Teacher Name]</span>
+    </div>
+  </div>
+
+  <!-- Badge bar -->
+  <div class="badge-bar">
+    <span class="badge badge-vc" contenteditable="true">[Curriculum Code] – [Strand]</span>
+    <span class="badge badge-yr" contenteditable="true">[Year Level]</span>
+    <span class="badge badge-dur" contenteditable="true">[Duration]</span>
+    <span class="badge badge-eq" contenteditable="true">[Location / Room]</span>
+    <span class="badge badge-set" contenteditable="true">[Class Size]</span>
+  </div>
+
+  <!-- CRT section label -->
+  <div class="crt-label">📋 CRT Instructions — Lesson Overview</div>
+
+  <!-- Overview row -->
+  <div class="overview-row">
+    <div class="overview-cell">
+      <div class="oc-label">Focus / Topic</div>
+      <div class="oc-val" contenteditable="true">[Key concept or skill]</div>
+    </div>
+    <div class="overview-cell">
+      <div class="oc-label">Resources</div>
+      <div class="oc-val" contenteditable="true">[Key materials / resources]</div>
+    </div>
+    <div class="overview-cell">
+      <div class="oc-label">Room / Setup</div>
+      <div class="oc-val" contenteditable="true">[Room arrangement]</div>
+    </div>
+    <div class="overview-cell">
+      <div class="oc-label">Learning Intention</div>
+      <div class="oc-val" contenteditable="true">[Short LI summary]</div>
+    </div>
+  </div>
+
+  <!-- Learning intention full -->
+  <div class="li-box">
+    <div class="li-label">Learning Intention &amp; Success Criteria</div>
+    <div contenteditable="true"><strong>We are learning to</strong> [learning intention]. &nbsp;<strong>I can:</strong> (1) [success criterion 1], (2) [success criterion 2], (3) [success criterion 3].</div>
+  </div>
+
+  <!-- ── WARM UP ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar wu-sidebar">
+      <span>Opening</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title wu-title">① OPENING / ACTIVATION</div>
+        <div class="phase-time-badge wu-time">5 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">[Hook / activation strategy — how you engage students and activate prior knowledge]</div>
+      <div class="step-row"><div class="step-num wu-step-num">1</div><div class="step-text" contenteditable="true">[Step 1 — set up the opening activity]</div></div>
+      <div class="step-row"><div class="step-num wu-step-num">2</div><div class="step-text" contenteditable="true">[Step 2 — run the activity]</div></div>
+      <div class="step-row"><div class="step-num wu-step-num">3</div><div class="step-text" contenteditable="true">[Step 3 — wrap up, bring students together]</div></div>
+      <div class="note-box"><span class="nb-label">📌 NOTE &nbsp;</span><span contenteditable="true">[Teacher note — modifications, watch-fors, setup tips]</span></div>
+      <div class="trans-line" contenteditable="true">→ [Transition script to next phase]</div>
+    </div>
+  </div>
+
+  <!-- ── EXPLICIT TEACHING ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar et-sidebar">
+      <span>Explicit Teaching</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title et-title">② EXPLICIT TEACHING</div>
+        <div class="phase-time-badge et-time">8 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">[What concept/skill/strategy you are explicitly teaching — I Do approach]</div>
+      <div class="step-row"><div class="step-num et-step-num">1</div><div class="step-text" contenteditable="true">[Activate prior knowledge — question or prompt]</div></div>
+      <div class="step-row"><div class="step-num et-step-num">2</div><div class="step-text" contenteditable="true">[Model / demonstrate — think aloud, show the process]</div></div>
+      <div class="step-row"><div class="step-num et-step-num">3</div><div class="step-text" contenteditable="true">[Guided mirror / class attempt — students try with you]</div></div>
+      <div class="cfu-box"><span class="nb-label">❓ CFU &nbsp;</span><span contenteditable="true">[Check for understanding — quick signal, show-me, thumbs, question]</span></div>
+      <div class="trans-line" contenteditable="true">→ [Transition script to We Do]</div>
+    </div>
+  </div>
+
+  <!-- ── WE DO ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar wd-sidebar">
+      <span>We Do</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title wd-title">③ WE DO (GUIDED)</div>
+        <div class="phase-time-badge wd-time">10 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">[Guided practice — students attempt with teacher support and feedback]</div>
+      <div class="step-row"><div class="step-num wd-step-num">1</div><div class="step-text" contenteditable="true">[Guided task 1 — scaffolded, teacher circulates]</div></div>
+      <div class="step-row"><div class="step-num wd-step-num">2</div><div class="step-text" contenteditable="true">[Guided task 2 — increase challenge or group size]</div></div>
+      <div class="step-row"><div class="step-num wd-step-num">3</div><div class="step-text" contenteditable="true">[Guided task 3 — peer interaction, self-assessment]</div></div>
+      <div class="note-box"><span class="nb-label">📌 NOTE &nbsp;</span><span contenteditable="true">[Common misconception / error to watch for — cue or correction]</span></div>
+      <div class="trans-line" contenteditable="true">→ [Transition script to You Do / stations]</div>
+    </div>
+  </div>
+
+  <!-- ── YOU DO ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar yd-sidebar">
+      <span>You Do</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title yd-title">④ YOU DO (INDEPENDENT)</div>
+        <div class="phase-time-badge yd-time">15 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">[Independent or group task — students apply learning without direct teacher guidance]</div>
+      <div class="step-row"><div class="step-num yd-step-num">1</div><div class="step-text" contenteditable="true">[Task / station 1 — describe activity and expected outcome]</div></div>
+      <div class="step-row"><div class="step-num yd-step-num">2</div><div class="step-text" contenteditable="true">[Task / station 2]</div></div>
+      <div class="step-row"><div class="step-num yd-step-num">3</div><div class="step-text" contenteditable="true">[Task / station 3]</div></div>
+      <div class="cfu-box"><span class="nb-label">❓ CFU &nbsp;</span><span contenteditable="true">[Checking for understanding during independent work — question, signal, or observation focus]</span></div>
+      <div class="trans-line" contenteditable="true">→ [Transition script to closure]</div>
+    </div>
+  </div>
+
+  <!-- ── PACK UP ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar pu-sidebar">
+      <span>Closure</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title pu-title">⑤ CLOSURE &amp; REFLECTION</div>
+        <div class="phase-time-badge pu-time">7 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">[Closure strategy — how students consolidate and reflect on their learning]</div>
+      <div class="step-row"><div class="step-num pu-step-num">1</div><div class="step-text" contenteditable="true">[Tidy up / pack away / transition from task mode]</div></div>
+      <div class="step-row"><div class="step-num pu-step-num">2</div><div class="step-text" contenteditable="true">[Reflection activity — exit ticket, thumbs, pair share, traffic light]</div></div>
+      <div class="step-row"><div class="step-num pu-step-num">3</div><div class="step-text" contenteditable="true">[Close — preview next lesson, line up / dismiss]</div></div>
+    </div>
+  </div>
+
+  <!-- Resources & Safety -->
+  <div class="res-safety">
+    <div class="res-box">
+      <div class="rb-label">📦 Resources &amp; Materials</div>
+      <ul>
+        <li contenteditable="true">[Resource 1]</li>
+        <li contenteditable="true">[Resource 2]</li>
+        <li contenteditable="true">[Resource 3]</li>
+        <li contenteditable="true">[Resource 4]</li>
+        <li contenteditable="true">[Resource 5]</li>
+      </ul>
+    </div>
+    <div class="res-box">
+      <div class="rb-label">⚠️ Safety &amp; Wellbeing Notes</div>
+      <ul>
+        <li contenteditable="true">[Safety consideration 1]</li>
+        <li contenteditable="true">[Safety consideration 2]</li>
+        <li contenteditable="true">[Check medical register / support plans]</li>
+        <li contenteditable="true">[Inclusion adjustment]</li>
+        <li contenteditable="true">[Class signal / management cue]</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span contenteditable="true">WPS [Subject] &nbsp;|&nbsp; [Year Level] &nbsp;|&nbsp; [Term Week] &nbsp;|&nbsp; [Topic]</span>
+    <span>Page 1 of 3 — CRT Reference</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 2 – VTLM ELEMENTS 1, 2, 3
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page2">
+
+  <!-- Header -->
+  <div class="full-header">
+    <div class="fh-row">
+      <div>
+        <h1>📋 WPS <span contenteditable="true">[Subject]</span> Lesson Plan — Full Detail</h1>
+        <div class="fh-sub" contenteditable="true">Westbourne Park School &nbsp;|&nbsp; [Subject] &nbsp;|&nbsp; VTLM 2.0 Framework</div>
+      </div>
+      <div class="fh-meta">
+        <strong contenteditable="true">[Year Level]</strong><br>
+        <span contenteditable="true">[Term Week] — [Topic]</span><br>
+        <span contenteditable="true">[Teacher Name]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context fields -->
+  <div class="two-col" style="margin-bottom:4px;">
+    <div class="field-box">
+      <div class="fb-label">Learning Intention</div>
+      <div class="fb-val" contenteditable="true">[Full learning intention — We are learning to…]</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Success Criteria</div>
+      <div class="fb-val" contenteditable="true">I can: (1) [criterion 1], (2) [criterion 2], (3) [criterion 3].</div>
+    </div>
+  </div>
+
+  <div class="three-col" style="margin-bottom:4px;">
+    <div class="field-box">
+      <div class="fb-label">Victorian Curriculum Links</div>
+      <div class="fb-val" contenteditable="true">[Curriculum code(s) and strand — e.g. VC2HPFM01]</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Class Profile / Context</div>
+      <div class="fb-val" contenteditable="true">[Class size, EAL/D, support plans, prior experience, engagement notes]</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Evidence from Last Lesson</div>
+      <div class="fb-val" contenteditable="true">[What you observed last lesson — strengths, gaps, what you're building on today]</div>
+    </div>
+  </div>
+
+  <!-- Achievement Standard -->
+  <div class="ach-box">
+    <div class="ab-label" contenteditable="true">Victorian Curriculum 2.0 Achievement Standard — [Year Level] [Subject]</div>
+    <div contenteditable="true">[Paste the relevant achievement standard from the Victorian Curriculum 2.0 website here]</div>
+  </div>
+
+  <!-- ── ELEMENT 1: PLANNING ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">①</span>ELEMENT 1 — PLANNING FOR LEARNING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <div class="vtlm-fields">
+    <div class="field-box">
+      <div class="fb-label">Prior Knowledge / Pre-Assessment</div>
+      <div class="fb-val" contenteditable="true">[Prior assessment data, observations, or student knowledge that informs today's lesson]</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Differentiation Planning</div>
+      <div class="fb-val" contenteditable="true">Tier 1 (Supported): [Adjustment — reduce complexity, scaffold, buddy support]<br>Core: Standard task as planned.<br>Tier 3 (Extension): [Increase challenge — depth, speed, complexity, independence]</div>
+    </div>
+  </div>
+  <div class="vtlm-fields">
+    <div class="field-box">
+      <div class="fb-label">Links to Sequence / Unit Overview</div>
+      <div class="fb-val" contenteditable="true">Lesson [X] of [Y] in "[Unit Name]" unit. Builds toward [culminating task / assessment]. Links to [curriculum strand].</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Resources &amp; Space Required</div>
+      <div class="fb-val" contenteditable="true">[List resources, materials, technology, room setup required for this lesson]</div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 2: ENABLING LEARNING ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">②</span>ELEMENT 2 — ENABLING LEARNING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- Full phase: Warm Up -->
+  <div class="full-phase">
+    <div class="full-phase-header wu-bg">
+      <div class="fph-num">①</div>
+      <span>OPENING / ACTIVATION</span>
+      <span class="fph-time">5 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> [Activation strategy — what prior knowledge or engagement hook you're using to open the lesson]</div>
+      <div class="full-step-row">
+        <div class="full-step-num wu-step-num">1</div>
+        <div class="full-step-text" contenteditable="true">[Opening activity step 1 — setup / introduction]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wu-step-num">2</div>
+        <div class="full-step-text" contenteditable="true">[Opening activity step 2 — run the activity]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wu-step-num">3</div>
+        <div class="full-step-text" contenteditable="true">[Opening activity step 3 — bring together, bridge to teaching]</div>
+      </div>
+      <div class="full-note-box">
+        <div class="nb-label">📌 Teacher Note</div>
+        <div contenteditable="true">[Differentiation note for opening — modifications, watch-fors, inclusion tips]</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: [Script to move students to explicit teaching position]</div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 3: EXPLICIT TEACHING ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">③</span>ELEMENT 3 — EXPLICIT TEACHING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- Full phase: Explicit Teaching -->
+  <div class="full-phase">
+    <div class="full-phase-header et-bg">
+      <div class="fph-num">②</div>
+      <span>EXPLICIT TEACHING — I DO</span>
+      <span class="fph-time">8 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> [Key concept / skill being explicitly taught — I Do approach with think-aloud]</div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">1</div>
+        <div class="full-step-text" contenteditable="true"><strong>Activate prior knowledge:</strong> "Has anyone done a chest pass before? What do you think we need to do?" — gather 2–3 ideas. Validate and redirect to cue cards on the board.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">2</div>
+        <div class="full-step-text" contenteditable="true"><strong>Demonstrate with think-aloud:</strong> Hold ball at chest, elbows out (READY). Step toward target (STEP). Extend both arms and push (PUSH). Fingers point toward target on release (FOLLOW). Repeat slowly ×2.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">3</div>
+        <div class="full-step-text" contenteditable="true"><strong>Whole class mirror:</strong> Students stand, mirror all 4 cues in slow-motion without a ball ×2. Teacher narrates: READY → STEP → PUSH → FOLLOW. Students call out each cue as they mirror.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">4</div>
+        <div class="full-step-text" contenteditable="true"><strong>Partner slow-motion:</strong> Each pair gets 1 ball. One student does a slow-motion chest pass; partner gives thumbs up when they see all 3 cues. Swap roles once each.</div>
+      </div>
+      <div class="full-note-box">
+        <div class="nb-label">📌 Teaching Notes</div>
+        <div contenteditable="true">Common errors to address: (a) throwing overhead — cue: READY (ball at shirt buttons) — cue "ball starts at your shirt buttons," (b) not extending arms — cue "reach and release," (c) stepping sideways — cue "step toward your target."<br>Use visual cue card on whiteboard throughout lesson.</div>
+      </div>
+      <div class="full-cfu-box">
+        <div class="nb-label">❓ Check for Understanding</div>
+        <div contenteditable="true">Thumbs signal: "Show me your READY position." Scan the group — look for elbows at shoulder height, ball at chest. Address any misconceptions before moving to guided practice.</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: "One ball between two. Find a partner and stand on opposite blue lines — 3 metres apart."</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span contenteditable="true">WPS [Subject] &nbsp;|&nbsp; [Year Level] &nbsp;|&nbsp; [Term Week] &nbsp;|&nbsp; [Topic]</span>
+    <span>Page 2 of 3 — Full Detail</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 3 – VTLM ELEMENTS 4 & 5 + WELLBEING + ASSESSMENT + REFLECTION
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page3">
+
+  <!-- Header -->
+  <div class="full-header" style="margin-bottom:4px;">
+    <div class="fh-row">
+      <div>
+        <h1>📋 WPS <span contenteditable="true">[Subject]</span> Lesson Plan — Elements 4 &amp; 5</h1>
+        <div class="fh-sub">Elements 4 &amp; 5 &nbsp;|&nbsp; Differentiation &nbsp;|&nbsp; Wellbeing &nbsp;|&nbsp; Assessment &amp; Reflection</div>
+      </div>
+      <div class="fh-meta">
+        <strong contenteditable="true">[Year Level]</strong><br>
+        <span contenteditable="true">[Term Week] — [Topic]</span><br>
+        <span contenteditable="true">[Teacher Name]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 4: SUPPORTED APPLICATION ── -->
+  <div class="elem-banner" style="margin-top:2px;">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">④</span>ELEMENT 4 — SUPPORTED APPLICATION</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- We Do phase -->
+  <div class="full-phase" style="margin-bottom:3px;">
+    <div class="full-phase-header wd-bg">
+      <div class="fph-num">③</div>
+      <span>WE DO — GUIDED PRACTICE</span>
+      <span class="fph-time">10 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> [Guided practice — teacher supports, students attempt with structured feedback]</div>
+      <div class="full-step-row">
+        <div class="full-step-num wd-step-num">1</div>
+        <div class="full-step-text" contenteditable="true">[Guided task 1 — scaffolded, teacher circulates with targeted feedback]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wd-step-num">2</div>
+        <div class="full-step-text" contenteditable="true">[Guided task 2 — increase complexity, peer feedback, self-assessment]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wd-step-num">3</div>
+        <div class="full-step-text" contenteditable="true">[Guided task 3 — group or collaborative application, teacher names good examples]</div>
+      </div>
+      <div class="full-cfu-box">
+        <div class="nb-label">❓ Checking for Understanding</div>
+        <div contenteditable="true">[Mid-activity CFU — stop the class, quick check, reteach if needed]</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: [Script to move students to independent work / stations]</div>
+    </div>
+  </div>
+
+  <!-- Tier Differentiation Table -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:9pt;font-weight:700;color:#455A64;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:3px;">📊 Differentiated Station Tasks — Element 4 Application</div>
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th class="tier-t1" style="width:33%;">🔴 Tier 1 — Supported</th>
+          <th class="tier-core" style="width:33%;">🔵 Core Task</th>
+          <th class="tier-t3" style="width:33%;">🟢 Tier 3 — Extension</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tier-t1-bg" contenteditable="true">[Tier 1 — reduce complexity, scaffold, provide additional support or resources]</td>
+          <td class="tier-core-bg" contenteditable="true">[Core task — standard expectation for all students at this level]</td>
+          <td class="tier-t3-bg" contenteditable="true">[Tier 3 — extend thinking, increase challenge, independent application]</td>
+        </tr>
+        <tr>
+          <td class="tier-t1-bg" contenteditable="true"><strong>[Task/Station 1 — Supported]:</strong> [Modified version of task for Tier 1 learners]</td>
+          <td class="tier-core-bg" contenteditable="true"><strong>[Task/Station 2 — Core]:</strong> [Standard task for core learners]</td>
+          <td class="tier-t3-bg" contenteditable="true"><strong>[Task/Station 3 — Extension]:</strong> [Extended or enriched version for Tier 3]</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- You Do phase -->
+  <div class="full-phase" style="margin-bottom:3px;">
+    <div class="full-phase-header yd-bg">
+      <div class="fph-num">④</div>
+      <span>YOU DO — INDEPENDENT APPLICATION</span>
+      <span class="fph-time">15 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> [Independent application — students work without direct guidance while teacher observes for assessment evidence]</div>
+      <div class="full-step-row">
+        <div class="full-step-num yd-step-num">1</div>
+        <div class="full-step-text" contenteditable="true"><strong>[Task / Station 1]:</strong> [Describe independent task — expected process and outcome]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num yd-step-num">2</div>
+        <div class="full-step-text" contenteditable="true"><strong>[Task / Station 2]:</strong> [Describe independent task]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num yd-step-num">3</div>
+        <div class="full-step-text" contenteditable="true"><strong>[Task / Station 3]:</strong> [Describe independent task]</div>
+      </div>
+      <div class="full-note-box">
+        <div class="nb-label">📌 Assessment Observation Window</div>
+        <div contenteditable="true">[Which curriculum descriptor you're assessing. How many students to target. What to look for. How to record — clipboard, Seesaw, anecdotal notes]</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: [Script to bring students to closure / reflection]</div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 5: REFLECTION ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">⑤</span>ELEMENT 5 — REFLECTION ON LEARNING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- Pack Up phase -->
+  <div class="full-phase" style="margin-bottom:4px;">
+    <div class="full-phase-header pu-bg">
+      <div class="fph-num">⑤</div>
+      <span>PACK UP &amp; STUDENT REFLECTION</span>
+      <span class="fph-time">7 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="full-step-row">
+        <div class="full-step-num pu-step-num">1</div>
+        <div class="full-step-text" contenteditable="true">[Pack away / tidy up — who is responsible, how long this takes]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num pu-step-num">2</div>
+        <div class="full-step-text" contenteditable="true">[Reflection activity — exit ticket, traffic light, pair share, thumbs, sentence starter]</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num pu-step-num">3</div>
+        <div class="full-step-text" contenteditable="true">[Close — preview next lesson, connect to unit goal, dismiss]</div>
+      </div>
+      <div class="full-cfu-box">
+        <div class="nb-label">❓ Exit Reflection</div>
+        <div contenteditable="true">[Exit reflection prompt — did we meet the LI? What did students show? What do you need to address next lesson?]</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WELLBEING & SEL ── -->
+  <div class="wellbeing-banner">💚 Wellbeing &amp; Social-Emotional Learning (SEL)</div>
+  <div class="three-col" style="margin-bottom:4px;">
+    <div class="wellbeing-col">
+      <div class="wc-label">Wellbeing Focus</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[Wellbeing focus for this lesson — growth mindset, self-regulation, belonging, positive identity]</div>
+    </div>
+    <div class="wellbeing-col">
+      <div class="wc-label">Social Skill Target</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[Social skill target — collaboration, communication, peer feedback, inclusion strategy]</div>
+    </div>
+    <div class="wellbeing-col">
+      <div class="wc-label">Emotional Regulation</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[Emotional regulation strategy — how you'll support students who disengage or become dysregulated during the lesson]</div>
+    </div>
+  </div>
+
+  <!-- ── INCLUSIVE PRACTICE ── -->
+  <div class="inclusive-banner">♿ Inclusive Practice &amp; Adjustments</div>
+  <div class="incl-grid">
+    <div class="incl-cell">
+      <div class="ic-label">EAL/D Students</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[EAL/D adjustments — visuals, buddy pairing, simplified instructions, glossary of key terms]</div>
+    </div>
+    <div class="incl-cell">
+      <div class="ic-label">Learning / Physical Support</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[Adjustments for students with learning plans, IEPs, or physical needs — specific to your class]</div>
+    </div>
+    <div class="incl-cell">
+      <div class="ic-label">Extension / Gifted</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[Extension pathway — deeper thinking, peer coaching, added complexity, leadership role in activity]</div>
+    </div>
+    <div class="incl-cell">
+      <div class="ic-label">Medical / Withdrawal Notes</div>
+      <div contenteditable="true" style="font-size:7.5pt;">[Medical notes — check register, known conditions, students withdrawn from activity and how they participate]</div>
+    </div>
+  </div>
+
+  <!-- ── ASSESSMENT ── -->
+  <div class="assess-banner">📊 Assessment &amp; Evidence</div>
+  <div class="two-col" style="margin-bottom:4px;">
+    <div class="field-box">
+      <div class="fb-label">Assessment Strategy</div>
+      <div class="fb-val" contenteditable="true">[Assessment strategy — observation, work sample, self-assessment, peer assessment, exit ticket. When in lesson. What to look for.]</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">VC2.0 Links &amp; Documentation</div>
+      <div class="fb-val" contenteditable="true">[Curriculum descriptor being assessed. Where you'll record evidence — Seesaw, portfolio, spreadsheet. How data informs next lesson planning.]</div>
+    </div>
+  </div>
+
+  <!-- ── TEACHER REFLECTION ── -->
+  <div class="reflect-banner">🪞 Teacher Reflection (Post-Lesson)</div>
+  <div class="reflect-grid" style="margin-bottom:3px;">
+    <div class="field-box">
+      <div class="fb-label">What Worked Well?</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">What Would I Change?</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+  </div>
+  <div class="reflect-grid">
+    <div class="field-box">
+      <div class="fb-label">Student Data / Patterns Observed</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Adjustments for Next Lesson</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span contenteditable="true">WPS [Subject] &nbsp;|&nbsp; [Year Level] &nbsp;|&nbsp; [Term Week] &nbsp;|&nbsp; [Topic] &nbsp;|&nbsp; VTLM 2.0 Framework</span>
+    <span>Page 3 of 3</span>
+  </div>
+</div>
+
+</div><!-- end page-wrapper -->
+
+<script>
+/**
+ * AUTO-FIT ENGINE v2
+ *
+ * LAYER 1 – Viewport fit:  CSS `zoom` on .page
+ *   zoom changes both visual AND layout size, so flex centering stays
+ *   correct and nothing clips on the left.
+ *
+ * LAYER 2 – Content fit:  transform:scale on .page-inner
+ *   If text would overflow the A4 bottom, content shrinks to fit.
+ *
+ * Text wrap: word-break:break-word so even non-spaced text wraps.
+ */
+
+// ── Extra styles ───────────────────────────────────────────────────────
+const _s = document.createElement('style');
+_s.textContent = `
+  .page-inner {
+    width: 100%;
+    transform-origin: top left;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .page { overflow: hidden !important; }
+  [contenteditable] {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+  @media print { .page { zoom: 1 !important; } }
+`;
+document.head.appendChild(_s);
+
+// ── Helpers ────────────────────────────────────────────────────────────
+function debounce(fn, ms) {
+  let t;
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+let _mmPx;
+function mm2px() {
+  if (_mmPx) return _mmPx;
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;width:10mm;visibility:hidden;pointer-events:none';
+  document.body.appendChild(d);
+  _mmPx = d.offsetWidth / 10;
+  document.body.removeChild(d);
+  return _mmPx;
+}
+
+// ── Layer 1: zoom each .page to fit the viewport ───────────────────────
+function fitViewport() {
+  const pageWpx = 210 * mm2px();
+  const avail   = document.documentElement.clientWidth - 32;
+  const zoom    = Math.min(1, avail / pageWpx);
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.zoom = zoom < 1 ? String(zoom) : '';
+  });
+}
+
+// ── Layer 2: wrap & scale content inside each .page ───────────────────
+function wrapInners() {
+  document.querySelectorAll('.page').forEach(page => {
+    if (page.querySelector('.page-inner')) return;
+    const inner = document.createElement('div');
+    inner.className = 'page-inner';
+    Array.from(page.children).forEach(ch => {
+      if (!ch.classList.contains('page-footer')) inner.appendChild(ch);
+    });
+    page.insertBefore(inner, page.firstChild);
+  });
+}
+
+function fitContent(page) {
+  const inner = page.querySelector('.page-inner');
+  if (!inner) return;
+  inner.style.transform = '';
+  inner.style.width     = '100%';
+  requestAnimationFrame(() => {
+    const avH = page.clientHeight - 22;
+    const avW = page.clientWidth;
+    const cH  = inner.scrollHeight;
+    const cW  = inner.scrollWidth;
+    if (cH <= avH && cW <= avW) return;
+    const scale = Math.min(
+      cH > avH ? avH / cH : 1,
+      cW > avW ? avW / cW : 1
+    );
+    inner.style.transformOrigin = 'top left';
+    inner.style.transform       = `scale(${scale.toFixed(5)})`;
+    inner.style.width           = `${(100 / scale).toFixed(3)}%`;
+  });
+}
+
+function fitAll() {
+  fitViewport();
+  document.querySelectorAll('.page').forEach(fitContent);
+}
+
+// ── Watch edits ────────────────────────────────────────────────────────
+const observer = new MutationObserver(debounce(mutations => {
+  const pages = new Set();
+  mutations.forEach(m => {
+    let el = m.target;
+    while (el && !el.classList?.contains('page')) el = el.parentElement;
+    if (el) pages.add(el);
+  });
+  pages.forEach(fitContent);
+}, 280));
+
+// ── Boot ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  wrapInners();
+  fitAll();
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+});
+window.addEventListener('resize',      debounce(fitAll, 180));
+window.addEventListener('beforeprint', fitAll);
+</script>
+
+</body>
+</html>
