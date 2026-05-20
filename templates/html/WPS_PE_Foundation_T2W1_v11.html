@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPS PE Lesson Plan – Foundation T2W1</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    background: #e0e0e0;
+    color: #1a1a1a;
+    font-size: 10pt;
+    line-height: 1.35;
+    /* Ensure page-wrapper can scroll horizontally if narrower than A4 */
+    min-width: 226mm; /* 210mm page + 16px*2 padding */
+  }
+
+  /* ── GLOBAL TEXT WRAPPING ── */
+  /* All text wraps naturally — no overflow on single lines */
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /* ── PRINT BAR (hidden on print) ── */
+  #print-bar {
+    background: #1F3864;
+    color: white;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 11pt;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  #print-bar button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 4px;
+    font-size: 11pt;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #print-bar button:hover { background: #388E3C; }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 30px;
+    gap: 24px;
+    /* Let pages scroll horizontally if viewport is narrower than A4 */
+    overflow-x: auto;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    padding: 8mm 8mm 14mm 8mm; /* extra bottom for footer */
+    position: relative;
+    /* Hard overflow wall */
+    overflow: hidden;
+    /* Don't shrink below A4 width in flex */
+    flex-shrink: 0;
+  }
+
+  /* ── CONTENTEDITABLE STYLING ── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 2px;
+    transition: background 0.15s;
+    /* Text always wraps — never overflows sideways */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-height: 1em;
+  }
+  [contenteditable="true"]:hover {
+    background: rgba(100,150,255,0.07) !important;
+  }
+  [contenteditable="true"]:focus {
+    background: rgba(100,150,255,0.13) !important;
+    outline: 1.5px dashed #5b8def;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PAGE 1 – CRT ONE-PAGER
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Header ── */
+  .p1-header {
+    background: #1F3864;
+    color: white;
+    padding: 5px 8px 4px;
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .p1-header-left h1 {
+    font-size: 13.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .p1-header-left p {
+    font-size: 8.5pt;
+    opacity: 0.88;
+    margin-top: 1px;
+  }
+  .p1-header-right {
+    text-align: right;
+    font-size: 8.5pt;
+    opacity: 0.88;
+    line-height: 1.5;
+  }
+  .p1-header-right strong {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  /* ── Badge bar ── */
+  .badge-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 4px;
+    padding: 3px 0;
+  }
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 8pt;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+  }
+  .badge-vc  { background: #1B6B2A; }
+  .badge-yr  { background: #0277BD; }
+  .badge-dur { background: #6A1B9A; }
+  .badge-eq  { background: #BF360C; }
+  .badge-set { background: #455A64; }
+
+  /* ── CRT label ── */
+  .crt-label {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #1F3864;
+    border-bottom: 1.5px solid #1F3864;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Lesson overview row ── */
+  .overview-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.2fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .overview-cell {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 2px 4px;
+  }
+  .overview-cell .oc-label {
+    font-size: 7pt;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .overview-cell .oc-val {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #1F3864;
+  }
+
+  /* ── Learning intention ── */
+  .li-box {
+    background: #EBF4FB;
+    border-left: 3px solid #1F3864;
+    padding: 2px 5px;
+    margin-bottom: 4px;
+    border-radius: 0 2px 2px 0;
+    font-size: 9pt;
+  }
+  .li-box .li-label {
+    font-size: 7pt;
+    font-weight: 700;
+    color: #1F3864;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Phase strip (CRT page) ── */
+  .phase-strip {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 3px;
+    align-items: stretch;
+  }
+  .phase-sidebar {
+    width: 16px;
+    border-radius: 2px 0 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .phase-sidebar span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .phase-body {
+    flex: 1;
+    border: 0.5px solid #ddd;
+    border-radius: 0 2px 2px 0;
+    padding: 2px 4px;
+  }
+  .phase-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1px;
+  }
+  .phase-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: inherit;
+  }
+  .phase-time-badge {
+    font-size: 7.5pt;
+    color: white;
+    padding: 0px 5px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .phase-focus {
+    font-size: 8pt;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 2px;
+  }
+
+  /* Numbered step */
+  .step-row {
+    display: flex;
+    gap: 3px;
+    align-items: flex-start;
+    margin-bottom: 1px;
+  }
+  .step-num {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 0.5px;
+  }
+  .step-text {
+    font-size: 8.5pt;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  /* Note / CFU / Transition boxes */
+  .note-box {
+    background: #EBF4FB;
+    border-left: 2px solid #1E88E5;
+    padding: 1.5px 4px;
+    margin: 2px 0;
+    font-size: 8pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .note-box .nb-label {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #1565C0;
+  }
+  .cfu-box {
+    background: #FFFDE7;
+    border-left: 2px solid #F9A825;
+    padding: 1.5px 4px;
+    margin: 2px 0;
+    font-size: 8pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .cfu-box .nb-label {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #E65100;
+  }
+  .trans-line {
+    font-size: 8pt;
+    color: #1B5E20;
+    font-style: italic;
+    margin: 1px 0;
+    padding-left: 4px;
+  }
+
+  /* ── Phase colours ── */
+  .wu-sidebar  { background: #1565C0; }
+  .wu-title    { color: #1565C0; }
+  .wu-step-num { background: #1565C0; }
+  .wu-time     { background: #1565C0; }
+
+  .et-sidebar  { background: #6A1B9A; }
+  .et-title    { color: #6A1B9A; }
+  .et-step-num { background: #6A1B9A; }
+  .et-time     { background: #6A1B9A; }
+
+  .wd-sidebar  { background: #2E7D32; }
+  .wd-title    { color: #2E7D32; }
+  .wd-step-num { background: #2E7D32; }
+  .wd-time     { background: #2E7D32; }
+
+  .yd-sidebar  { background: #BF360C; }
+  .yd-title    { color: #BF360C; }
+  .yd-step-num { background: #BF360C; }
+  .yd-time     { background: #BF360C; }
+
+  .pu-sidebar  { background: #455A64; }
+  .pu-title    { color: #455A64; }
+  .pu-step-num { background: #455A64; }
+  .pu-time     { background: #455A64; }
+
+  /* ── Resources & Safety ── */
+  .res-safety {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-top: 3px;
+  }
+  .res-box {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 2px 4px;
+  }
+  .res-box .rb-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #555;
+    margin-bottom: 1px;
+  }
+  .res-box ul {
+    list-style: disc;
+    padding-left: 12px;
+    font-size: 8.5pt;
+    line-height: 1.4;
+  }
+
+  /* ── Page footer ── */
+  .page-footer {
+    position: absolute;
+    bottom: 5mm;
+    left: 8mm;
+    right: 8mm;
+    font-size: 5.5pt;
+    color: #999;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PAGES 2 & 3 – FULL DETAIL
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Full header ── */
+  .full-header {
+    background: #1F3864;
+    color: white;
+    padding: 6px 9px 5px;
+    border-radius: 3px 3px 0 0;
+    margin-bottom: 4px;
+  }
+  .full-header h1 { font-size: 14pt; font-weight: 700; }
+  .full-header .fh-sub { font-size: 9pt; opacity: 0.88; margin-top: 1px; }
+  .fh-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .fh-meta {
+    text-align: right;
+    font-size: 9pt;
+    opacity: 0.88;
+    line-height: 1.6;
+  }
+
+  /* ── Achievement standard ── */
+  .ach-box {
+    background: #E8F5E9;
+    border-left: 3px solid #1B6B2A;
+    padding: 3px 6px;
+    margin-bottom: 5px;
+    border-radius: 0 2px 2px 0;
+    font-size: 9pt;
+  }
+  .ach-box .ab-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #1B6B2A;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Two-col fields ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .field-box {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 3px 5px;
+    min-height: 28px;
+  }
+  .field-box .fb-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #1F3864;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+  }
+  .field-box .fb-val {
+    font-size: 9pt;
+    line-height: 1.35;
+  }
+
+  /* ── Element banner ── */
+  .elem-banner {
+    background: #D5F5E3;
+    border-left: 4px solid #1B6B2A;
+    padding: 3px 6px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .elem-banner h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1B6B2A;
+  }
+  .elem-badge {
+    background: #1B6B2A;
+    color: white;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Full phase block (pages 2-3) ── */
+  .full-phase {
+    border: 0.5px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  .full-phase-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    color: white;
+    font-size: 10.5pt;
+    font-weight: 700;
+  }
+  .full-phase-header .fph-time {
+    font-size: 8.5pt;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-left: auto;
+  }
+  .full-phase-header .fph-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13pt;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .full-phase-body {
+    padding: 4px 6px;
+  }
+  .full-phase-body .phase-focus {
+    margin-bottom: 3px;
+  }
+
+  .full-step-row {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    margin-bottom: 2px;
+  }
+  .full-step-num {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .full-step-text {
+    font-size: 9.5pt;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .full-note-box {
+    background: #EBF4FB;
+    border-left: 2.5px solid #1E88E5;
+    padding: 2px 6px;
+    margin: 2px 0;
+    font-size: 9pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .full-note-box .nb-label {
+    font-weight: 700;
+    font-size: 8pt;
+    color: #1565C0;
+  }
+  .full-cfu-box {
+    background: #FFFDE7;
+    border-left: 2.5px solid #F9A825;
+    padding: 2px 6px;
+    margin: 2px 0;
+    font-size: 9pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .full-cfu-box .nb-label {
+    font-weight: 700;
+    font-size: 8pt;
+    color: #E65100;
+  }
+  .full-trans-line {
+    font-size: 9pt;
+    color: #1B5E20;
+    font-style: italic;
+    margin: 2px 0;
+    padding-left: 6px;
+    border-left: 2px dotted #1B5E20;
+  }
+
+  /* Phase bg colours */
+  .wu-bg { background: #1565C0; }
+  .et-bg { background: #6A1B9A; }
+  .wd-bg { background: #2E7D32; }
+  .yd-bg { background: #BF360C; }
+  .pu-bg { background: #455A64; }
+
+  /* ── Tier table ── */
+  .tier-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0;
+    font-size: 9pt;
+  }
+  .tier-table th {
+    color: white;
+    padding: 4px 6px;
+    text-align: left;
+    font-size: 8.5pt;
+    font-weight: 700;
+  }
+  .tier-t1 { background: #C62828; }
+  .tier-core { background: #1565C0; }
+  .tier-t3 { background: #2E7D32; }
+  .tier-table td {
+    border: 0.5px solid #ddd;
+    padding: 3px 5px;
+    vertical-align: top;
+    line-height: 1.35;
+  }
+  .tier-t1-bg { background: #FFEBEE; }
+  .tier-core-bg { background: #EBF5FB; }
+  .tier-t3-bg { background: #EAFAF1; }
+
+  /* ── Wellbeing SEL 3-col ── */
+  .wellbeing-banner {
+    background: #FCE4EC;
+    border-left: 4px solid #C2185B;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #880E4F;
+  }
+  .wellbeing-col { border: 0.5px solid #F48FB1; border-radius: 2px; padding: 3px 5px; }
+  .wellbeing-col .wc-label { font-size: 7.5pt; font-weight: 700; color: #880E4F; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+
+  /* ── Inclusive practice 2×2 ── */
+  .inclusive-banner {
+    background: #E8EAF6;
+    border-left: 4px solid #3949AB;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1A237E;
+  }
+  .incl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .incl-cell {
+    border: 0.5px solid #9FA8DA;
+    border-radius: 2px;
+    padding: 3px 5px;
+    min-height: 28px;
+  }
+  .incl-cell .ic-label { font-size: 7.5pt; font-weight: 700; color: #3949AB; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+
+  /* ── Assessment ── */
+  .assess-banner {
+    background: #FFF8E1;
+    border-left: 4px solid #F9A825;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #E65100;
+  }
+
+  /* ── Reflection ── */
+  .reflect-banner {
+    background: #E0F7FA;
+    border-left: 4px solid #00838F;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #006064;
+  }
+  .reflect-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  /* ── VTLM element sub-fields ── */
+  .vtlm-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+  .vtlm-full {
+    margin-bottom: 3px;
+  }
+
+
+  /* ══════════════════════════════════════════════════════
+     FILL-PAGE — content always stretches to full A4 height
+  ══════════════════════════════════════════════════════ */
+
+  /* All pages are flex columns so children can grow */
+  .page {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  /* ── Page 1 (CRT): phase strips grow equally ── */
+  #page1 .phase-strip {
+    flex: 1 1 0;
+    min-height: 55px;
+  }
+  /* Resources/safety box fixed at bottom */
+  #page1 .res-safety {
+    flex-shrink: 0;
+  }
+
+  /* ── Pages 2 & 3: full-phase blocks grow ── */
+  .full-phase {
+    flex: 1 1 0;
+    min-height: 70px;
+  }
+
+  /* ── Field boxes in grids: grow to fill their cell ── */
+  .field-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .field-box .fb-val {
+    flex: 1;
+  }
+
+  /* ── Wellbeing & inclusive cols: fill their cell ── */
+  .wellbeing-col,
+  .incl-cell {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* ── Tier table cells: stretch ── */
+  .tier-table { height: 100%; }
+
+  /* ── Grids fill their allotted space ── */
+  .two-col, .three-col, .vtlm-fields, .reflect-grid, .incl-grid {
+    align-items: stretch;
+  }
+
+  /* Fix elements that MUST NOT grow (structural/headers) */
+  .p1-header, .badge-bar, .crt-label, .overview-row, .li-box,
+  .full-header, .ach-box, .elem-banner, .wellbeing-banner,
+  .inclusive-banner, .assess-banner, .reflect-banner,
+  .phase-header-row, .full-phase-header, .phase-focus,
+  .fh-row, .fh-meta, .fh-sub {
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PRINT STYLES
+  ══════════════════════════════════════════════════════ */
+  @media print {
+    #print-bar { display: none !important; }
+    body { background: white; }
+    .page-wrapper { padding: 0; gap: 0; }
+    .page {
+      box-shadow: none;
+      page-break-after: always;
+      width: 210mm;
+      height: 297mm;
+      min-height: 0;
+      max-height: 297mm;
+      overflow: hidden !important;
+      margin: 0;
+    }
+    .page:last-child { page-break-after: auto; }
+    [contenteditable="true"]:hover,
+    [contenteditable="true"]:focus {
+      background: transparent !important;
+      outline: none !important;
+    }
+  }
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- PRINT BAR -->
+<div id="print-bar">
+  <span>✏️ Click any field to edit &nbsp;|&nbsp; 🖨️ Print to save as PDF</span>
+  <button onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<div class="page-wrapper">
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 1 – CRT ONE-PAGER
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page1">
+
+  <!-- Header -->
+  <div class="p1-header">
+    <div class="p1-header-left">
+      <h1>🏃 PE Lesson Plan <span style="font-size:8pt;font-weight:400;opacity:0.85;">— CRT Quick Reference</span></h1>
+      <p>Westbourne Park School &nbsp;|&nbsp; Physical Education</p>
+    </div>
+    <div class="p1-header-right">
+      <strong contenteditable="true">Foundation</strong><br>
+      <span contenteditable="true">Term 2, Week 1 — 2025</span><br>
+      <span contenteditable="true">Mr. P. Gallivan</span>
+    </div>
+  </div>
+
+  <!-- Badge bar -->
+  <div class="badge-bar">
+    <span class="badge badge-vc" contenteditable="true">VC2HPFM01 – Movement &amp; Physical Activity</span>
+    <span class="badge badge-yr" contenteditable="true">Foundation</span>
+    <span class="badge badge-dur" contenteditable="true">45 min</span>
+    <span class="badge badge-eq" contenteditable="true">Gym / Oval</span>
+    <span class="badge badge-set" contenteditable="true">30 students</span>
+  </div>
+
+  <!-- CRT section label -->
+  <div class="crt-label">📋 CRT Instructions — Lesson Overview</div>
+
+  <!-- Overview row -->
+  <div class="overview-row">
+    <div class="overview-cell">
+      <div class="oc-label">Focus Skill</div>
+      <div class="oc-val" contenteditable="true">Object Control – Chest Pass</div>
+    </div>
+    <div class="overview-cell">
+      <div class="oc-label">Equipment</div>
+      <div class="oc-val" contenteditable="true">Cones, bibs, balls ×15</div>
+    </div>
+    <div class="overview-cell">
+      <div class="oc-label">Space</div>
+      <div class="oc-val" contenteditable="true">Full oval / gym floor</div>
+    </div>
+    <div class="overview-cell">
+      <div class="oc-label">Learning Intention</div>
+      <div class="oc-val" contenteditable="true">Move safely &amp; follow rules</div>
+    </div>
+  </div>
+
+  <!-- Learning intention full -->
+  <div class="li-box">
+    <div class="li-label">Learning Intention &amp; Success Criteria</div>
+    <div contenteditable="true"><strong>We are learning to</strong> travel safely in shared spaces and follow game rules. &nbsp;<strong>I can:</strong> (1) move safely &amp; follow signals, (2) name the 4 cues (READY–STEP–PUSH–FOLLOW), (3) coach a partner using at least 1 cue.</div>
+  </div>
+
+  <!-- ── WARM UP ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar wu-sidebar">
+      <span>Warm Up</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title wu-title">① WARM UP</div>
+        <div class="phase-time-badge wu-time">5 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">Get hearts pumping — Space Invaders tag game. Students move freely; tagged players do 5 star jumps.</div>
+      <div class="step-row"><div class="step-num wu-step-num">1</div><div class="step-text" contenteditable="true">Set boundary with 4 cones. Choose 2 taggers, give them a bib.</div></div>
+      <div class="step-row"><div class="step-num wu-step-num">2</div><div class="step-text" contenteditable="true">Play Space Invaders: taggers freeze runners with a gentle shoulder touch.</div></div>
+      <div class="step-row"><div class="step-num wu-step-num">3</div><div class="step-text" contenteditable="true">Rotate taggers every 60 sec. Swap on teacher signal (clap ×2).</div></div>
+      <div class="note-box"><span class="nb-label">📌 NOTE &nbsp;</span><span contenteditable="true">If gym — reduce boundary to half-court. Watch for students running into walls.</span></div>
+      <div class="trans-line" contenteditable="true">→ "Freeze! Hands on head. Walk quietly to the middle circle and sit down facing me."</div>
+    </div>
+  </div>
+
+  <!-- ── EXPLICIT TEACHING ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar et-sidebar">
+      <span>Explicit Teaching</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title et-title">② EXPLICIT TEACHING</div>
+        <div class="phase-time-badge et-time">8 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">Demonstrate key movement skill — chest pass technique (ready position, step &amp; push, follow through).</div>
+      <div class="step-row"><div class="step-num et-step-num">1</div><div class="step-text" contenteditable="true">Ask: "What does a good pass look like?" — gather ideas.</div></div>
+      <div class="step-row"><div class="step-num et-step-num">2</div><div class="step-text" contenteditable="true">Model: READY (ball at chest, elbows out) → STEP (forward foot) → PUSH (extend both arms) → FOLLOW (fingers point to target).</div></div>
+      <div class="step-row"><div class="step-num et-step-num">3</div><div class="step-text" contenteditable="true">Class mirrors you 3×. Pair students to practise slow-motion once each.</div></div>
+      <div class="cfu-box"><span class="nb-label">❓ CFU &nbsp;</span><span contenteditable="true">"Show me your READY position." Scan — look for elbows up and ball at chest height.</span></div>
+      <div class="trans-line" contenteditable="true">→ "Take one ball between two and find a space on the blue line."</div>
+    </div>
+  </div>
+
+  <!-- ── WE DO ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar wd-sidebar">
+      <span>We Do</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title wd-title">③ WE DO (GUIDED)</div>
+        <div class="phase-time-badge wd-time">10 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">Partner passing practice with teacher feedback — stationary, then step forward on catch.</div>
+      <div class="step-row"><div class="step-num wd-step-num">1</div><div class="step-text" contenteditable="true">Pairs stand 3 m apart and pass back and forth ×5. CRT circulates — cue "PUSH and FOLLOW."</div></div>
+      <div class="step-row"><div class="step-num wd-step-num">2</div><div class="step-text" contenteditable="true">Increase distance to 5 m. Students self-assess: thumbs up if pass reached partner at chest height.</div></div>
+      <div class="step-row"><div class="step-num wd-step-num">3</div><div class="step-text" contenteditable="true">3-person triangle passes — one rotation, then swap roles.</div></div>
+      <div class="note-box"><span class="nb-label">📌 NOTE &nbsp;</span><span contenteditable="true">Common error: students throwing overhead. Remind: "Keep it low, push from chest."</span></div>
+      <div class="trans-line" contenteditable="true">→ "Balls in the bucket. Rotate to your station colour — check the board for which station is yours."</div>
+    </div>
+  </div>
+
+  <!-- ── YOU DO ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar yd-sidebar">
+      <span>You Do</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title yd-title">④ YOU DO (INDEPENDENT)</div>
+        <div class="phase-time-badge yd-time">15 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">Station rotations — students apply skills independently while CRT monitors all stations.</div>
+      <div class="step-row"><div class="step-num yd-step-num">1</div><div class="step-text" contenteditable="true"><strong>Station A (Red):</strong> Target passing — hit the hoop on the wall ×3 then swap.</div></div>
+      <div class="step-row"><div class="step-num yd-step-num">2</div><div class="step-text" contenteditable="true"><strong>Station B (Blue):</strong> Keep-away — 4v1, team keeps ball from defender for 30 sec.</div></div>
+      <div class="step-row"><div class="step-num yd-step-num">3</div><div class="step-text" contenteditable="true"><strong>Station C (Green):</strong> Relay passing — line of 4, chest pass down and back.</div></div>
+      <div class="cfu-box"><span class="nb-label">❓ CFU &nbsp;</span><span contenteditable="true">Visit each station. Ask: "What's one thing you're focusing on?" — listen for "push" or "follow through."</span></div>
+      <div class="trans-line" contenteditable="true">→ "Equipment down. Walk to the finish circle and sit quietly."</div>
+    </div>
+  </div>
+
+  <!-- ── PACK UP ── -->
+  <div class="phase-strip">
+    <div class="phase-sidebar pu-sidebar">
+      <span>Pack Up</span>
+    </div>
+    <div class="phase-body">
+      <div class="phase-header-row">
+        <div class="phase-title pu-title">⑤ PACK UP &amp; REFLECTION</div>
+        <div class="phase-time-badge pu-time">7 min</div>
+      </div>
+      <div class="phase-focus" contenteditable="true">Return equipment, cool down, student self-reflection against success criteria.</div>
+      <div class="step-row"><div class="step-num pu-step-num">1</div><div class="step-text" contenteditable="true">Group returns equipment to storage. Assign 2 students as "equipment managers."</div></div>
+      <div class="step-row"><div class="step-num pu-step-num">2</div><div class="step-text" contenteditable="true">Seated circle — thumbs up/down: "Did you use a chest pass today?"</div></div>
+      <div class="step-row"><div class="step-num pu-step-num">3</div><div class="step-text" contenteditable="true">Students share: "Next time I will try to…" Line up quietly for class return.</div></div>
+    </div>
+  </div>
+
+  <!-- Resources & Safety -->
+  <div class="res-safety">
+    <div class="res-box">
+      <div class="rb-label">📦 Equipment List</div>
+      <ul>
+        <li contenteditable="true">15× foam balls</li>
+        <li contenteditable="true">20× marker cones</li>
+        <li contenteditable="true">4× bibs / vests</li>
+        <li contenteditable="true">2× target hoops (wall mount)</li>
+        <li contenteditable="true">3× ball buckets</li>
+      </ul>
+    </div>
+    <div class="res-box">
+      <div class="rb-label">⚠️ Safety &amp; Inclusion</div>
+      <ul>
+        <li contenteditable="true">Foam balls only — no hard balls</li>
+        <li contenteditable="true">Clear all trip hazards before start</li>
+        <li contenteditable="true">Check medical register (office copy)</li>
+        <li contenteditable="true">Adjust station distances for needs</li>
+        <li contenteditable="true">Signal: clap ×2 = FREEZE immediately</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>WPS Physical Education &nbsp;|&nbsp; Foundation &nbsp;|&nbsp; Term 2, Week 1 &nbsp;|&nbsp; Chest Pass</span>
+    <span>Page 1 of 3 — CRT Reference</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 2 – VTLM ELEMENTS 1, 2, 3
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page2">
+
+  <!-- Header -->
+  <div class="full-header">
+    <div class="fh-row">
+      <div>
+        <h1>🏃 WPS PE Lesson Plan — Full Detail</h1>
+        <div class="fh-sub">Westbourne Park School &nbsp;|&nbsp; Physical Education &nbsp;|&nbsp; VTLM 2.0 Framework</div>
+      </div>
+      <div class="fh-meta">
+        <strong contenteditable="true">Foundation</strong><br>
+        <span contenteditable="true">Term 2, Week 1 — Chest Pass</span><br>
+        <span contenteditable="true">Mr. P. Gallivan</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context fields -->
+  <div class="two-col" style="margin-bottom:4px;">
+    <div class="field-box">
+      <div class="fb-label">Learning Intention</div>
+      <div class="fb-val" contenteditable="true">We are learning to perform a chest pass using correct technique: READY, STEP, PUSH, FOLLOW, and to apply this in game situations with peers.</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Success Criteria</div>
+      <div class="fb-val" contenteditable="true">I can: (1) demonstrate all 4 cues (READY, STEP, PUSH, FOLLOW) in sequence, (2) chest pass accurately to a partner at 3–5m, (3) identify a cue to improve when watching a peer.</div>
+    </div>
+  </div>
+
+  <div class="three-col" style="margin-bottom:4px;">
+    <div class="field-box">
+      <div class="fb-label">Victorian Curriculum Links</div>
+      <div class="fb-val" contenteditable="true">VC2HPFM01 – Fundamental movement skills. VC2HPFP01 – Personal &amp; social skills through movement.</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Class Profile / Context</div>
+      <div class="fb-val" contenteditable="true">30 students. 3 EAL/D. 2 students with fine motor support plans. Mixed prior experience with ball sports. Enthusiastic class with high engagement in games.</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Evidence from Last Lesson</div>
+      <div class="fb-val" contenteditable="true">Students showed strong spatial awareness in tag games. Passing technique was inconsistent — most students pushed from shoulder rather than chest. Targeting this in today's explicit teaching.</div>
+    </div>
+  </div>
+
+  <!-- Achievement Standard -->
+  <div class="ach-box">
+    <div class="ab-label">Victorian Curriculum 2.0 Achievement Standard — Foundation</div>
+    <div contenteditable="true">By end of Foundation, students perform fundamental movement skills in a variety of movement sequences and situations. They incorporate the elements of movement when composing and performing movement sequences. They use personal and social skills to cooperate with others and to include others in activities.</div>
+  </div>
+
+  <!-- ── ELEMENT 1: PLANNING ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">①</span>ELEMENT 1 — PLANNING FOR LEARNING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <div class="vtlm-fields">
+    <div class="field-box">
+      <div class="fb-label">Prior Knowledge / Pre-Assessment</div>
+      <div class="fb-val" contenteditable="true">Observed in Week 10 last term: majority of students have experienced ball passing in play. Several students could not catch at chest height reliably. Class enjoys competitive game formats.</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Differentiation Planning</div>
+      <div class="fb-val" contenteditable="true">Tier 1: Use larger/lighter ball, reduce distance to 2m, peer buddy support.<br>Core: Standard task as written.<br>Tier 3: Increase distance, add a defender, or use non-dominant hand challenge.</div>
+    </div>
+  </div>
+  <div class="vtlm-fields">
+    <div class="field-box">
+      <div class="fb-label">Links to Sequence / Unit Overview</div>
+      <div class="fb-val" contenteditable="true">Lesson 1 of 4 in "Passing &amp; Ball Control" unit. Builds toward lead-up netball game in Week 4. Foundation for VC2HPFM01 assessment task.</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Resources &amp; Space Required</div>
+      <div class="fb-val" contenteditable="true">15× foam balls, 20× cones, 4× bibs, 2× target hoops, full oval or gym half-court. Ball pump available in PE storeroom.</div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 2: ENABLING LEARNING ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">②</span>ELEMENT 2 — ENABLING LEARNING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- Full phase: Warm Up -->
+  <div class="full-phase">
+    <div class="full-phase-header wu-bg">
+      <div class="fph-num">①</div>
+      <span>WARM UP &amp; ACTIVATION</span>
+      <span class="fph-time">5 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> Raise heart rate, activate spatial awareness and listening — Space Invaders tag game in boundary area.</div>
+      <div class="full-step-row">
+        <div class="full-step-num wu-step-num">1</div>
+        <div class="full-step-text" contenteditable="true">Set boundary with 4 cones (approx 20m × 20m for oval; half-court for gym). Choose 2 taggers and give them a bib. Explain: taggers gently touch shoulder to freeze a runner.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wu-step-num">2</div>
+        <div class="full-step-text" contenteditable="true">Play Space Invaders: frozen students stand still until a free runner does 5 star jumps next to them to "unfreeze." Rotate taggers every 60 seconds on signal.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wu-step-num">3</div>
+        <div class="full-step-text" contenteditable="true">Cool transition: Call FREEZE (clap ×2). Students walk 2 laps of boundary, shaking out arms. Dynamic stretches: arm circles, wrist rolls, side twists ×5 each.</div>
+      </div>
+      <div class="full-note-box">
+        <div class="nb-label">📌 Teacher Note</div>
+        <div contenteditable="true">Check for students who need modified movement — allow walking or reduced boundary for those with physical needs. Watch for wall proximity in gym setting.</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: "Freeze! Hands on head. Walk quietly to the middle circle and sit down facing me."</div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 3: EXPLICIT TEACHING ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">③</span>ELEMENT 3 — EXPLICIT TEACHING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- Full phase: Explicit Teaching -->
+  <div class="full-phase">
+    <div class="full-phase-header et-bg">
+      <div class="fph-num">②</div>
+      <span>EXPLICIT TEACHING — I DO</span>
+      <span class="fph-time">8 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> Teach the 3-cue chest pass model (READY → PUSH → FOLLOW THROUGH) using demonstration, think-aloud, and guided practice.</div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">1</div>
+        <div class="full-step-text" contenteditable="true"><strong>Activate prior knowledge:</strong> "Has anyone done a chest pass before? What do you think we need to do?" — gather 2–3 ideas. Validate and redirect to cue cards on the board.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">2</div>
+        <div class="full-step-text" contenteditable="true"><strong>Demonstrate with think-aloud:</strong> Hold ball at chest, elbows out (READY). Step toward target (STEP). Extend both arms and push (PUSH). Fingers point toward target on release (FOLLOW). Repeat slowly ×2.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">3</div>
+        <div class="full-step-text" contenteditable="true"><strong>Whole class mirror:</strong> Students stand, mirror all 4 cues in slow-motion without a ball ×2. Teacher narrates: READY → STEP → PUSH → FOLLOW. Students call out each cue as they mirror.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num et-step-num">4</div>
+        <div class="full-step-text" contenteditable="true"><strong>Partner slow-motion:</strong> Each pair gets 1 ball. One student does a slow-motion chest pass; partner gives thumbs up when they see all 3 cues. Swap roles once each.</div>
+      </div>
+      <div class="full-note-box">
+        <div class="nb-label">📌 Teaching Notes</div>
+        <div contenteditable="true">Common errors to address: (a) throwing overhead — cue: READY (ball at shirt buttons) — cue "ball starts at your shirt buttons," (b) not extending arms — cue "reach and release," (c) stepping sideways — cue "step toward your target."<br>Use visual cue card on whiteboard throughout lesson.</div>
+      </div>
+      <div class="full-cfu-box">
+        <div class="nb-label">❓ Check for Understanding</div>
+        <div contenteditable="true">Thumbs signal: "Show me your READY position." Scan the group — look for elbows at shoulder height, ball at chest. Address any misconceptions before moving to guided practice.</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: "One ball between two. Find a partner and stand on opposite blue lines — 3 metres apart."</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>WPS Physical Education &nbsp;|&nbsp; Foundation &nbsp;|&nbsp; Term 2, Week 1 &nbsp;|&nbsp; Chest Pass</span>
+    <span>Page 2 of 3 — Full Detail</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE 3 – VTLM ELEMENTS 4 & 5 + WELLBEING + ASSESSMENT + REFLECTION
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page3">
+
+  <!-- Header -->
+  <div class="full-header" style="margin-bottom:4px;">
+    <div class="fh-row">
+      <div>
+        <h1>🏃 WPS PE Lesson Plan — Elements 4 &amp; 5</h1>
+        <div class="fh-sub">Elements 4 &amp; 5 &nbsp;|&nbsp; Differentiation &nbsp;|&nbsp; Wellbeing &nbsp;|&nbsp; Assessment &amp; Reflection</div>
+      </div>
+      <div class="fh-meta">
+        <strong contenteditable="true">Foundation</strong><br>
+        <span contenteditable="true">Term 2, Week 1 — Chest Pass</span><br>
+        <span contenteditable="true">Mr. P. Gallivan</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 4: SUPPORTED APPLICATION ── -->
+  <div class="elem-banner" style="margin-top:2px;">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">④</span>ELEMENT 4 — SUPPORTED APPLICATION</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- We Do phase -->
+  <div class="full-phase" style="margin-bottom:3px;">
+    <div class="full-phase-header wd-bg">
+      <div class="fph-num">③</div>
+      <span>WE DO — GUIDED PRACTICE</span>
+      <span class="fph-time">10 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> Guided partner passing — teacher provides corrective feedback, students self-assess using cue card.</div>
+      <div class="full-step-row">
+        <div class="full-step-num wd-step-num">1</div>
+        <div class="full-step-text" contenteditable="true">Pairs at 3m: 5 passes each, partner gives feedback using the 3 cues ("READY ✓, PUSH ✓, FOLLOW ✗"). Teacher circulates with targeted feedback — prioritise students flagged in pre-assessment.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wd-step-num">2</div>
+        <div class="full-step-text" contenteditable="true">Increase distance to 5m. Students self-assess: was the pass at chest height? Thumbs up/middle/down. Switch partners after 3 passes for broader peer interaction.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num wd-step-num">3</div>
+        <div class="full-step-text" contenteditable="true">Triangle passes (groups of 3): one rotation of 6 passes total. Challenge: try to complete triangle without the ball bouncing. Teacher observes and names good technique publicly.</div>
+      </div>
+      <div class="full-cfu-box">
+        <div class="nb-label">❓ Checking for Understanding</div>
+        <div contenteditable="true">Stop class at halfway. "Show me — which cue is hardest for you?" Quick scan and class discussion. Reteach FOLLOW THROUGH if needed using one student as model.</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: "Balls in the bucket. Rotate to your station colour — check the board for which station is yours."</div>
+    </div>
+  </div>
+
+  <!-- Tier Differentiation Table -->
+  <div style="margin-bottom:4px;">
+    <div style="font-size:9pt;font-weight:700;color:#455A64;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:3px;">📊 Differentiated Station Tasks — Element 4 Application</div>
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th class="tier-t1" style="width:33%;">🔴 Tier 1 — Supported</th>
+          <th class="tier-core" style="width:33%;">🔵 Core Task</th>
+          <th class="tier-t3" style="width:33%;">🟢 Tier 3 — Extension</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tier-t1-bg" contenteditable="true">Use larger foam ball (size 5→7). Reduce distance to 2m. Peer buddy provides verbal cue before each pass. May perform stationary slow-motion pass without stepping.</td>
+          <td class="tier-core-bg" contenteditable="true">Standard task: 5 passes at 3m, increase to 5m. Triangle passing. Self-assess with cue card. Focus on all 3 technical cues with consistency.</td>
+          <td class="tier-t3-bg" contenteditable="true">Pass to moving partner (catcher jogs sideways). Use non-dominant hand for 2 passes. Bonus: call "go" before each pass so receiver must react and reposition.</td>
+        </tr>
+        <tr>
+          <td class="tier-t1-bg" contenteditable="true"><strong>Station A (modified):</strong> Target hoop at 1.5m, may bounce ball once. Support from aide or buddy.</td>
+          <td class="tier-core-bg" contenteditable="true"><strong>Station B:</strong> 4v1 keep-away, standard chest pass only. Rotate defender every 30 sec.</td>
+          <td class="tier-t3-bg" contenteditable="true"><strong>Station C (extension):</strong> Relay with bounce pass alternate — chest, bounce, chest, bounce sequence.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- You Do phase -->
+  <div class="full-phase" style="margin-bottom:3px;">
+    <div class="full-phase-header yd-bg">
+      <div class="fph-num">④</div>
+      <span>YOU DO — INDEPENDENT APPLICATION</span>
+      <span class="fph-time">15 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="phase-focus" contenteditable="true"><strong>Focus:</strong> 3-station rotation — students apply technique independently while teacher observes for assessment evidence.</div>
+      <div class="full-step-row">
+        <div class="full-step-num yd-step-num">1</div>
+        <div class="full-step-text" contenteditable="true"><strong>Station A – Target Passing (Red cones):</strong> Pass at wall-mounted hoop from 3m. Score 1 point per clean pass through. Record personal score. Rotate after 5 attempts each.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num yd-step-num">2</div>
+        <div class="full-step-text" contenteditable="true"><strong>Station B – Keep Away (Blue cones):</strong> 4v1. Team must use chest pass only — no bouncing or overhead. Defender tries to intercept within 30 sec. Rotate defender role.</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num yd-step-num">3</div>
+        <div class="full-step-text" contenteditable="true"><strong>Station C – Relay (Green cones):</strong> Line of 4 students. Chest pass down the line and back. Team counts total successful passes in 60 sec. Challenge own score each rotation.</div>
+      </div>
+      <div class="full-note-box">
+        <div class="nb-label">📌 Assessment Observation Window</div>
+        <div contenteditable="true">Use this block to gather anecdotal evidence for VC2HPFM01. Target 6–8 students per lesson for observation notes. Record on clipboard: student name + cue observed (R/P/F). Note: who demonstrates consistently, who needs reteaching.</div>
+      </div>
+      <div class="full-trans-line" contenteditable="true">→ Transition: "Equipment down where it is. Walk to the finish circle and sit cross-legged. No talking until everyone is seated."</div>
+    </div>
+  </div>
+
+  <!-- ── ELEMENT 5: REFLECTION ── -->
+  <div class="elem-banner">
+    <h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">⑤</span>ELEMENT 5 — REFLECTION ON LEARNING</h3>
+    <span class="elem-badge">VTLM 2.0</span>
+  </div>
+
+  <!-- Pack Up phase -->
+  <div class="full-phase" style="margin-bottom:4px;">
+    <div class="full-phase-header pu-bg">
+      <div class="fph-num">⑤</div>
+      <span>PACK UP &amp; STUDENT REFLECTION</span>
+      <span class="fph-time">7 minutes</span>
+    </div>
+    <div class="full-phase-body">
+      <div class="full-step-row">
+        <div class="full-step-num pu-step-num">1</div>
+        <div class="full-step-text" contenteditable="true">Equipment managers (2 students) collect balls and cones while class completes cool-down stretches (arms across chest, wrist flexor stretch, slow neck rolls ×5).</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num pu-step-num">2</div>
+        <div class="full-step-text" contenteditable="true">Seated circle reflection — "Traffic light": Green = I nailed my chest pass today / Amber = I'm getting there / Red = I need more practice. Students hold up a finger (1/2/3).</div>
+      </div>
+      <div class="full-step-row">
+        <div class="full-step-num pu-step-num">3</div>
+        <div class="full-step-text" contenteditable="true">Pair share: "Tell your partner one thing you will focus on next lesson." 2 volunteers share with class. Teacher closes: "Next lesson we'll add movement — catching from a bounce pass."</div>
+      </div>
+      <div class="full-cfu-box">
+        <div class="nb-label">❓ Exit Reflection</div>
+        <div contenteditable="true">Students give thumbs up/down: "Did we achieve our learning intention today?" Teacher notes patterns for planning next lesson.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WELLBEING & SEL ── -->
+  <div class="wellbeing-banner">💚 Wellbeing &amp; Social-Emotional Learning (SEL)</div>
+  <div class="three-col" style="margin-bottom:4px;">
+    <div class="wellbeing-col">
+      <div class="wc-label">Wellbeing Focus</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Positive self-talk during skill learning. Acknowledge "not yet" mindset — mistakes are part of learning. Celebrate effort, not just outcome.</div>
+    </div>
+    <div class="wellbeing-col">
+      <div class="wc-label">Social Skill Target</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Respectful feedback to partners — "I noticed your arms…" framing. Encourage and include — no negative comments about peers' attempts.</div>
+    </div>
+    <div class="wellbeing-col">
+      <div class="wc-label">Emotional Regulation</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Students who struggle with frustration: offer a "reset moment" — step to blue cone, do 5 deep breaths, rejoin. Normalise this as a strategy, not a punishment.</div>
+    </div>
+  </div>
+
+  <!-- ── INCLUSIVE PRACTICE ── -->
+  <div class="inclusive-banner">♿ Inclusive Practice &amp; Adjustments</div>
+  <div class="incl-grid">
+    <div class="incl-cell">
+      <div class="ic-label">EAL/D Students (3)</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Use visual cue cards with diagrams rather than text. Pair with supportive English-speaking buddy. Demonstrate each station personally before group starts.</div>
+    </div>
+    <div class="incl-cell">
+      <div class="ic-label">Fine Motor Support (2 students)</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Larger ball (size 7 foam). Reduced grip — may hold ball from underneath rather than sides. Check IEP for specific strategies. Aide support during We Do block.</div>
+    </div>
+    <div class="incl-cell">
+      <div class="ic-label">Extension / Gifted</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Assign as peer coach role at Station C. Challenge: pass with non-dominant hand, add a jump before release, time the relay for personal best record.</div>
+    </div>
+    <div class="incl-cell">
+      <div class="ic-label">Medical / Withdrawal Notes</div>
+      <div contenteditable="true" style="font-size:7.5pt;">Check class medical register (office). Students with asthma: ensure puffer accessible. Students withdrawn from vigorous activity may still participate in station observation and peer coaching roles.</div>
+    </div>
+  </div>
+
+  <!-- ── ASSESSMENT ── -->
+  <div class="assess-banner">📊 Assessment &amp; Evidence</div>
+  <div class="two-col" style="margin-bottom:4px;">
+    <div class="field-box">
+      <div class="fb-label">Assessment Strategy</div>
+      <div class="fb-val" contenteditable="true">Anecdotal observation during You Do block (targeted 6–8 students). Clipboard checklist: READY ✓/✗, PUSH ✓/✗, FOLLOW ✓/✗. Traffic light self-assessment at end of lesson for whole class data. Photos of students at Station A with consent.</div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">VC2.0 Links &amp; Documentation</div>
+      <div class="fb-val" contenteditable="true">VC2HPFM01 — Fundamental movement skills. Record observation notes in Seesaw (upload photo + voice note). Add to unit portfolio. Use traffic light data to plan Week 2 groupings.</div>
+    </div>
+  </div>
+
+  <!-- ── TEACHER REFLECTION ── -->
+  <div class="reflect-banner">🪞 Teacher Reflection (Post-Lesson)</div>
+  <div class="reflect-grid" style="margin-bottom:3px;">
+    <div class="field-box">
+      <div class="fb-label">What Worked Well?</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">What Would I Change?</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+  </div>
+  <div class="reflect-grid">
+    <div class="field-box">
+      <div class="fb-label">Student Data / Patterns Observed</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+    <div class="field-box">
+      <div class="fb-label">Adjustments for Next Lesson</div>
+      <div class="fb-val" contenteditable="true" style="min-height:28px;"><br></div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>WPS Physical Education &nbsp;|&nbsp; Foundation &nbsp;|&nbsp; Term 2, Week 1 &nbsp;|&nbsp; Chest Pass &nbsp;|&nbsp; VTLM 2.0 Framework</span>
+    <span>Page 3 of 3</span>
+  </div>
+</div>
+
+</div><!-- end page-wrapper -->
+
+<script>
+/**
+ * AUTO-FIT ENGINE v2
+ *
+ * LAYER 1 – Viewport fit:  CSS `zoom` on .page
+ *   zoom changes both visual AND layout size, so flex centering stays
+ *   correct and nothing clips on the left.
+ *
+ * LAYER 2 – Content fit:  transform:scale on .page-inner
+ *   If text would overflow the A4 bottom, content shrinks to fit.
+ *
+ * Text wrap: word-break:break-word so even non-spaced text wraps.
+ */
+
+// ── Extra styles ───────────────────────────────────────────────────────
+const _s = document.createElement('style');
+_s.textContent = `
+  .page-inner {
+    width: 100%;
+    transform-origin: top left;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .page { overflow: hidden !important; }
+  [contenteditable] {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+  @media print { .page { zoom: 1 !important; } }
+`;
+document.head.appendChild(_s);
+
+// ── Helpers ────────────────────────────────────────────────────────────
+function debounce(fn, ms) {
+  let t;
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+let _mmPx;
+function mm2px() {
+  if (_mmPx) return _mmPx;
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;width:10mm;visibility:hidden;pointer-events:none';
+  document.body.appendChild(d);
+  _mmPx = d.offsetWidth / 10;
+  document.body.removeChild(d);
+  return _mmPx;
+}
+
+// ── Layer 1: zoom each .page to fit the viewport ───────────────────────
+function fitViewport() {
+  const pageWpx = 210 * mm2px();
+  const avail   = document.documentElement.clientWidth - 32;
+  const zoom    = Math.min(1, avail / pageWpx);
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.zoom = zoom < 1 ? String(zoom) : '';
+  });
+}
+
+// ── Layer 2: wrap & scale content inside each .page ───────────────────
+function wrapInners() {
+  document.querySelectorAll('.page').forEach(page => {
+    if (page.querySelector('.page-inner')) return;
+    const inner = document.createElement('div');
+    inner.className = 'page-inner';
+    Array.from(page.children).forEach(ch => {
+      if (!ch.classList.contains('page-footer')) inner.appendChild(ch);
+    });
+    page.insertBefore(inner, page.firstChild);
+  });
+}
+
+function fitContent(page) {
+  const inner = page.querySelector('.page-inner');
+  if (!inner) return;
+  inner.style.transform = '';
+  inner.style.width     = '100%';
+  requestAnimationFrame(() => {
+    const avH = page.clientHeight - 22;
+    const avW = page.clientWidth;
+    const cH  = inner.scrollHeight;
+    const cW  = inner.scrollWidth;
+    if (cH <= avH && cW <= avW) return;
+    const scale = Math.min(
+      cH > avH ? avH / cH : 1,
+      cW > avW ? avW / cW : 1
+    );
+    inner.style.transformOrigin = 'top left';
+    inner.style.transform       = `scale(${scale.toFixed(5)})`;
+    inner.style.width           = `${(100 / scale).toFixed(3)}%`;
+  });
+}
+
+function fitAll() {
+  fitViewport();
+  document.querySelectorAll('.page').forEach(fitContent);
+}
+
+// ── Watch edits ────────────────────────────────────────────────────────
+const observer = new MutationObserver(debounce(mutations => {
+  const pages = new Set();
+  mutations.forEach(m => {
+    let el = m.target;
+    while (el && !el.classList?.contains('page')) el = el.parentElement;
+    if (el) pages.add(el);
+  });
+  pages.forEach(fitContent);
+}, 280));
+
+// ── Boot ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  wrapInners();
+  fitAll();
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+});
+window.addEventListener('resize',      debounce(fitAll, 180));
+window.addEventListener('beforeprint', fitAll);
+</script>
+
+</body>
+</html>
