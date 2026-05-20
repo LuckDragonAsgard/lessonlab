@@ -1,9 +1,32 @@
 # LessonLab Lesson Plan HTML — Full Handover
 
-**Last updated:** May 2026  
-**Picking up from:** Previous Cowork session (context ran out)  
+**Last updated:** 21 May 2026  
+**Session status:** ✅ ALL TASKS COMPLETE — files live on GitHub  
 **User:** Paddy Gallivan — PE / Specialist Teacher, WPS  
 **Project:** LessonLab — SaaS AI lesson plan generator for PE/specialist teachers
+
+---
+
+## 🟢 Session Summary (21 May 2026)
+
+Everything below was built and shipped in this Cowork session. All 3 files are now live in `Luck-Dragon-Pty-Ltd/lessonlab` on GitHub at `templates/html/`.
+
+### Files pushed to GitHub (via asgard-tools `/admin/gh-write`)
+
+| GitHub path | Purpose |
+|-------------|---------|
+| [`templates/html/WPS_PE_Foundation_T2W1_v11.html`](https://github.com/Luck-Dragon-Pty-Ltd/lessonlab/blob/main/templates/html/WPS_PE_Foundation_T2W1_v11.html) | Filled PE example — Foundation, Chest Pass |
+| [`templates/html/WPS_LessonPlan_BLANK_TEMPLATE_v11.html`](https://github.com/Luck-Dragon-Pty-Ltd/lessonlab/blob/main/templates/html/WPS_LessonPlan_BLANK_TEMPLATE_v11.html) | Blank cross-subject master template |
+| [`templates/html/HANDOVER.md`](https://github.com/Luck-Dragon-Pty-Ltd/lessonlab/blob/main/templates/html/HANDOVER.md) | This file |
+
+### How files were pushed
+No local git. Used `asgard-tools` worker endpoint:
+```
+POST https://asgard-tools.pgallivan.workers.dev/admin/gh-write
+X-Pin: 535554
+{ repo, path, content_b64, message, branch: "main" }
+```
+Worker holds `GITHUB_TOKEN` binding, handles SHA lookup + PUT to GitHub Contents API.
 
 ---
 
@@ -200,27 +223,4 @@ The template uses "Opening / Activation" and the placeholder text guides the tea
 
 **Existing DOCX template system (in GitHub repo):**
 - `lessonlab/templates/` — 11 subject templates
-- Each has a blank DOCX, filled example DOCX, `build_[subject]_v11_template.js`, `build_[subject]_v11_example.js`
-- These were built with Node.js `docx` npm package
-- The HTML approach was chosen INSTEAD of DOCX because: better layout control, no page overflow issues, contenteditable for teacher edits, print-to-PDF in browser
-
----
-
-## Notes on Opening Files
-
-Open in **Chrome** (not Safari or Edge) for best zoom/print behaviour.
-
-The files live in Paddy's outputs folder. To share with teachers:
-1. Open the blank template in Chrome
-2. Fill in subject, year level, term/week, teacher name in the header fields
-3. Fill in all `[placeholder]` content areas
-4. Hit **Print / Save as PDF** to export
-5. Can also copy-paste into Google Docs or Word if preferred
-
----
-
-## Key Conversation Context
-
-Paddy is building LessonLab as a product for teachers. The lesson plan HTML is meant to be the OUTPUT format that teachers receive from LessonLab — either AI-pre-filled or as a blank they fill themselves. The design goal is: "looks as good as the v5 PDF Paddy made manually, but editable and scalable."
-
-The v5 PDF reference was: `WPS_PE_Y34_T2W3_ChestPass_v5.pdf` — a manually designed lesson plan that Paddy showed as the gold standard.
+- Each has a blank DOCX, filled example DOCX, `build_
