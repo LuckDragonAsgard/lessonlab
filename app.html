@@ -1450,6 +1450,7 @@ document.addEventListener('click', function() {
       width: 90%;
       max-width: 420px;
       overflow: hidden;
+      position: relative;
     }
 
     .auth-modal-header {
@@ -1576,6 +1577,21 @@ document.addEventListener('click', function() {
       font-size: 0.875rem;
       margin-bottom: 1rem;
     }
+
+    .auth-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #9ca3af;
+      padding: 2px 6px;
+      z-index: 10;
+    }
+    .auth-modal-close:hover { color: #374151; }
   </style>
 
   <div class="auth-modal-content">
@@ -1584,6 +1600,7 @@ document.addEventListener('click', function() {
       <button class="auth-tab active" data-tab="signin">Sign In</button>
       <button class="auth-tab" data-tab="signup" style="display:none !important;" aria-hidden="true">Sign Up</button>
     </div>
+    <button class="auth-modal-close" onclick="hideAuthModal()" aria-label="Close">&times;</button>
 
     <!-- Sign In Tab -->
     <div id="signinContent" class="auth-content show">
@@ -1699,6 +1716,18 @@ document.getElementById('backToSignInLink')?.addEventListener('click', function(
   document.querySelectorAll('.auth-content').forEach(c => c.classList.remove('show'));
   document.querySelector('[data-tab="signin"]').classList.add('active');
   document.getElementById('signinContent').classList.add('show');
+});
+
+// Close on backdrop click (clicking outside the modal content)
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if (e.target === this) hideAuthModal();
+});
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('authModal').classList.contains('show')) {
+    hideAuthModal();
+  }
 });
 </script>
 
