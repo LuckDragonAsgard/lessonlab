@@ -19,10 +19,9 @@ The 2026-04-29 session **shipped v11 across the remaining 9 subjects** using a c
 
 ## Live URLs
 
-- **App (production):** https://lessonlab.luckdragon.io — CF Worker `lessonlab` (inline v11 build), `app.html` proxied from GitHub raw
-- **API:** https://lessonlab-api.luckdragon.workers.dev (D1-backed, ~931 lessons)
-- **Lesson handler:** https://lesson-handler.luckdragon.workers.dev
-- **Legacy redirect:** `lessonlab.com.au` + `www.lessonlab.com.au` → `lessonlab.luckdragon.io` via `lessonlab-redirect` CF Worker
+- **App (production):** https://www.lessonlab.com.au — CF Worker `lessonlab` proxies `app.html` from GitHub raw; routes `lessonlab.com.au/*` and `www.lessonlab.com.au/*`
+- **API:** https://lessonlab-api.luckdragon.workers.dev — CF Worker `lessonlab-api` v2.0.0 (D1-backed)
+- **Workers.dev subdomain:** intentionally disabled
 
 ---
 
@@ -128,8 +127,8 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 
 - **CF account:** `a6f47c17811ee2f8b6caeb8f38768c20` (Luck Dragon Main)
 - **GitHub org:** `LuckDragonAsgard` (legacy at `PaddyGallivan/lessonlab`)
-- **D1 databases:** `lessonlab` (UUID: `295203f9-1f60-43f0-91f2-a6fd6b55d069`) — lessons, users, sessions, ai_lessons, lesson_usage, generate_errors, templates
-- **lessonlab-api secrets:** 18 total — ANTHROPIC_API_KEY, RESEND_API_KEY, JWT_SECRET, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_* (12 price IDs), + internal secrets
+- **D1 databases:** `lessonlab` (UUID: `295203f9-1f60-43f0-91f2-a6fd6b55d069`) — users, sessions, lessons, ai_lessons, lesson_usage, generate_errors, password_reset_tokens, content_reviews
+- **lessonlab-api secrets:** 19 total — ANTHROPIC_API_KEY, RESEND_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, LESSONLAB_PIN, GITHUB_TOKEN, FALKOR_AP + 12 STRIPE_PRICE_* IDs. (No JWT_SECRET — auth is session-based via D1)
 - **Secrets:** `asgard-vault.luckdragon.workers.dev` (PIN-gated; PIN rotated 2026-04-28 — see vault `/secret/PADDY_PIN`)
 - **gh-push bearer:** stored at vault `/secret/GH_PUSH_BEARER` and bound to the gh-push worker.
 
@@ -151,6 +150,70 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 ---
 
 ## Recent work
+
+### 2026-05-21 — Audits #2–5 + 8 more bugs fixed + billing groundwork complete
+
+Four full-stack audit cycles run against live production (`lessonlab.com.au`). All bugs found, fixed, and verified. DB cleaned up.
+
+#### 🔴 Critical bugs fixed
+
+1. **`GET /lessons` returned object, not array — library always empty** — worker was returning `{ lessons: [] }` but `app.html` expected a bare array and bailed on the `!Array.isArray(data)` guard. Every user's lesson library showed empty. Fixed: changed handler to `return json(rows.results || [])`. (Audit #3)
+
+2. **Stripe webhook silently dropped all events** — `STRIPE_WEBHOOK_SECRET` env var was unset; the guard `if (env.STRIPE_WEBHOOK_SECRET)` returned false and the handler returned `{ok:true}` before parsing anything. No subscription upgrades/downgrades were ever processed. Fix: rolled a new webhook (`we_1TZT2YAm8bVflPN0k2qiq6EB`), set secret `whsec_QV6BsEUUado5yBanN2sQXveUxMGebcpq` as `STRIPE_WEBHOOK_SECRET` on the worker, rewrote handler with full HMAC-SHA256 verification and handlers for `checkout.session.completed`, `customer.subscription.updated/created/deleted`, `invoice.payment_failed`. (Audit #3)
+
+3. **`PUT /lessons/:id` missing — lesson edits always returned 404** — worker had GET/POST/DELETE on lessons but no PUT. Any lesson edit in the app silently failed. Added full PUT handler with field allowlist (`subject, unit, focus, year_level, term, week, title, learning_intention, success_criteria, equipment, lesson_data`). (Audit #4)
+
+4. **Checkout `success_url` mismatch — post-payment tier upgrade never fired** — worker sent user to `?checkout=success` but `app.html` checks `params.get('upgrade')`, so the `initAuth()` re-fetch that picks up the new tier never ran. Fixed `success_url` to `https://www.lessonlab.com.au/app?upgrade=success&type=pro`. (Audit #4)
+
+5. **3 Stripe prices inactive** — Pro Monthly (`price_1TLpaYAm...`), Cycle Planner (`price_1TLpaaAm...`), Extra Subject (`price_1TLpaZAm...`) were set to `active: false`. Any checkout attempt for those plans would fail at the Stripe API level. Reactivated all 3 via `POST /v1/prices/{id}` with `active=true`. (Audit #4)
+
+6. **D1 binding stripped on redeploy** — CF Workers API redeploy wiped the D1 binding when metadata didn't include it. Worker returned 1101 on all DB-touching endpoints. Fixed: always include `"bindings":[{"type":"d1","name":"DB","id":"295203f9-1f60-43f0-91f2-a6fd6b55d069"}]` in the metadata JSON on every deploy. (Audit #4 — deployment procedure note)
+
+7. **5 pro users with `stripe_customer_id = NULL` — billing portal errored** — all 5 manually-granted pro users had no Stripe customer record. `POST /stripe/portal` returned `{"error":"No Stripe customer found"}` for all of them. Fixed: created Stripe customers for all 5 and updated D1:
+   - `pgallivan@outlook.com` → `cus_UYak9bpA16uTT3`
+   - `moni_gallivan@hotmail.com` → `cus_UYakjL8v52FZST`
+   - `rooney.jaclyn.l@gmail.com` → `cus_UYakp44r27tyCO`
+   - `stevenpuhar@yahoo.com.au` → `cus_UYaknPw1XmP5RJ`
+   - `aeneasg@hotmail.com` → `cus_UYakvEHMJ9Qfgi`
+   Billing portal now generates a valid Stripe session for all 5. (Audit #5)
+
+#### 🟡 Other fixes
+
+8. **Rate limit 429 showed wrong message** — app hit the `res.error` branch on limit but showed a generic AI-unavailable toast instead of opening the pricing modal. Added `res.error.toLowerCase().includes('limit')` check to call `openPricingModal(true)` on 429s. Two dead `monthly_limit_reached` checks also removed from save endpoints. (Audit #2)
+
+9. **35 stale password reset tokens cleaned up** — all expired, unused tokens deleted from D1. (Audit #3)
+
+#### Current state (post Audit #5 — all clean)
+
+**Worker `lessonlab-api` v2.0.0** — deployed, etag `b02ee9eb`
+- 23 endpoints, all smoke-tested and passing
+- 19 secrets: `ANTHROPIC_API_KEY, STRIPE_SECRET_KEY, RESEND_API_KEY, LESSONLAB_PIN, GITHUB_TOKEN, FALKOR_AP, STRIPE_WEBHOOK_SECRET` + 12 price IDs
+- D1 binding: `DB` → `295203f9-1f60-43f0-91f2-a6fd6b55d069`
+- ⚠️ **Always include D1 binding in metadata on redeploy** (see note above)
+
+**D1 Database** — clean
+- 5 real users, all `tier=pro`, all with `stripe_customer_id`
+- 4 template lessons (`is_template=1`) in Paddy's library (music, visual-art, science, italian)
+- All test users cleared after each audit cycle
+- `generate_errors`: 10 historical rows from prior worker's validation logic — not indicative of current bugs (current worker has no such validation)
+
+**app.html** (GitHub `main`, ~1.15 MB)
+- API_URL: `https://lessonlab-api.luckdragon.workers.dev` ✅
+- `?upgrade=success` handler → re-fetches profile via `initAuth()` after 2s delay ✅
+- Rate limit 429 → opens pricing modal ✅
+- PUT `/lessons/:id` call present ✅
+- VTLM v11 enrich + legacy map: 46 refs ✅
+- Export: multi-lesson docx stitch ✅
+
+**Stripe**
+- 20 active prices (all products live)
+- Webhook `we_1TZT2YAm8bVflPN0k2qiq6EB` → `https://lessonlab-api.luckdragon.workers.dev/stripe/webhook` (HMAC-verified)
+- Checkout success URL: `https://www.lessonlab.com.au/app?upgrade=success&type=pro`
+- All 5 pro users have Stripe customers; portal works
+
+**Known ongoing**
+- Pro users' Stripe customers have no subscription attached (manually granted tier). Portal shows empty account. Resolves naturally if they subscribe through Checkout.
+- Templates in D1 are owned by Paddy's user_id — visible only in his library. Template gallery for other users uses GitHub-hosted files (separate flow, works correctly).
 
 ### 2026-04-29 — 9 subjects shipped + gh-push repair (this session)
 
@@ -325,5 +388,5 @@ Full production audit run against live app at `lessonlab.com.au`. Findings and f
 
 #### Known issue (not yet fixed)
 
-- **No Stripe customer IDs for existing pro users** — all 5 pro users (`moni_gallivan`, `rooney.jaclyn.l`, `pgallivan`, `stevenpuhar`, `aeneasg`) have `stripe_customer_id: null` because their pro tier was set manually via `POST /admin/set-tier`. Billing portal (`/billing/portal`) will fail for all of them. **Resolution path:** users must subscribe through Stripe Checkout to receive a customer ID; or Stripe customers can be created and matched manually.
+- ~~**No Stripe customer IDs for existing pro users**~~ — FIXED 2026-05-21: Stripe customers created for all 5 pro users, D1 updated. Billing portal works.
 
