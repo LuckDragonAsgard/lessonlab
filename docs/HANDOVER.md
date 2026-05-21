@@ -195,3 +195,76 @@ End-to-end verified against a real v3 row from D1 (id=212, "Handballing Helpers"
 Defensive cleanup: pre-existing `'👎 Noted. We'll improve this.'` syntax error in `rateLessonAI()` (literal ASCII apostrophe inside SQ string — block #8 wouldn't parse in Node) was fixed at the same time by replacing the apostrophe with U+2019 `'`. Block #8 now parses cleanly.
 
 Verification on live: `https://www.lessonlab.com.au/app.html` size 1,122,141 bytes; `_v11LegacyMap` × 3, `_v11Enrich` × 7. Pages auto-deploy from `LuckDragonAsgard/lessonlab/main` on push.
+
+
+### 2026-05-21 — Full audit + lessonlab-api v2.0.0 rebuild + 7 app.html fixes
+
+#### lessonlab-api v2.0.0 — full API rebuilt from scratch
+
+**Background:** The `lessonlab-api` CF Worker was discovered to have been replaced by a GitHub-write-only stub (v1.1.0) in a prior session. The original full API (auth, lessons, generation, Stripe, admin) was gone. Rebuilt from scratch as v2.0.0.
+
+**D1 database:** `lessonlab` (UUID: `295203f9-1f60-43f0-91f2-a6fd6b55d069`) — all data intact (7 users, 615 ai_lessons).
+
+**D1 schema (key tables):**
+- `users` — id, email, password_hash, display_name, school_name, tier, role, is_admin, stripe_customer_id, stripe_subscription_id, subjects, addons, plan_interval, school_logo
+- `lessons` — id, user_id, subject, unit, focus, year_level, term, week, title, learning_intention, success_criteria, equipment, lesson_data
+- `sessions` — id, user_id, expires_at (30-day sessions)
+- `lesson_usage` — user_id, year_month, count (monthly generation tracking)
+- `ai_lessons` — AI-generated lesson JSON store (615 rows)
+- `password_reset_tokens` — for /auth/forgot-password flow
+
+**Auth:** Custom session-based (NOT Supabase JWT, NOT Cloudflare KV). Sessions stored in D1. Token = 64-char hex stored in localStorage as `ll_token`, sent as `Authorization: Bearer <token>`. Password hashing: PBKDF2-SHA256, 100,000 iterations, 16-byte random salt. Hash format: `base64(salt).base64(hash)` = 69 chars.
+
+**Paddy's password reset (2026-05-21):** `pgallivan@outlook.com` password was reset to `LessonLab2026!` to verify the hash algorithm. Change it after confirming login works.
+
+**Worker endpoints (v2.0.0):**
+- `GET /health` — public
+- `POST /auth/signup` — register (email, password, display_name, school_name)
+- `POST /auth/signin` — login, returns session token
+- `POST /auth/signout` — deletes session
+- `GET /auth/session` — returns current user from token
+- `POST /auth/update-password` — change password (requires current_password)
+- `POST /auth/forgot-password` — sends reset email via Resend
+- `POST /auth/reset-password` — reset with token
+- `GET /profile` — get user profile
+- `PUT /profile` — update display_name, school_name, school_logo, curriculum
+- `GET /api/usage` — monthly generation stats
+- `GET /lessons` — list saved lessons
+- `POST /lessons` — save lesson
+- `GET /lessons/:id` — get single lesson
+- `DELETE /lessons/:id` — delete lesson
+- `POST /lessons/generate` — AI lesson via Anthropic claude-haiku-4-5-20251001
+- `POST /lessons/rate/:id` — rate ai_lesson by D1 row id
+- `POST /stripe/checkout` — create Stripe checkout session
+- `POST /stripe/portal` — Stripe billing portal
+- `POST /stripe/webhook` — handle subscription events
+- `GET /admin/users` — list all users (is_admin only)
+- `POST /admin/set-tier` — set user tier (is_admin only)
+- `GET /falkor/access` — returns Falkor agent PIN (is_admin only, server-side only)
+- `POST /gh-write` — GitHub file write (X-Pin: LESSONLAB_PIN)
+- `POST /gh-delete` — GitHub file delete (X-Pin: LESSONLAB_PIN)
+
+**Worker secrets set:** ANTHROPIC_API_KEY, STRIPE_SECRET_KEY, RESEND_API_KEY, GITHUB_TOKEN, LESSONLAB_PIN (1708), FALKOR_AP
+
+**Stripe price env vars needed** (set in CF dashboard per plan): STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_SCHOOL_MONTHLY, STRIPE_PRICE_SCHOOL_ANNUAL, plus per-subject prices as needed.
+
+**Generation limits:** Free = 3/month, Pro/School = 20/month.
+
+#### app.html — 7 fixes shipped (commit 8e887de7)
+
+1. **API_URL** — fixed `lessonlab-api.pgallivan.workers.dev` → `lessonlab-api.luckdragon.workers.dev`
+2. **Landing page VC codes** — replaced old VC1 codes (`VCHPEM082 · VCHPEM083`) with real VC2 codes (`VC2HP4M01 · VC2HP4M02`)
+3. **Falkor curriculum-align prompt** — fixed few-shot example from `VCHPEM1` → `VC2HP4M01`
+4. **AI fallback notice** — `generateAll()` catch/empty-response branches now call `showToast('AI is temporarily unavailable — using pre-built lesson templates.', 'warn')` once per session (guarded by `window._aiFailedNotified`)
+5. **Falkor PIN security** — removed hardcoded `ALLOWED` email list and `AP` agent pin from public source. Widget init now checks `currentProfile.is_admin` and fetches AP from `/falkor/access` server-side
+6. **school_name ReferenceError** — `handleSignUp` now accepts `schoolName` as 4th param; caller reads `signupSchool` input; body sends `school_name: schoolName || ''`
+7. **Renamed "Email Digest" → "Download Summary"** — button label and download filename updated
+
+#### Known remaining gaps (not yet fixed)
+
+- **Stripe price IDs** not configured in worker env vars — checkout/portal will error until set in CF dashboard
+- **Existing user passwords** — 6 users (not pgallivan) have hashes from the original worker. If the original used the same PBKDF2-SHA256-100k algorithm they'll work; if not, they'll need password resets via `/auth/forgot-password`
+- **VC2 codes are static** — no live VCAA API integration. Manual update required if VCAA revises VC2
+- **VTLM tokens mostly hardcoded** — only 7 of ~50 v11 template tokens come from AI; rest use JS defaults. Needs `generateLesson()` extension to populate VTLM-specific fields
+- **No email capability** — password reset emails go via Resend (configured); lesson sharing/digest emails not built
+- **Sign-up hidden in UI** — `signupContent` has `display:none`; new registrations require direct form manipulation or admin tier-set
