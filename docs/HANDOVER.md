@@ -20,8 +20,8 @@ The 2026-04-29 session **shipped v11 across the remaining 9 subjects** using a c
 ## Live URLs
 
 - **App (production):** https://lessonlab.luckdragon.io — CF Worker `lessonlab` (inline v11 build), `app.html` proxied from GitHub raw
-- **API:** https://lessonlab-api.pgallivan.workers.dev (D1-backed, ~931 lessons)
-- **Lesson handler:** https://lesson-handler.pgallivan.workers.dev
+- **API:** https://lessonlab-api.luckdragon.workers.dev (D1-backed, ~931 lessons)
+- **Lesson handler:** https://lesson-handler.luckdragon.workers.dev
 - **Legacy redirect:** `lessonlab.com.au` + `www.lessonlab.com.au` → `lessonlab.luckdragon.io` via `lessonlab-redirect` CF Worker
 
 ---
@@ -119,8 +119,8 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 
 ## How to deploy
 
-- App: deployed via Vercel from `index.html` + `app.html` in this repo (vercel.json present).
-- Default pattern for new files: push to this repo via `gh-push.pgallivan.workers.dev` (now repaired, see below).
+- **App:** deployed via Cloudflare Pages/Workers from `index.html` + `app.html` in this repo. Pages auto-deploy from `LuckDragonAsgard/lessonlab/main` on push.
+- Default pattern for new files: push to this repo via `lessonlab-api` worker (`https://lessonlab-api.luckdragon.workers.dev/gh-write`).
 
 ---
 
@@ -129,7 +129,7 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 - **CF account:** `a6f47c17811ee2f8b6caeb8f38768c20` (Luck Dragon Main)
 - **GitHub org:** `LuckDragonAsgard` (legacy at `PaddyGallivan/lessonlab`)
 - **D1 databases:** lesson content via `lessonlab-api` worker; session log in `asgard-prod` (host worker `asgard-brain`)
-- **Secrets:** `asgard-vault.pgallivan.workers.dev` (PIN-gated; PIN rotated 2026-04-28 — see vault `/secret/PADDY_PIN`)
+- **Secrets:** `asgard-vault.luckdragon.workers.dev` (PIN-gated; PIN rotated 2026-04-28 — see vault `/secret/PADDY_PIN`)
 - **gh-push bearer:** stored at vault `/secret/GH_PUSH_BEARER` and bound to the gh-push worker.
 
 ---
@@ -192,6 +192,6 @@ Three open follow-ups from the 2026-04-30 session, all shipped to live `app.html
 
 End-to-end verified against a real v3 row from D1 (id=212, "Handballing Helpers"): all of cue_1/2/3, entry_1, warm_up_say, teach_step_1, practice_step_1, app_step_1, packup_step_1, tier1_task_1, tier3_task_1 populate from the legacy fields rather than hitting the generic defaults.
 
-Defensive cleanup: pre-existing `'👎 Noted. We'll improve this.'` syntax error in `rateLessonAI()` (literal ASCII apostrophe inside SQ string — block #8 wouldn't parse in Node) was fixed at the same time by replacing the apostrophe with U+2019 `’`. Block #8 now parses cleanly.
+Defensive cleanup: pre-existing `'👎 Noted. We'll improve this.'` syntax error in `rateLessonAI()` (literal ASCII apostrophe inside SQ string — block #8 wouldn't parse in Node) was fixed at the same time by replacing the apostrophe with U+2019 `'`. Block #8 now parses cleanly.
 
 Verification on live: `https://www.lessonlab.com.au/app.html` size 1,122,141 bytes; `_v11LegacyMap` × 3, `_v11Enrich` × 7. Pages auto-deploy from `LuckDragonAsgard/lessonlab/main` on push.
