@@ -452,3 +452,75 @@ Full production audit run against live app at `lessonlab.com.au`. Findings and f
 
 - ~~**No Stripe customer IDs for existing pro users**~~ — FIXED 2026-05-21: Stripe customers created for all 5 pro users, D1 updated. Billing portal works.
 
+---
+
+## Next steps & roadmap
+
+*Last reviewed: 2026-05-21. All critical bugs resolved. System is production-ready.*
+
+### 🔴 High priority — affects paying users now
+
+**1. Add secondary year levels to the UI picker**
+The backend (`lessonlab-api`) now generates correctly for Y7–12 (secondary persona, discipline-specific vocab, higher-order SC). But the app year-level selector only shows Foundation / Y1-2 / Y3-4 / Y5-6. Secondary subscribers have to use the API directly or can't select their year at all.
+Fix: add "Years 7-8" and "Years 9-10" options to the year level picker in `app.html`. One small UI change, backend is ready.
+
+**2. Add secondary subjects to the subject picker**
+Current subject list is primary: literacy, numeracy, pe, visual-art, french, music, drama, science, digital_tech, hass, wellbeing. Secondary teachers need: English, Maths, Biology, Chemistry, Physics, History, Geography, Health & PE, Visual Arts, etc.
+Fix: extend the subject cards/list in `app.html` with secondary subjects. VC2 curriculum codes are already in the `CD` object for secondary strands.
+
+**3. Welcome email on signup**
+Resend is configured and password reset emails work. But new users get no welcome email — no confirmation, no "here's how to get started", no link to the app. Drop-off risk.
+Fix: add a `sendWelcomeEmail()` call in `POST /auth/signup` in the worker, same pattern as the reset email.
+
+---
+
+### 🟡 Medium priority — product quality
+
+**4. Upgrade AI model for better output**
+Currently using `claude-haiku-4-5-20251001` (fast, cheap). Upgrading to `claude-sonnet-4-6` would give meaningfully richer lesson content — better worked examples, more nuanced differentiation, stronger metacognitive prompts. Cost increases but quality is noticeably better for a paid product. Could be tier-gated: Haiku for free, Sonnet for pro.
+
+**5. More template lessons — especially secondary**
+Only 4 templates in D1, all primary (music, visual art, science, Italian). Secondary has none. Teachers browsing before signing up want to see what output looks like for their context.
+Add: 2-4 secondary templates (e.g. Y7-8 English, Y7-8 Maths) and more primary variety (literacy, numeracy, PE, HASS).
+
+**6. School account management UI**
+School Site Licence ($1,500/yr) exists as a Stripe product. But there's no school admin UI — no way to manage seats, add/remove teachers, set school branding, or view usage by school. The `school_logo` and `school_name` fields exist in the DB but the UI for it is minimal.
+Minimum viable: a school admin view showing enrolled teachers + usage counts.
+
+**7. Admin dashboard — usage & health metrics**
+Current admin panel shows raw user list and a tier-setter. Useful additions:
+- Generation count by user/month (already in `lesson_usage` table)
+- Error rate from `generate_errors` table
+- Subject distribution (what are people generating most?)
+- Revenue snapshot (pull from Stripe)
+These are all one-query reads from existing tables.
+
+---
+
+### 🟢 Lower priority — nice to have
+
+**8. VC2 codes are static**
+Curriculum codes are hardcoded in `app.html`. If VCAA updates VC2 (they will), the codes go stale silently. Long-term: serve codes from a D1 table seeded from VCAA, with an admin refresh endpoint. Near-term: at least document the update process.
+
+**9. Onboarding flow**
+`app.html` has ~38 references to onboarding logic but it's unclear how complete it is in production. A proper first-run flow (select subjects → select year levels → see a sample lesson) would reduce time-to-value for new signups.
+
+**10. Lesson sharing / collaboration**
+~21 share-related refs in `app.html` but no server-side sharing endpoint exists. Teachers want to share good lessons with colleagues.
+Minimum: a `GET /lessons/:id/public` endpoint that returns a lesson without auth, and a share URL the teacher can copy.
+
+**11. PDF export**
+Current export is Word (.docx). Many teachers want PDF for printing or sharing. Could be done client-side (browser print-to-PDF) or server-side (Puppeteer on a CF Worker). A "Print PDF" button that opens a clean print view would handle 80% of the need.
+
+**12. Convert the 5 manually-granted pro users**
+pgallivan, moni_gallivan, rooney.jaclyn.l, stevenpuhar, aeneasg are all `tier=pro` with Stripe customers but no active subscriptions. They're getting pro features for free. Decide: gift them permanently (add a `is_gifted` flag), ask them to subscribe, or set an expiry. Currently they'll stay pro forever unless manually changed.
+
+---
+
+### Infrastructure notes for future sessions
+
+- **Always include D1 binding in CF Worker deploy metadata** — omitting it wipes the binding and crashes all DB endpoints. Required JSON: `{"type":"d1","name":"DB","id":"295203f9-1f60-43f0-91f2-a6fd6b55d069"}`
+- **Worker file**: work from the deployed version fetched via CF API, not a local copy — local copies can get truncated by the Edit tool
+- **Stripe prices**: 20 active. All active as of 2026-05-21. Check with `GET /v1/prices?active=false` before any billing work
+- **lessonlab-monitor** worker exists in the CF account — purpose unclear, worth auditing before it causes confusion
+- **Secondary year level detection regex**: `/year[s]?\s*(7|8|9|10|11|12)|y(7|8|9|10|11|12)/` — extend if Years 11-12 subjects are added
