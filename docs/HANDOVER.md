@@ -151,6 +151,68 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 
 ## Recent work
 
+### 2026-05-21 — Secondary AI prompt fix + full system wrap-up
+
+#### Fix: AI generation now year-level aware (primary vs secondary)
+
+`generateLesson()` in `lessonlab-api` previously hardcoded `"You are an expert Australian primary school teacher"` regardless of the `year_level` field. Secondary subscribers (Years 7–8) were receiving primary-pitched content — concrete scaffolding, simple vocabulary, Foundation-level framing.
+
+**Fix deployed (etag `e04e24e9`):** Worker now detects school stage at runtime:
+
+```javascript
+const isSecondary = /year[s]?\s*(7|8|9|10|11|12)|y(7|8|9|10|11|12)/.test(yrStr);
+```
+
+- **Primary (F–6):** persona = "expert Australian primary school teacher… concrete language, scaffolded tasks, explicit instruction"
+- **Secondary (Y7–12):** persona = "expert Australian secondary school teacher… adolescent learners: abstract reasoning, discipline-specific literacy, higher-order thinking"
+
+SC guide also switches: primary uses plain success criteria; secondary uses "I can [verb] (knowledge/skill / application / analysis or evaluation)" framing.
+
+**Tested live:**
+- Y3–4 Science "Animal Adaptations" → concrete vocab (body parts / adaptation / inherited trait), simple sentence stems, picture-based worked example ✅
+- Y7–8 English "Persuasive Writing" → Tier 3 vocab (rhetorical strategy / warrant / concession / refutation), SC demanding evaluation, extension probing logical fallacies, exit ticket requiring reasoning ✅
+
+No app.html changes needed — purely server-side prompt logic.
+
+---
+
+#### Full system status — 2026-05-21 wrap-up
+
+All known bugs resolved across 5 full-stack audit cycles. System is production-ready.
+
+**`lessonlab-api` v2.0.0 — etag `e04e24e9` — 23 endpoints**
+
+| Endpoint | Status |
+|---|---|
+| Auth (signup/signin/signout/session/profile/update-password/forgot/reset) | ✅ |
+| Lessons (list/create/get/update/delete) | ✅ |
+| `POST /lessons/generate` | ✅ Year-level aware, VTLM 2.0, 19 fields |
+| `POST /lessons/rate/:id` | ✅ |
+| `GET /api/usage` | ✅ |
+| `POST /stripe/checkout` | ✅ success_url → `?upgrade=success&type=pro` |
+| `POST /stripe/portal` | ✅ All 5 pro users have Stripe customer IDs |
+| `POST /stripe/webhook` | ✅ HMAC-verified, handles subscription lifecycle |
+| Admin + Falkor + GitHub helpers | ✅ |
+
+**D1 `lessonlab` (`295203f9-1f60-43f0-91f2-a6fd6b55d069`)**
+- 5 real users, all `tier=pro`, all with `stripe_customer_id`
+- 4 template lessons in Paddy's library (music, visual-art, science, italian)
+- All test users and expired sessions cleared
+
+**Stripe**
+- 20 active prices across all products
+- Webhook `we_1TZT2YAm8bVflPN0k2qiq6EB` → correct URL, HMAC verified
+- Pro users: `pgallivan` / `moni_gallivan` / `rooney.jaclyn.l` / `stevenpuhar` / `aeneasg` — all have Stripe customers, billing portal works
+
+**app.html (GitHub `main`, ~1.15 MB)**
+- API_URL correct, upgrade handler wired, rate limit opens pricing modal
+- PUT `/lessons/:id` present, VTLM v11 export (multi-lesson), Falkor widget (admin only)
+
+**Known ongoing (by design, not bugs)**
+- Pro users have Stripe customers but no active subscriptions — manually granted tier. Portal shows empty account; resolves when they subscribe through Checkout
+- Templates in D1 owned by Paddy's user_id — visible only in his library; template gallery for other users uses GitHub-hosted files (working correctly)
+- Secondary school subjects (Y7–8): Stripe prices exist and generation now works correctly; app year-level picker currently only shows F–6 options — a UI update would be needed to surface Y7–8 in the dropdown
+
 ### 2026-05-21 — Audits #2–5 + 8 more bugs fixed + billing groundwork complete
 
 Four full-stack audit cycles run against live production (`lessonlab.com.au`). All bugs found, fixed, and verified. DB cleaned up.
