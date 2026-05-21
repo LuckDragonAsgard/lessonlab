@@ -2,30 +2,40 @@
 
 ## ⚡ New session quick-start
 
-> Copy-paste this block at the start of any new chat to restore full context.
+Paste this into a new chat to restore full context immediately.
 
+**Step 1 — read this doc**
+https://github.com/Luck-Dragon-Pty-Ltd/lessonlab/blob/main/docs/HANDOVER.md
+
+**Step 2 — fetch credentials from vault (PIN: 535554)**
+```bash
+# CF deploy token
+curl -s -H "X-Pin: 535554" https://asgard-vault.luckdragon.workers.dev/secret/CF_API_TOKEN_FULLOPS
+
+# GitHub token (repo: Luck-Dragon-Pty-Ltd/lessonlab)
+curl -s -H "X-Pin: 535554" https://asgard-vault.luckdragon.workers.dev/secret/GITHUB_TOKEN_LESSONLAB
 ```
-Read first: https://github.com/Luck-Dragon-Pty-Ltd/lessonlab/blob/main/docs/HANDOVER.md
 
-Vault: https://asgard-vault.luckdragon.workers.dev  |  PIN: 535554
-  Keys: CF_API_TOKEN_FULLOPS, GITHUB_TOKEN_LESSONLAB
+**Step 3 — key facts**
+| Item | Value |
+|---|---|
+| CF account ID | `a6f47c17811ee2f8b6caeb8f38768c20` |
+| D1 database | `lessonlab` — UUID `295203f9-1f60-43f0-91f2-a6fd6b55d069` |
+| Worker (API) | `lessonlab-api` — 23 endpoints, v2.0.0 |
+| Worker (frontend) | `lessonlab` — proxy → GitHub raw app.html |
+| GitHub repo | `Luck-Dragon-Pty-Ltd/lessonlab` |
 
-CF account ID: a6f47c17811ee2f8b6caeb8f38768c20
-GitHub repo:   Luck-Dragon-Pty-Ltd/lessonlab  (token from vault GITHUB_TOKEN_LESSONLAB)
-D1 database:   lessonlab  |  UUID: 295203f9-1f60-43f0-91f2-a6fd6b55d069
-
-CRITICAL deploy rule — always include D1 binding in metadata:
-  {"type":"d1","name":"DB","id":"295203f9-1f60-43f0-91f2-a6fd6b55d069"}
-
-Workers: lessonlab-api (23 endpoints, v2.0.0) | lessonlab (frontend proxy)
-
-Next priorities:
-  1. Add Y7-8 / Y9-10 to year picker in app.html
-  2. Add secondary subjects to subject picker in app.html
-  3. Welcome email on signup (Resend wired — add call in POST /auth/signup)
-  4. Upgrade AI to Sonnet for pro tier
-  5. More template lessons (secondary)
+**CRITICAL deploy rule** — every CF worker deploy must include D1 binding in metadata or the DB gets wiped:
+```json
+{"bindings":[{"type":"d1","name":"DB","id":"295203f9-1f60-43f0-91f2-a6fd6b55d069"}]}
 ```
+
+**Step 4 — next priorities**
+1. Add Y7-8 / Y9-10 to year picker in app.html
+2. Add secondary subjects to subject picker in app.html
+3. Welcome email on signup — Resend already wired, just add call in `POST /auth/signup`
+4. Upgrade AI to Sonnet for pro tier
+5. More template lessons (secondary)
 
 ---
 
