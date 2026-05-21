@@ -1943,7 +1943,7 @@ document.addEventListener('keydown', function(e) {
           <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> Basketballs × 1 per pair · cones × 10 · traffic light cards × 25 · mini whiteboards × 8</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
-          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> VCHPEM082 · VCHPEM083</div>
+          <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> VC2HP4M01 · VC2HP4M02</div>
           <div style="font-size:0.71rem;color:#6b7280;background:#f9fafb;border-radius:6px;padding:4px 10px;"> Export DOCX · PDF · Compass · Slides</div>
         </div>
       </div>
@@ -2362,7 +2362,7 @@ document.addEventListener('keydown', function(e) {
       <button class="btn btn-pri" id="generateSlidesBtn" title="Generate a PowerPoint slide deck for this term plan (Pro/School)"> Generate Slides</button>
       <button class="btn btn-sec" id="printCRTBtn">Print CRT Summaries</button>
       <button class="btn btn-sec" id="equipmentChecklistBtn">Equipment Checklist</button>
-      <button class="btn btn-sec" id="emailDigestBtn">Email Digest</button>
+      <button class="btn btn-sec" id="emailDigestBtn">Download Summary</button>
       <button class="btn btn-sec" id="printTermOverviewFromResultsBtn" style="display:none;">Print Term Overview</button>
     </div>
   </div>
@@ -6681,9 +6681,11 @@ function generateAll() {
           buildAndRender({ title: l.title, li: l.li, sc: l.sc, equipment: l.equipment, 
             context: ctx, differentiation: normDiff, exitTicket: l.exitTicket }, res.ai_lesson_id || null);
         } else {
+          if (!window._aiFailedNotified) { window._aiFailedNotified = true; showToast('AI is temporarily unavailable — using pre-built lesson templates.', 'warn'); }
           buildAndRender(generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel));
         }
       }).catch(function() {
+        if (!window._aiFailedNotified) { window._aiFailedNotified = true; showToast('AI is temporarily unavailable — using pre-built lesson templates.', 'warn'); }
         buildAndRender(generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel));
       });
     } else {
@@ -8199,7 +8201,7 @@ function exportEmailDigest() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'EmailDigest_' + (state.term || 'Lessons') + '_' + new Date().toISOString().split('T')[0] + '.txt';
+  a.download = 'LessonSummary_' + (state.term || 'Lessons') + '_' + new Date().toISOString().split('T')[0] + '.txt';
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -11074,7 +11076,7 @@ if (localStorage.getItem('lessonlab_darkmode') === '1') {
 // ============================================================================
 
 // Cloudflare Worker API Configuration
-const API_URL = 'https://lessonlab-api.pgallivan.workers.dev';
+const API_URL = 'https://lessonlab-api.luckdragon.workers.dev';
 
 function getToken() { return localStorage.getItem('ll_token'); }
 function setToken(t) { if (t) localStorage.setItem('ll_token', t); else localStorage.removeItem('ll_token'); }
@@ -11306,14 +11308,14 @@ async function handleSignIn(email, password) {
 /**
  * Handle sign up form submission
  */
-async function handleSignUp(email, password, displayName) {
+async function handleSignUp(email, password, displayName, schoolName) {
   try {
     const signupError = document.getElementById('signupError');
     if (signupError) signupError.innerHTML = '';
 
     const data = await api('/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ email, password, display_name: displayName , school_name })
+      body: JSON.stringify({ email, password, display_name: displayName, school_name: schoolName || '' })
     });
 
     if (data.error) {
@@ -12042,10 +12044,11 @@ document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
   const email = document.getElementById('signupEmail').value;
   const password = document.getElementById('signupPassword').value;
   const displayName = document.getElementById('signupDisplayName').value;
+  const schoolName = document.getElementById('signupSchool')?.value || '';
   const submitBtn = document.getElementById('signupSubmitBtn');
 
   if (submitBtn) submitBtn.disabled = true;
-  const success = await handleSignUp(email, password, displayName);
+  const success = await handleSignUp(email, password, displayName, schoolName);
   if (submitBtn) submitBtn.disabled = false;
 
   if (success) {
@@ -12601,9 +12604,8 @@ function rateLessonAI(idx, rating, btn) {
 
 <script>
 (function() {
-  var ALLOWED = ['pgallivan@outlook.com','stevenpuhar@yahoo.com.au','rooney.jaclyn.l@gmail.com','moni_gallivan@hotmail.com'];
   var WU = 'https://falkor-widget.luckdragon.io';
-  var AP = 'JilSS1zLn3Rl7mWrM6fOJc69';
+  var AP = null; // fetched server-side via /falkor/access
   var lastLesson = null;
   var lastParams = null;
   var lastAiId = null;
@@ -14038,7 +14040,7 @@ function rateLessonAI(idx, rating, btn) {
       if (!lastLesson) { addMsg('No lesson loaded.', 'fb'); return; }
       addMsg('Identifying Vic Curriculum 2.0 alignment...', 'fb');
       var t = typing();
-      callChat('LESSONLAB_CURRICULUM: Identify which Victorian Curriculum 2.0 content descriptions this lesson aligns with. Return ONLY ```json {"tags":["HPE - Movement and Physical Activity - FMS","..."],"content_descriptions":[{"code":"VCHPEM1","description":"..."}]} ``` with 2-4 most relevant tags and content descriptions. Lesson: '+JSON.stringify({title:lastLesson.title,li:lastLesson.li,subject:lastLesson.subject,year_level:lastLesson.year_level}),
+      callChat('LESSONLAB_CURRICULUM: Identify which Victorian Curriculum 2.0 content descriptions this lesson aligns with. Return ONLY ```json {"tags":["HPE - Movement and Physical Activity - FMS","..."],"content_descriptions":[{"code":"VC2HP4M01","description":"..."}]} ``` with 2-4 most relevant tags and content descriptions. Lesson: '+JSON.stringify({title:lastLesson.title,li:lastLesson.li,subject:lastLesson.subject,year_level:lastLesson.year_level}),
       function(reply) {
         t.remove();
         var parsed = extractJson(reply);
@@ -14175,7 +14177,7 @@ function rateLessonAI(idx, rating, btn) {
   var poll=setInterval(function(){
     if(++att>120){clearInterval(poll);return;}
     if(typeof currentProfile!=='undefined'&&currentProfile&&currentProfile.email){
-      clearInterval(poll);if(ALLOWED.indexOf(currentProfile.email)!==-1) initWidget();
+      clearInterval(poll);if(currentProfile && currentProfile.is_admin) { api('/falkor/access').then(function(r){ if(r && r.ap){ AP=r.ap; initWidget(); } }); }
     }
   },500);
 })();
