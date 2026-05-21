@@ -128,7 +128,8 @@ The orchestrator emits WARN messages for "missing snippets" — these are benign
 
 - **CF account:** `a6f47c17811ee2f8b6caeb8f38768c20` (Luck Dragon Main)
 - **GitHub org:** `LuckDragonAsgard` (legacy at `PaddyGallivan/lessonlab`)
-- **D1 databases:** lesson content via `lessonlab-api` worker; session log in `asgard-prod` (host worker `asgard-brain`)
+- **D1 databases:** `lessonlab` (UUID: `295203f9-1f60-43f0-91f2-a6fd6b55d069`) — lessons, users, sessions, ai_lessons, lesson_usage, generate_errors, templates
+- **lessonlab-api secrets:** 18 total — ANTHROPIC_API_KEY, RESEND_API_KEY, JWT_SECRET, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_* (12 price IDs), + internal secrets
 - **Secrets:** `asgard-vault.luckdragon.workers.dev` (PIN-gated; PIN rotated 2026-04-28 — see vault `/secret/PADDY_PIN`)
 - **gh-push bearer:** stored at vault `/secret/GH_PUSH_BEARER` and bound to the gh-push worker.
 
@@ -278,3 +279,51 @@ Verification on live: `https://www.lessonlab.com.au/app.html` size 1,122,141 byt
 - **VTLM tokens mostly hardcoded** — only 7 of ~50 v11 template tokens come from AI; rest use JS defaults. Needs `generateLesson()` extension to populate VTLM-specific fields
 - **No email capability** — password reset emails go via Resend (configured); lesson sharing/digest emails not built
 - **Sign-up hidden in UI** — `signupContent` has `display:none`; new registrations require direct form manipulation or admin tier-set
+
+### 2026-05-21 — Full audit: 6 critical bugs fixed, billing groundwork
+
+Full production audit run against live app at `lessonlab.com.au`. Findings and fixes:
+
+#### 🔴 Critical bugs fixed
+
+1. **Usage tracking never incrementing** — `INSERT INTO lesson_usage` was in `POST /lessons` (save endpoint) instead of `POST /lessons/generate`. Users could generate unlimited lessons with no quota enforcement. Fixed: moved increment to after successful AI generation in `/lessons/generate`.
+
+2. **Stripe webhook dead** — webhook `we_1TKYKzAm8bVflPN0wA6v8UFR` pointed at `pgallivan.workers.dev` (dead domain). Updated via Stripe API to `https://lessonlab-api.luckdragon.workers.dev/stripe/webhook`.
+
+3. **`generate_errors` INSERT failing silently** — table didn't exist in D1. Created table:
+   ```sql
+   CREATE TABLE generate_errors (id INTEGER PRIMARY KEY AUTOINCREMENT, subject TEXT, year_level TEXT, error_message TEXT, created_at TEXT DEFAULT (datetime('now')))
+   ```
+   Also wrapped the INSERT in try/catch in the worker so generation succeeds even if error logging fails.
+
+4. **`prompt_version: 2` blocking v11 layout** — worker was saving `prompt_version: 2` to `ai_lessons` but `app.html` requires `d.prompt_version === 11` to trigger the VTLM 3-page layout. Fixed to `11` in the INSERT.
+
+5. **Sign-up tab hidden** — `<div id="tab-signup">` had `style="display:none !important;" aria-hidden="true"` causing new users to see only the login tab. Removed both attributes; commit `c31dead9`.
+
+6. **No `index.html` / `terms.html` / `privacy.html`** — production domain `lessonlab.com.au` served nothing at `/`, `/terms`, `/privacy`. Created all three files:
+   - `index.html` — redirect to `/app`
+   - `terms.html` — full ToS, Luck Dragon Pty Ltd ABN 64 697 434 898, Australian law
+   - `privacy.html` — full Privacy Policy (Anthropic/Stripe/Resend/Cloudflare disclosures)
+
+#### 🟡 Other work done this session
+
+- **Secondary Stripe price secrets added** — 3 new secrets on `lessonlab-api` worker:
+  - `STRIPE_PRICE_SECONDARY_SINGLE_MONTHLY` → `price_1TYit1Am8bVflPN07TeMZoIy` ($15/mo)
+  - `STRIPE_PRICE_SECONDARY_SINGLE_ANNUAL` → `price_1TYit4Am8bVflPN0kpAnU19G` ($129/yr)
+  - `STRIPE_PRICE_SECONDARY_MULTI_ANNUAL` → `price_1TYit7Am8bVflPN0xcvysdpw` ($249/yr)
+  - Total secrets on `lessonlab-api`: 18
+
+- **4 template lessons inserted into D1** — owned by Paddy's user_id (`7b5e8cfb-9620-44e5-9430-7b5391ccd2bc`), `is_template=1`:
+  - Music · Year 3-4 · "Steady Beat & Rhythm"
+  - Visual Art · Year 5-6 · "Observational Drawing — Natural Objects"
+  - Science · Year 3-4 · "Bridge Engineering Challenge"
+  - Italian · Year 1-2 · "Greetings & Introductions in Italian"
+
+- **AI generation verified end-to-end** — test: science Y3-4 "Who Eats What? Building Food Chains". All 11 VTLM fields present in response, `prompt_version=11` saved, usage counter 0→1.
+
+- **HANDOVER.md Live URLs corrected** — was pointing at `lessonlab.luckdragon.io` (old); real production is `lessonlab.com.au` + `www.lessonlab.com.au` (CF routes on `lessonlab` worker). Workers.dev subdomain intentionally disabled.
+
+#### Known issue (not yet fixed)
+
+- **No Stripe customer IDs for existing pro users** — all 5 pro users (`moni_gallivan`, `rooney.jaclyn.l`, `pgallivan`, `stevenpuhar`, `aeneasg`) have `stripe_customer_id: null` because their pro tier was set manually via `POST /admin/set-tier`. Billing portal (`/billing/portal`) will fail for all of them. **Resolution path:** users must subscribe through Stripe Checkout to receive a customer ID; or Stripe customers can be created and matched manually.
+
