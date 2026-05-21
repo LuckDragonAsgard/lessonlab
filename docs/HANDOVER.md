@@ -244,9 +244,20 @@ Verification on live: `https://www.lessonlab.com.au/app.html` size 1,122,141 byt
 - `POST /gh-write` — GitHub file write (X-Pin: LESSONLAB_PIN)
 - `POST /gh-delete` — GitHub file delete (X-Pin: LESSONLAB_PIN)
 
-**Worker secrets set:** ANTHROPIC_API_KEY, STRIPE_SECRET_KEY, RESEND_API_KEY, GITHUB_TOKEN, LESSONLAB_PIN (1708), FALKOR_AP
+**Worker secrets set:** ANTHROPIC_API_KEY, STRIPE_SECRET_KEY, RESEND_API_KEY, GITHUB_TOKEN, LESSONLAB_PIN (1708), FALKOR_AP, STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_ADDON_ANNUAL, STRIPE_PRICE_SCHOOL_ANNUAL, STRIPE_PRICE_EXTRA_SUBJECT_MONTHLY, STRIPE_PRICE_SCHOOL_BRANDING_MONTHLY, STRIPE_PRICE_YEAR_PLANNER_MONTHLY, STRIPE_PRICE_CYCLE_PLANNER_MONTHLY, STRIPE_PRICE_FULL_UNITS
 
-**Stripe price env vars needed** (set in CF dashboard per plan): STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_SCHOOL_MONTHLY, STRIPE_PRICE_SCHOOL_ANNUAL, plus per-subject prices as needed.
+**Stripe price IDs (set as worker secrets 2026-05-21):**
+| Secret | Price ID | Product | Amount |
+|--------|----------|---------|--------|
+| STRIPE_PRICE_PRO_MONTHLY | price_1TLpaYAm8bVflPN0G8IWNqsZ | LessonLab Pro - Subject Base | AUD $12/month |
+| STRIPE_PRICE_PRO_ANNUAL | price_1TLzXAAm8bVflPN07Jarm0nn | LessonLab — First Subject (Annual) | AUD $99/year |
+| STRIPE_PRICE_ADDON_ANNUAL | price_1TLzXAAm8bVflPN0sieXVcDp | LessonLab — Additional Subject (Annual) | AUD $45/year |
+| STRIPE_PRICE_SCHOOL_ANNUAL | price_1TYitAAm8bVflPN0RKVHVmxM | LessonLab — School Site Licence Annual | AUD $1,500/year |
+| STRIPE_PRICE_EXTRA_SUBJECT_MONTHLY | price_1TLpaZAm8bVflPN0wkCgmKmz | LessonLab - Extra Subject | AUD $5/month |
+| STRIPE_PRICE_SCHOOL_BRANDING_MONTHLY | price_1TLzu9Am8bVflPN0TFGRDhjr | LessonLab — School Branding | AUD $5/month |
+| STRIPE_PRICE_YEAR_PLANNER_MONTHLY | price_1TLpaZAm8bVflPN0bt93Sm3v | LessonLab - Year Planner | AUD $12/month |
+| STRIPE_PRICE_CYCLE_PLANNER_MONTHLY | price_1TLpaaAm8bVflPN09jJD2y7T | LessonLab - Cycle Planner | AUD $8/month |
+| STRIPE_PRICE_FULL_UNITS | price_1TLpabAm8bVflPN0l4bmz30N | LessonLab - Full Units (per subject) | AUD $8 one-time |
 
 **Generation limits:** Free = 3/month, Pro/School = 20/month.
 
@@ -262,7 +273,6 @@ Verification on live: `https://www.lessonlab.com.au/app.html` size 1,122,141 byt
 
 #### Known remaining gaps (not yet fixed)
 
-- **Stripe price IDs** not configured in worker env vars — checkout/portal will error until set in CF dashboard
 - **Existing user passwords** — 6 users (not pgallivan) have hashes from the original worker. If the original used the same PBKDF2-SHA256-100k algorithm they'll work; if not, they'll need password resets via `/auth/forgot-password`
 - **VC2 codes are static** — no live VCAA API integration. Manual update required if VCAA revises VC2
 - **VTLM tokens mostly hardcoded** — only 7 of ~50 v11 template tokens come from AI; rest use JS defaults. Needs `generateLesson()` extension to populate VTLM-specific fields
