@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WPS Music — Year 3/4 — T2W3 — Steady Beat &amp; Rhythm</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    background: #e0e0e0;
+    color: #1a1a1a;
+    font-size: 10pt;
+    line-height: 1.35;
+    /* Ensure page-wrapper can scroll horizontally if narrower than A4 */
+    min-width: 226mm; /* 210mm page + 16px*2 padding */
+  }
+
+  /* ── GLOBAL TEXT WRAPPING ── */
+  /* All text wraps naturally — no overflow on single lines */
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /* ── PRINT BAR (hidden on print) ── */
+  #print-bar {
+    background: #1F3864;
+    color: white;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 11pt;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  #print-bar button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 4px;
+    font-size: 11pt;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #print-bar button:hover { background: #388E3C; }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 30px;
+    gap: 24px;
+    /* Let pages scroll horizontally if viewport is narrower than A4 */
+    overflow-x: auto;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    padding: 8mm 8mm 14mm 8mm; /* extra bottom for footer */
+    position: relative;
+    /* Hard overflow wall */
+    overflow: hidden;
+    /* Don't shrink below A4 width in flex */
+    flex-shrink: 0;
+  }
+
+  /* ── CONTENTEDITABLE STYLING ── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 2px;
+    transition: background 0.15s;
+    /* Text always wraps — never overflows sideways */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-height: 1em;
+  }
+  [contenteditable="true"]:hover {
+    background: rgba(100,150,255,0.07) !important;
+  }
+  [contenteditable="true"]:focus {
+    background: rgba(100,150,255,0.13) !important;
+    outline: 1.5px dashed #5b8def;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PAGE 1 – CRT ONE-PAGER
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Header ── */
+  .p1-header {
+    background: #1F3864;
+    color: white;
+    padding: 5px 8px 4px;
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .p1-header-left h1 {
+    font-size: 13.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .p1-header-left p {
+    font-size: 8.5pt;
+    opacity: 0.88;
+    margin-top: 1px;
+  }
+  .p1-header-right {
+    text-align: right;
+    font-size: 8.5pt;
+    opacity: 0.88;
+    line-height: 1.5;
+  }
+  .p1-header-right strong {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  /* ── Badge bar ── */
+  .badge-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 4px;
+    padding: 3px 0;
+  }
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 8pt;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+  }
+  .badge-vc  { background: #1B6B2A; }
+  .badge-yr  { background: #0277BD; }
+  .badge-dur { background: #6A1B9A; }
+  .badge-eq  { background: #BF360C; }
+  .badge-set { background: #455A64; }
+
+  /* ── CRT label ── */
+  .crt-label {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #1F3864;
+    border-bottom: 1.5px solid #1F3864;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Lesson overview row ── */
+  .overview-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.2fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .overview-cell {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 2px 4px;
+  }
+  .overview-cell .oc-label {
+    font-size: 7pt;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .overview-cell .oc-val {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #1F3864;
+  }
+
+  /* ── Learning intention ── */
+  .li-box {
+    background: #EBF4FB;
+    border-left: 3px solid #1F3864;
+    padding: 2px 5px;
+    margin-bottom: 4px;
+    border-radius: 0 2px 2px 0;
+    font-size: 9pt;
+  }
+  .li-box .li-label {
+    font-size: 7pt;
+    font-weight: 700;
+    color: #1F3864;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Phase strip (CRT page) ── */
+  .phase-strip {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 3px;
+    align-items: stretch;
+  }
+  .phase-sidebar {
+    width: 16px;
+    border-radius: 2px 0 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .phase-sidebar span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .phase-body {
+    flex: 1;
+    border: 0.5px solid #ddd;
+    border-radius: 0 2px 2px 0;
+    padding: 2px 4px;
+  }
+  .phase-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1px;
+  }
+  .phase-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: inherit;
+  }
+  .phase-time-badge {
+    font-size: 7.5pt;
+    color: white;
+    padding: 0px 5px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .phase-focus {
+    font-size: 8pt;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 2px;
+  }
+
+  /* Numbered step */
+  .step-row {
+    display: flex;
+    gap: 3px;
+    align-items: flex-start;
+    margin-bottom: 1px;
+  }
+  .step-num {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 0.5px;
+  }
+  .step-text {
+    font-size: 8.5pt;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  /* Note / CFU / Transition boxes */
+  .note-box {
+    background: #EBF4FB;
+    border-left: 2px solid #1E88E5;
+    padding: 1.5px 4px;
+    margin: 2px 0;
+    font-size: 8pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .note-box .nb-label {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #1565C0;
+  }
+  .cfu-box {
+    background: #FFFDE7;
+    border-left: 2px solid #F9A825;
+    padding: 1.5px 4px;
+    margin: 2px 0;
+    font-size: 8pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .cfu-box .nb-label {
+    font-weight: 700;
+    font-size: 7.5pt;
+    color: #E65100;
+  }
+  .trans-line {
+    font-size: 8pt;
+    color: #1B5E20;
+    font-style: italic;
+    margin: 1px 0;
+    padding-left: 4px;
+  }
+
+  /* ── Phase colours ── */
+  .wu-sidebar  { background: #1565C0; }
+  .wu-title    { color: #1565C0; }
+  .wu-step-num { background: #1565C0; }
+  .wu-time     { background: #1565C0; }
+
+  .et-sidebar  { background: #6A1B9A; }
+  .et-title    { color: #6A1B9A; }
+  .et-step-num { background: #6A1B9A; }
+  .et-time     { background: #6A1B9A; }
+
+  .wd-sidebar  { background: #2E7D32; }
+  .wd-title    { color: #2E7D32; }
+  .wd-step-num { background: #2E7D32; }
+  .wd-time     { background: #2E7D32; }
+
+  .yd-sidebar  { background: #BF360C; }
+  .yd-title    { color: #BF360C; }
+  .yd-step-num { background: #BF360C; }
+  .yd-time     { background: #BF360C; }
+
+  .pu-sidebar  { background: #455A64; }
+  .pu-title    { color: #455A64; }
+  .pu-step-num { background: #455A64; }
+  .pu-time     { background: #455A64; }
+
+  /* ── Resources & Safety ── */
+  .res-safety {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-top: 3px;
+  }
+  .res-box {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 2px 4px;
+  }
+  .res-box .rb-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #555;
+    margin-bottom: 1px;
+  }
+  .res-box ul {
+    list-style: disc;
+    padding-left: 12px;
+    font-size: 8.5pt;
+    line-height: 1.4;
+  }
+
+  /* ── Page footer ── */
+  .page-footer {
+    position: absolute;
+    bottom: 5mm;
+    left: 8mm;
+    right: 8mm;
+    font-size: 5.5pt;
+    color: #999;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PAGES 2 & 3 – FULL DETAIL
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Full header ── */
+  .full-header {
+    background: #1F3864;
+    color: white;
+    padding: 6px 9px 5px;
+    border-radius: 3px 3px 0 0;
+    margin-bottom: 4px;
+  }
+  .full-header h1 { font-size: 14pt; font-weight: 700; }
+  .full-header .fh-sub { font-size: 9pt; opacity: 0.88; margin-top: 1px; }
+  .fh-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .fh-meta {
+    text-align: right;
+    font-size: 9pt;
+    opacity: 0.88;
+    line-height: 1.6;
+  }
+
+  /* ── Achievement standard ── */
+  .ach-box {
+    background: #E8F5E9;
+    border-left: 3px solid #1B6B2A;
+    padding: 3px 6px;
+    margin-bottom: 5px;
+    border-radius: 0 2px 2px 0;
+    font-size: 9pt;
+  }
+  .ach-box .ab-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #1B6B2A;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Two-col fields ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .field-box {
+    border: 0.5px solid #c8c8c8;
+    border-radius: 2px;
+    padding: 3px 5px;
+    min-height: 28px;
+  }
+  .field-box .fb-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: #1F3864;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+  }
+  .field-box .fb-val {
+    font-size: 9pt;
+    line-height: 1.35;
+  }
+
+  /* ── Element banner ── */
+  .elem-banner {
+    background: #D5F5E3;
+    border-left: 4px solid #1B6B2A;
+    padding: 3px 6px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .elem-banner h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1B6B2A;
+  }
+  .elem-badge {
+    background: #1B6B2A;
+    color: white;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Full phase block (pages 2-3) ── */
+  .full-phase {
+    border: 0.5px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  .full-phase-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    color: white;
+    font-size: 10.5pt;
+    font-weight: 700;
+  }
+  .full-phase-header .fph-time {
+    font-size: 8.5pt;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-left: auto;
+  }
+  .full-phase-header .fph-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13pt;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .full-phase-body {
+    padding: 4px 6px;
+  }
+  .full-phase-body .phase-focus {
+    margin-bottom: 3px;
+  }
+
+  .full-step-row {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    margin-bottom: 2px;
+  }
+  .full-step-num {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .full-step-text {
+    font-size: 9.5pt;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .full-note-box {
+    background: #EBF4FB;
+    border-left: 2.5px solid #1E88E5;
+    padding: 2px 6px;
+    margin: 2px 0;
+    font-size: 9pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .full-note-box .nb-label {
+    font-weight: 700;
+    font-size: 8pt;
+    color: #1565C0;
+  }
+  .full-cfu-box {
+    background: #FFFDE7;
+    border-left: 2.5px solid #F9A825;
+    padding: 2px 6px;
+    margin: 2px 0;
+    font-size: 9pt;
+    border-radius: 0 2px 2px 0;
+  }
+  .full-cfu-box .nb-label {
+    font-weight: 700;
+    font-size: 8pt;
+    color: #E65100;
+  }
+  .full-trans-line {
+    font-size: 9pt;
+    color: #1B5E20;
+    font-style: italic;
+    margin: 2px 0;
+    padding-left: 6px;
+    border-left: 2px dotted #1B5E20;
+  }
+
+  /* Phase bg colours */
+  .wu-bg { background: #1565C0; }
+  .et-bg { background: #6A1B9A; }
+  .wd-bg { background: #2E7D32; }
+  .yd-bg { background: #BF360C; }
+  .pu-bg { background: #455A64; }
+
+  /* ── Tier table ── */
+  .tier-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0;
+    font-size: 9pt;
+  }
+  .tier-table th {
+    color: white;
+    padding: 4px 6px;
+    text-align: left;
+    font-size: 8.5pt;
+    font-weight: 700;
+  }
+  .tier-t1 { background: #C62828; }
+  .tier-core { background: #1565C0; }
+  .tier-t3 { background: #2E7D32; }
+  .tier-table td {
+    border: 0.5px solid #ddd;
+    padding: 3px 5px;
+    vertical-align: top;
+    line-height: 1.35;
+  }
+  .tier-t1-bg { background: #FFEBEE; }
+  .tier-core-bg { background: #EBF5FB; }
+  .tier-t3-bg { background: #EAFAF1; }
+
+  /* ── Wellbeing SEL 3-col ── */
+  .wellbeing-banner {
+    background: #FCE4EC;
+    border-left: 4px solid #C2185B;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #880E4F;
+  }
+  .wellbeing-col { border: 0.5px solid #F48FB1; border-radius: 2px; padding: 3px 5px; }
+  .wellbeing-col .wc-label { font-size: 7.5pt; font-weight: 700; color: #880E4F; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+
+  /* ── Inclusive practice 2×2 ── */
+  .inclusive-banner {
+    background: #E8EAF6;
+    border-left: 4px solid #3949AB;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1A237E;
+  }
+  .incl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .incl-cell {
+    border: 0.5px solid #9FA8DA;
+    border-radius: 2px;
+    padding: 3px 5px;
+    min-height: 28px;
+  }
+  .incl-cell .ic-label { font-size: 7.5pt; font-weight: 700; color: #3949AB; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+
+  /* ── Assessment ── */
+  .assess-banner {
+    background: #FFF8E1;
+    border-left: 4px solid #F9A825;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #E65100;
+  }
+
+  /* ── Reflection ── */
+  .reflect-banner {
+    background: #E0F7FA;
+    border-left: 4px solid #00838F;
+    padding: 4px 7px;
+    margin: 5px 0 3px;
+    border-radius: 0 2px 2px 0;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #006064;
+  }
+  .reflect-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  /* ── VTLM element sub-fields ── */
+  .vtlm-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+  .vtlm-full {
+    margin-bottom: 3px;
+  }
+
+
+  /* ══════════════════════════════════════════════════════
+     FILL-PAGE — content always stretches to full A4 height
+  ══════════════════════════════════════════════════════ */
+
+  /* All pages are flex columns so children can grow */
+  .page {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  /* ── Page 1 (CRT): phase strips grow equally ── */
+  #page1 .phase-strip {
+    flex: 1 1 0;
+    min-height: 55px;
+  }
+  /* Resources/safety box fixed at bottom */
+  #page1 .res-safety {
+    flex-shrink: 0;
+  }
+
+  /* ── Pages 2 & 3: full-phase blocks grow ── */
+  .full-phase {
+    flex: 1 1 0;
+    min-height: 70px;
+  }
+
+  /* ── Field boxes in grids: grow to fill their cell ── */
+  .field-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .field-box .fb-val {
+    flex: 1;
+  }
+
+  /* ── Wellbeing & inclusive cols: fill their cell ── */
+  .wellbeing-col,
+  .incl-cell {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* ── Tier table cells: stretch ── */
+  .tier-table { height: 100%; }
+
+  /* ── Grids fill their allotted space ── */
+  .two-col, .three-col, .vtlm-fields, .reflect-grid, .incl-grid {
+    align-items: stretch;
+  }
+
+  /* Fix elements that MUST NOT grow (structural/headers) */
+  .p1-header, .badge-bar, .crt-label, .overview-row, .li-box,
+  .full-header, .ach-box, .elem-banner, .wellbeing-banner,
+  .inclusive-banner, .assess-banner, .reflect-banner,
+  .phase-header-row, .full-phase-header, .phase-focus,
+  .fh-row, .fh-meta, .fh-sub {
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PRINT STYLES
+  ══════════════════════════════════════════════════════ */
+  @media print {
+    #print-bar { display: none !important; }
+    body { background: white; }
+    .page-wrapper { padding: 0; gap: 0; }
+    .page {
+      box-shadow: none;
+      page-break-after: always;
+      width: 210mm;
+      height: 297mm;
+      min-height: 0;
+      max-height: 297mm;
+      overflow: hidden !important;
+      margin: 0;
+    }
+    .page:last-child { page-break-after: auto; }
+    [contenteditable="true"]:hover,
+    [contenteditable="true"]:focus {
+      background: transparent !important;
+      outline: none !important;
+    }
+  }
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* ── Optional section toggle ── */
+  #res-safety-section.res-hidden { display: none !important; }
+  @media print {
+    .no-print { display: none !important; }
+    #res-safety-section.res-hidden { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<!-- PRINT BAR -->
+<div id="print-bar">
+<span>✏️ Click any field to edit  |  🖨️ Print / Save as PDF  |  📋 Blank template v12 — works for any subject  |  data-field attributes for AI injection</span>
+<button onclick="window.print()">Print / Save as PDF</button>
+</div>
+<div class="page-wrapper">
+<!-- ══════════════════════════════════════════════════════
+     PAGE 1 – CRT ONE-PAGER
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page1">
+<!-- Header -->
+<div class="p1-header">
+<div class="p1-header-left">
+<h1>📋 <span contenteditable="true" data-field="subject">Music</span> Lesson Plan <span style="font-size:8pt;font-weight:400;opacity:0.85;">— CRT Quick Reference</span></h1>
+<p contenteditable="true" data-field="school-subject">Westbourne Park School  |  Music</p>
+</div>
+<div class="p1-header-right">
+<strong contenteditable="true" data-field="year-level">Year 3/4</strong><br/>
+<span contenteditable="true" data-field="term-week">Term 2 Week 3 — 2026</span><br/>
+<span contenteditable="true" data-field="teacher-name">P. Gallivan</span>
+</div>
+</div>
+<!-- Badge bar -->
+<div class="badge-bar">
+<span class="badge badge-vc" contenteditable="true" data-field="curriculum-code">VC2MUSC2301 – Elements of Music</span>
+<span class="badge badge-yr" contenteditable="true" data-field="badge-year-level">Year 3/4</span>
+<span class="badge badge-dur" contenteditable="true" data-field="badge-duration">45 min</span>
+<span class="badge badge-eq" contenteditable="true" data-field="badge-location">Music Room</span>
+<span class="badge badge-set" contenteditable="true" data-field="badge-class-size">26 students</span>
+</div>
+<!-- CRT section label -->
+<div class="crt-label">📋 CRT Instructions — Lesson Overview</div>
+<!-- Overview row -->
+<div class="overview-row">
+<div class="overview-cell">
+<div class="oc-label">Focus / Topic</div>
+<div class="oc-val" contenteditable="true" data-field="focus-topic">Steady Beat &amp; Rhythm Patterns</div>
+</div>
+<div class="overview-cell">
+<div class="oc-label">Resources</div>
+<div class="oc-val" contenteditable="true" data-field="key-resources">Rhythm cards, untuned percussion, whiteboards</div>
+</div>
+<div class="overview-cell">
+<div class="oc-label">Room / Setup</div>
+<div class="oc-val" contenteditable="true" data-field="room-setup">Circle on mat → instrument stations</div>
+</div>
+<div class="overview-cell">
+<div class="oc-label">Learning Intention</div>
+<div class="oc-val" contenteditable="true" data-field="li-summary">Keep a steady beat; read &amp; perform rhythm patterns</div>
+</div>
+</div>
+<!-- Learning intention full -->
+<div class="li-box">
+<div class="li-label">Learning Intention &amp; Success Criteria</div>
+<div contenteditable="true" data-field="li-sc"><strong>We are learning to</strong> identify and perform steady beat and rhythm patterns using body percussion and untuned instruments.  <strong>I can:</strong> (1) keep a steady beat while performing, (2) identify quarter notes (ta) and eighth notes (ti-ti) in 4-beat patterns, (3) read and clap a rhythm pattern from a card.</div>
+</div>
+<!-- ── WARM UP ── -->
+<div class="phase-strip">
+<div class="phase-sidebar wu-sidebar">
+<span>Opening</span>
+</div>
+<div class="phase-body">
+<div class="phase-header-row">
+<div class="phase-title wu-title">① OPENING / ACTIVATION</div>
+<div class="phase-time-badge wu-time">5 min</div>
+</div>
+<div class="phase-focus" contenteditable="true" data-field="p1-open-focus">Body percussion warm-up — activate students' sense of steady beat and energise the group</div>
+<div class="step-row"><div class="step-num wu-step-num">1</div><div class="step-text" contenteditable="true" data-field="p1-open-step1">Begin a 4-beat steady clap. Invite students to join in. Vary dynamics (loud/soft) and tempo (faster/slower) responding to student energy.</div></div>
+<div class="step-row"><div class="step-num wu-step-num">2</div><div class="step-text" contenteditable="true" data-field="p1-open-step2">Layer in stomp on beat 1 and clap on beats 2–4. Call-and-response: teacher claps a short rhythm, students echo.</div></div>
+<div class="step-row"><div class="step-num wu-step-num">3</div><div class="step-text" contenteditable="true" data-field="p1-open-step3">Ask: "What stayed the same?" (the beat). "What changed?" (the rhythm on top). 2–3 hands-up responses.</div></div>
+<div class="note-box"><span class="nb-label">📌 NOTE  </span><span contenteditable="true" data-field="p1-open-note">📌 Watch for students who clap the rhythm instead of the beat — these are your focus students. Seat them near you during teaching.</span></div>
+<div class="trans-line" contenteditable="true" data-field="p1-open-trans">→ "Let's look at how musicians write down rhythm. Sit on the mat facing the board."</div>
+</div>
+</div>
+<!-- ── EXPLICIT TEACHING ── -->
+<div class="phase-strip">
+<div class="phase-sidebar et-sidebar">
+<span>Explicit Teaching</span>
+</div>
+<div class="phase-body">
+<div class="phase-header-row">
+<div class="phase-title et-title">② EXPLICIT TEACHING</div>
+<div class="phase-time-badge et-time">8 min</div>
+</div>
+<div class="phase-focus" contenteditable="true" data-field="p1-teach-focus">Explicit notation — reading and performing quarter notes (ta) and eighth notes (ti-ti) using rhythm cards</div>
+<div class="step-row"><div class="step-num et-step-num">1</div><div class="step-text" contenteditable="true" data-field="p1-teach-step1">Show large rhythm card: 4 quarter notes. "One note = one beat — we say ta." Clap together: ta-ta-ta-ta. Repeat ×2.</div></div>
+<div class="step-row"><div class="step-num et-step-num">2</div><div class="step-text" contenteditable="true" data-field="p1-teach-step2">Show two eighth notes beamed. "Two eighth notes fill one beat — we say ti-ti." Clap: ti-ti-ti-ti (fast). Then: ta ti-ti ta ta. Repeat ×3.</div></div>
+<div class="step-row"><div class="step-num et-step-num">3</div><div class="step-text" contenteditable="true" data-field="p1-teach-step3">Clap a 4-beat mixed pattern. Students mirror. Then point to rhythm card showing the same pattern. "Can you read this before I clap it?"</div></div>
+<div class="cfu-box"><span class="nb-label">❓ CFU  </span><span contenteditable="true" data-field="p1-teach-cfu">❓ Hold up a new rhythm card. Students silently clap on their lap, then clap aloud together. Scan — who hesitates on ti-ti?</span></div>
+<div class="trans-line" contenteditable="true" data-field="p1-teach-trans">→ "Pick up the card in front of you. Find a partner near you."</div>
+</div>
+</div>
+<!-- ── WE DO ── -->
+<div class="phase-strip">
+<div class="phase-sidebar wd-sidebar">
+<span>We Do</span>
+</div>
+<div class="phase-body">
+<div class="phase-header-row">
+<div class="phase-title wd-title">③ WE DO (GUIDED)</div>
+<div class="phase-time-badge wd-time">10 min</div>
+</div>
+<div class="phase-focus" contenteditable="true" data-field="p1-wedo-focus">Partner rhythm reading — students practise reading cards and echoing each other, teacher circulates with feedback</div>
+<div class="step-row"><div class="step-num wd-step-num">1</div><div class="step-text" contenteditable="true" data-field="p1-wedo-step1">Partner A claps their rhythm card (4 beats), Partner B echoes. Swap cards and roles.</div></div>
+<div class="step-row"><div class="step-num wd-step-num">2</div><div class="step-text" contenteditable="true" data-field="p1-wedo-step2">Move to a new partner. Clap your pattern; ask partner to write ta/ti-ti notation on their mini whiteboard.</div></div>
+<div class="step-row"><div class="step-num wd-step-num">3</div><div class="step-text" contenteditable="true" data-field="p1-wedo-step3">Group of 4: each claps a different card simultaneously. Listen — does it work together? Teacher nominates one group to share.</div></div>
+<div class="note-box"><span class="nb-label">📌 NOTE  </span><span contenteditable="true" data-field="p1-wedo-note">📌 Students rush eighth notes — cue: "ti-ti fits inside the SAME space as ta." Use metronome app on tablet if needed.</span></div>
+<div class="trans-line" contenteditable="true" data-field="p1-wedo-trans">→ "Return cards to the pile. Move to your instrument station — look for your name card."</div>
+</div>
+</div>
+<!-- ── YOU DO ── -->
+<div class="phase-strip">
+<div class="phase-sidebar yd-sidebar">
+<span>You Do</span>
+</div>
+<div class="phase-body">
+<div class="phase-header-row">
+<div class="phase-title yd-title">④ YOU DO (INDEPENDENT)</div>
+<div class="phase-time-badge yd-time">15 min</div>
+</div>
+<div class="phase-focus" contenteditable="true" data-field="p1-ydo-focus">Instrument stations — independent application of rhythm reading on untuned percussion</div>
+<div class="step-row"><div class="step-num yd-step-num">1</div><div class="step-text" contenteditable="true" data-field="p1-ydo-step1">Station A — Clap &amp; Write: read 3 rhythm cards, write each pattern using ta/ti-ti on the recording sheet.</div></div>
+<div class="step-row"><div class="step-num yd-step-num">2</div><div class="step-text" contenteditable="true" data-field="p1-ydo-step2">Station B — Play the Pattern: choose a card, perform it on drum, woodblock, or claves. Record which patterns you played.</div></div>
+<div class="step-row"><div class="step-num yd-step-num">3</div><div class="step-text" contenteditable="true" data-field="p1-ydo-step3">Station C — Create: compose your own 4-beat rhythm using ta and ti-ti. Write it on a blank card and practise performing it.</div></div>
+<div class="cfu-box"><span class="nb-label">❓ CFU  </span><span contenteditable="true" data-field="p1-ydo-cfu">❓ Tap 3–4 students during stations: "Clap your pattern for me." Look for steady beat and accurate ti-ti.</span></div>
+<div class="trans-line" contenteditable="true" data-field="p1-ydo-trans">→ "Return instruments to shelf quietly. Back to the mat."</div>
+</div>
+</div>
+<!-- ── PACK UP ── -->
+<div class="phase-strip">
+<div class="phase-sidebar pu-sidebar">
+<span>Closure</span>
+</div>
+<div class="phase-body">
+<div class="phase-header-row">
+<div class="phase-title pu-title">⑤ CLOSURE &amp; REFLECTION</div>
+<div class="phase-time-badge pu-time">7 min</div>
+</div>
+<div class="phase-focus" contenteditable="true" data-field="p1-close-focus">Exit reflection — demonstrate understanding of beat vs rhythm; self-assess against success criteria</div>
+<div class="step-row"><div class="step-num pu-step-num">1</div><div class="step-text" contenteditable="true" data-field="p1-close-step1">Students return cards and recording sheets. Instruments to shelf.</div></div>
+<div class="step-row"><div class="step-num pu-step-num">2</div><div class="step-text" contenteditable="true" data-field="p1-close-step2">Exit ticket: teacher claps two patterns — one is the steady beat, one is a rhythm. "Which is which?" Thumbs up = first, thumbs down = second.</div></div>
+<div class="step-row"><div class="step-num pu-step-num">3</div><div class="step-text" contenteditable="true" data-field="p1-close-step3">Preview: "Next lesson we'll use pitched instruments to turn your rhythm pattern into a 2-part ostinato."</div></div>
+</div>
+</div>
+<!-- Resources & Safety — OPTIONAL SECTION (hide/show via button) -->
+<div class="no-print" style="text-align:right;margin-bottom:2px;flex-shrink:0;">
+<button id="res-toggle-btn" onclick="toggleResSection()" style="font-size:7.5pt;padding:1px 7px;border:1px solid #aaa;border-radius:3px;background:#f8f8f8;color:#555;cursor:pointer;">👁 Hide resources section</button>
+</div>
+<div class="res-safety" id="res-safety-section">
+<div class="res-box">
+<div class="rb-label">📦 Resources &amp; Materials</div>
+<ul>
+<li contenteditable="true" data-field="resource-1">Rhythm cards — sets of 10 (quarter/eighth combinations)</li>
+<li contenteditable="true" data-field="resource-2">Untuned percussion: drums, claves, woodblocks, tambourines</li>
+<li contenteditable="true" data-field="resource-3">Mini whiteboards and dry-erase markers</li>
+<li contenteditable="true" data-field="resource-4">Station recording sheets (printed)</li>
+<li contenteditable="true" data-field="resource-5">Metronome app (tablet)</li>
+</ul>
+</div>
+<div class="res-box">
+<div class="rb-label">⚠️ Safety &amp; Wellbeing Notes</div>
+<ul>
+<li contenteditable="true" data-field="safety-1">Instruments handled carefully — no hitting other students with mallets</li>
+<li contenteditable="true" data-field="safety-2">Agree on a stop/freeze signal before stations begin (raised hand + "3-2-1")</li>
+<li contenteditable="true" data-field="safety-3">Check for hearing sensitivities — seat affected students away from drums</li>
+<li contenteditable="true" data-field="safety-4">Students with fine motor difficulties: use a larger drum rather than claves</li>
+<li contenteditable="true" data-field="safety-5">Volume management — signal if room noise exceeds comfortable level</li>
+</ul>
+</div>
+</div>
+<div class="page-footer">
+<span contenteditable="true" data-field="p1-footer">WPS Music  |  Year 3/4  |  T2 W3  |  Steady Beat &amp; Rhythm</span>
+<span>Page 1 of 3 — CRT Reference</span>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════════════
+     PAGE 2 – VTLM ELEMENTS 1, 2, 3
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page2">
+<!-- Header -->
+<div class="full-header">
+<div class="fh-row">
+<div>
+<h1>📋 WPS <span contenteditable="true" data-field="subject">Music</span> Lesson Plan — Full Detail</h1>
+<div class="fh-sub" contenteditable="true" data-field="p2-subtitle">Westbourne Park School  |  Music  |  VTLM 2.0 Framework</div>
+</div>
+<div class="fh-meta">
+<strong contenteditable="true" data-field="year-level">Year 3/4</strong><br/>
+<span contenteditable="true" data-field="term-week">Term 2 Week 3 — 2026</span><br/>
+<span contenteditable="true" data-field="teacher-name">P. Gallivan</span>
+</div>
+</div>
+</div>
+<!-- Context fields -->
+<div class="two-col" style="margin-bottom:4px;">
+<div class="field-box">
+<div class="fb-label">Learning Intention</div>
+<div class="fb-val" contenteditable="true" data-field="li-full">We are learning to identify and perform steady beat and rhythm patterns using body percussion and untuned percussion instruments.</div>
+</div>
+<div class="field-box">
+<div class="fb-label">Success Criteria</div>
+<div class="fb-val" contenteditable="true" data-field="success-criteria">I can: (1) keep a steady beat independently while performing, (2) identify and name quarter notes (ta) and eighth notes (ti-ti) in a 4-beat pattern, (3) read a rhythm pattern from a card and perform it accurately.</div>
+</div>
+</div>
+<div class="three-col" style="margin-bottom:4px;">
+<div class="field-box">
+<div class="fb-label">Victorian Curriculum Links</div>
+<div class="fb-val" contenteditable="true" data-field="curriculum-links">VC2MUSC2301 — Explore the use of rhythm in music they listen to and make, including rhythm patterns. VC2MUSC2302 — Practise and rehearse music they create and perform.</div>
+</div>
+<div class="field-box">
+<div class="fb-label">Class Profile / Context</div>
+<div class="fb-val" contenteditable="true" data-field="class-profile">26 students (Y3/Y4 split). 3 EAL/D students (Vietnamese, Mandarin). 2 students with IEPs — fine motor focus. Most students have experienced beat activities in Yr 1/2.</div>
+</div>
+<div class="field-box">
+<div class="fb-label">Evidence from Last Lesson</div>
+<div class="fb-val" contenteditable="true" data-field="prior-evidence">Last lesson: students could maintain a steady beat with clapping but struggled to layer rhythm on top. 6 students still confusing beat and rhythm — targeted today.</div>
+</div>
+</div>
+<!-- Achievement Standard -->
+<div class="ach-box">
+<div class="ab-label" contenteditable="true" data-field="achievement-label">Victorian Curriculum 2.0 Achievement Standard — Year 3/4 Music</div>
+<div contenteditable="true" data-field="achievement-standard">By the end of Year 4, students perform music using rhythm, pitch and dynamics. They identify and describe elements of music including rhythm, pitch, dynamics and form. Students use music concepts to compose simple pieces and explain how composers use the elements of music.</div>
+</div>
+<!-- ── ELEMENT 1: PLANNING ── -->
+<div class="elem-banner">
+<h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">①</span>ELEMENT 1 — PLANNING FOR LEARNING</h3>
+<span class="elem-badge">VTLM 2.0</span>
+</div>
+<div class="vtlm-fields">
+<div class="field-box">
+<div class="fb-label">Prior Knowledge / Pre-Assessment</div>
+<div class="fb-val" contenteditable="true" data-field="prior-knowledge">Students have maintained a steady beat in Years F–2. Most can echo clap simple 2-beat patterns. Limited exposure to formal notation (ta/ti-ti).</div>
+</div>
+<div class="field-box">
+<div class="fb-label">Differentiation Planning</div>
+<div class="fb-val" contenteditable="true" data-field="diff-planning">Tier 1 (Supported): Use 2-beat patterns on rhythm cards; partner with strong beat-keeper; trace notation on card.
+Core: Standard 4-beat patterns as planned.
+Tier 3 (Extension): Create 8-beat patterns; compose a 4-bar piece using ta/ti-ti; notate in rhythm grid.</div>
+</div>
+</div>
+<div class="vtlm-fields">
+<div class="field-box">
+<div class="fb-label">Links to Sequence / Unit Overview</div>
+<div class="fb-val" contenteditable="true" data-field="unit-links">Lesson 3 of 8 in "Beat, Rhythm and Notation" unit. Builds toward creating and performing a 4-bar ostinato in Lesson 6. Links to VC2MUSC2301.</div>
+</div>
+<div class="field-box">
+<div class="fb-label">Resources &amp; Space Required</div>
+<div class="fb-val" contenteditable="true" data-field="resources-space">Music room set up with instrument stations (3 × stations around the room). Whiteboard with rhythm cards attached using magnets. Tablets at Station B.</div>
+</div>
+</div>
+<!-- ── ELEMENT 2: ENABLING LEARNING ── -->
+<div class="elem-banner">
+<h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">②</span>ELEMENT 2 — ENABLING LEARNING</h3>
+<span class="elem-badge">VTLM 2.0</span>
+</div>
+<!-- Full phase: Warm Up -->
+<div class="full-phase">
+<div class="full-phase-header wu-bg">
+<div class="fph-num">①</div>
+<span>OPENING / ACTIVATION</span>
+<span class="fph-time">5 minutes</span>
+</div>
+<div class="full-phase-body">
+<div class="phase-focus" contenteditable="true" data-field="p2-open-focus"><strong>Focus:</strong> Body percussion call-and-response to activate students' sense of steady beat and distinguish beat from rhythm before notation is introduced.</div>
+<div class="full-step-row">
+<div class="full-step-num wu-step-num">1</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-open-step1">[Opening step 1] Begin a 4-beat steady clap at a moderate tempo (~70bpm). Count students in: "Ready — 1 2 3 4." Students join in.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num wu-step-num">2</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-open-step2">[Opening step 2] Layer in stomp on beat 1 while clapping beats 2–4. Call-and-response echo clapping: teacher claps a 4-beat rhythm, students echo.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num wu-step-num">3</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-open-step3">[Opening step 3] Bring class together: "What stayed the same? What changed?" Draw out vocabulary — beat (steady pulse) vs rhythm (pattern on top).</div>
+</div>
+<div class="full-note-box">
+<div class="nb-label">📌 Teacher Note</div>
+<div contenteditable="true" data-field="p2-open-note">Differentiation: Students who cannot yet distinguish beat from rhythm are seated closest to you. Use physical cue — tap shoulder on beat 1 to anchor their sense of pulse.</div>
+</div>
+<div class="full-trans-line" contenteditable="true" data-field="p2-open-trans">→ Transition: "Sit on the mat facing the board — I want you to see the rhythm cards clearly."</div>
+</div>
+</div>
+<!-- ── ELEMENT 3: EXPLICIT TEACHING ── -->
+<div class="elem-banner">
+<h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">③</span>ELEMENT 3 — EXPLICIT TEACHING</h3>
+<span class="elem-badge">VTLM 2.0</span>
+</div>
+<!-- Full phase: Explicit Teaching -->
+<div class="full-phase">
+<div class="full-phase-header et-bg">
+<div class="fph-num">②</div>
+<span>EXPLICIT TEACHING — I DO</span>
+<span class="fph-time">8 minutes</span>
+</div>
+<div class="full-phase-body">
+<div class="phase-focus" contenteditable="true" data-field="p2-teach-focus"><strong>Focus:</strong> Explicit notation — introducing quarter notes (ta) and eighth notes (ti-ti) through visual cards, teacher modelling, and mirroring.</div>
+<div class="full-step-row">
+<div class="full-step-num et-step-num">1</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-teach-step1"><strong>Activate prior knowledge:</strong> "Has anyone seen music written down? What does it look like?" 2–3 responses. Show a simple 4-beat rhythm card. "Today we learn to READ rhythm."</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num et-step-num">2</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-teach-step2"><strong>Quarter notes (ta):</strong> Point to card showing ♩♩♩♩. "Each of these gets one beat — we say ta." Model: tap chest once per note. "Join me: ta-ta-ta-ta." Repeat ×3, varying tempo.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num et-step-num">3</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-teach-step3"><strong>Eighth notes (ti-ti):</strong> Show ♪♪ beamed together. "Two eighth notes share one beat — we say ti-ti." Model ×2. Then mix: "ta ti-ti ta ta." Students mirror. Compare the feel of rushing vs accurate ti-ti.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num et-step-num">4</div>
+<div class="full-step-text" contenteditable="true" data-field="p2-teach-step4"><strong>Read before you clap:</strong> Show a new 4-beat card. "Look first — read silently in your head." 5 seconds. "Now clap with me." Students read, then perform.</div>
+</div>
+<div class="full-note-box">
+<div class="nb-label">📌 Teaching Notes</div>
+<div contenteditable="true" data-field="p2-teach-notes">Key misconceptions: (a) rushing ti-ti — cue "ti-ti fits INSIDE ta's space," (b) clapping ta as two claps — cue "one note, one clap." Keep visual cards visible throughout lesson. Tap metronome for students who rush.</div>
+</div>
+<div class="full-cfu-box">
+<div class="nb-label">❓ Check for Understanding</div>
+<div contenteditable="true" data-field="p2-teach-cfu">Show a new card — students silently clap on their lap (no sound). Scan for accuracy. Then "1-2-3 — clap!" together. If more than 6 students make errors, reteach the problem notation before proceeding.</div>
+</div>
+<div class="full-trans-line" contenteditable="true" data-field="p2-teach-trans">→ Transition: "Excellent. Pick up the card in front of you — yours has your name on the back. Find a partner."</div>
+</div>
+</div>
+<div class="page-footer">
+<span contenteditable="true" data-field="p2-footer">WPS Music  |  Year 3/4  |  T2 W3  |  Steady Beat &amp; Rhythm</span>
+<span>Page 2 of 3 — Full Detail</span>
+</div>
+</div>
+<!-- ══════════════════════════════════════════════════════
+     PAGE 3 – VTLM ELEMENTS 4 & 5 + WELLBEING + ASSESSMENT + REFLECTION
+══════════════════════════════════════════════════════ -->
+<div class="page" id="page3">
+<!-- Header -->
+<div class="full-header" style="margin-bottom:4px;">
+<div class="fh-row">
+<div>
+<h1>📋 WPS <span contenteditable="true" data-field="subject">Music</span> Lesson Plan — Elements 4 &amp; 5</h1>
+<div class="fh-sub">Elements 4 &amp; 5  |  Differentiation  |  Wellbeing  |  Assessment &amp; Reflection</div>
+</div>
+<div class="fh-meta">
+<strong contenteditable="true" data-field="year-level">Year 3/4</strong><br/>
+<span contenteditable="true" data-field="term-week">Term 2 Week 3 — 2026</span><br/>
+<span contenteditable="true" data-field="teacher-name">P. Gallivan</span>
+</div>
+</div>
+</div>
+<!-- ── ELEMENT 4: SUPPORTED APPLICATION ── -->
+<div class="elem-banner" style="margin-top:2px;">
+<h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">④</span>ELEMENT 4 — SUPPORTED APPLICATION</h3>
+<span class="elem-badge">VTLM 2.0</span>
+</div>
+<!-- We Do phase -->
+<div class="full-phase" style="margin-bottom:3px;">
+<div class="full-phase-header wd-bg">
+<div class="fph-num">③</div>
+<span>WE DO — GUIDED PRACTICE</span>
+<span class="fph-time">10 minutes</span>
+</div>
+<div class="full-phase-body">
+<div class="phase-focus" contenteditable="true" data-field="p3-wedo-focus"><strong>Focus:</strong> Guided partner practice — students read rhythm cards and echo each other with teacher circulating and providing targeted feedback.</div>
+<div class="full-step-row">
+<div class="full-step-num wd-step-num">1</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-wedo-step1">Partner A reads and claps their rhythm card (4 beats). Partner B echoes exactly. Check with each other. Swap cards and roles.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num wd-step-num">2</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-wedo-step2">New partner. Clap your card. Partner writes what they hear on their mini whiteboard (ta or ti-ti for each beat). Compare — do they match the card?</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num wd-step-num">3</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-wedo-step3">Group of 4: each claps a different card at the same time. Listen for how the parts combine. Teacher stops group mid-way: "Did everyone stay together?"</div>
+</div>
+<div class="full-cfu-box">
+<div class="nb-label">❓ Checking for Understanding</div>
+<div contenteditable="true" data-field="p3-wedo-cfu">Stop activity: "Show me READY position for ta." Students hold one finger up. "Show me ti-ti." Two fingers. Quick visual scan for understanding before stations.</div>
+</div>
+<div class="full-trans-line" contenteditable="true" data-field="p3-wedo-trans">→ Transition: "Return cards to the centre pile. Look for your station sign — Station A, B, or C — and move there now."</div>
+</div>
+</div>
+<!-- Tier Differentiation Table -->
+<div style="margin-bottom:4px;">
+<div style="font-size:9pt;font-weight:700;color:#455A64;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:3px;">📊 Differentiated Station Tasks — Element 4 Application</div>
+<table class="tier-table">
+<thead>
+<tr>
+<th class="tier-t1" style="width:33%;">🔴 Tier 1 — Supported</th>
+<th class="tier-core" style="width:33%;">🔵 Core Task</th>
+<th class="tier-t3" style="width:33%;">🟢 Tier 3 — Extension</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tier-t1-bg" contenteditable="true" data-field="tier1-diff-desc">Reduce pattern length to 2 beats. Partner work only (no solo). Provide visual anchor card showing ta = 1 clap, ti-ti = 2 fast claps.</td>
+<td class="tier-core-bg" contenteditable="true" data-field="tier-core-diff-desc">4-beat patterns using ta and ti-ti combinations as designed. Read from card and perform independently.</td>
+<td class="tier-t3-bg" contenteditable="true" data-field="tier3-diff-desc">8-beat patterns. Create their own pattern. Begin composing a 4-bar piece. Write patterns using rhythm grid (instead of ta/ti-ti labels).</td>
+</tr>
+<tr>
+<td class="tier-t1-bg" contenteditable="true" data-field="tier1-task"><strong>Station A (Supported):</strong> Clap 2-beat patterns with teacher aide. Use large print cards. Trace notation with finger as you clap.</td>
+<td class="tier-core-bg" contenteditable="true" data-field="tier-core-task"><strong>Stations A–C (Core):</strong> Rotate through all 3 stations as designed. Complete recording sheet with at least 2 patterns per station.</td>
+<td class="tier-t3-bg" contenteditable="true" data-field="tier3-task"><strong>Station C (Extension):</strong> Compose an 8-beat rhythm. Write it in a rhythm grid. Teach it to a Year 3 student nearby. Create a second contrasting pattern.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- You Do phase -->
+<div class="full-phase" style="margin-bottom:3px;">
+<div class="full-phase-header yd-bg">
+<div class="fph-num">④</div>
+<span>YOU DO — INDEPENDENT APPLICATION</span>
+<span class="fph-time">15 minutes</span>
+</div>
+<div class="full-phase-body">
+<div class="phase-focus" contenteditable="true" data-field="p3-ydo-focus"><strong>Focus:</strong> Independent application — students work at instrument stations without direct guidance while teacher assesses rhythm reading accuracy.</div>
+<div class="full-step-row">
+<div class="full-step-num yd-step-num">1</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-ydo-step1"><strong>Station A — Clap &amp; Write:</strong> Read 3 rhythm cards. Write each pattern using ta/ti-ti notation on recording sheet. Self-check: clap your written version back against the card.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num yd-step-num">2</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-ydo-step2"><strong>Station B — Play the Pattern:</strong> Choose a rhythm card. Perform it on drum, woodblock, or claves. Try 3 different cards. Circle your favourite on recording sheet.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num yd-step-num">3</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-ydo-step3"><strong>Station C — Create a Pattern:</strong> Compose your own 4-beat rhythm using ta and ti-ti. Write it on a blank card. Practise until you can clap it steadily 3 times in a row.</div>
+</div>
+<div class="full-note-box">
+<div class="nb-label">📌 Assessment Observation Window</div>
+<div contenteditable="true" data-field="p3-ydo-assessment">Assessing VC2MUSC2301 — rhythm. Target 6–8 students. Look for: accurate ti-ti timing, steady tempo, correct number of beats. Record on class checklist. Use anecdotal notes for standout observations.</div>
+</div>
+<div class="full-trans-line" contenteditable="true" data-field="p3-ydo-trans">→ Transition: "Timer going off in 10 seconds — instruments to shelf, return to mat. Bring your recording sheet."</div>
+</div>
+</div>
+<!-- ── ELEMENT 5: REFLECTION ── -->
+<div class="elem-banner">
+<h3><span style="font-size:13pt;margin-right:6px;opacity:0.7;">⑤</span>ELEMENT 5 — REFLECTION ON LEARNING</h3>
+<span class="elem-badge">VTLM 2.0</span>
+</div>
+<!-- Pack Up phase -->
+<div class="full-phase" style="margin-bottom:4px;">
+<div class="full-phase-header pu-bg">
+<div class="fph-num">⑤</div>
+<span>PACK UP &amp; STUDENT REFLECTION</span>
+<span class="fph-time">7 minutes</span>
+</div>
+<div class="full-phase-body">
+<div class="full-step-row">
+<div class="full-step-num pu-step-num">1</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-close-step1">Students return instruments to shelf and recording sheets to teacher tray. 30-second tidy-up.</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num pu-step-num">2</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-close-step2">Exit ticket: teacher claps — "Is this a steady beat or a rhythm?" Two options, students vote. Then: "Clap a 4-beat pattern that has at least one ti-ti."</div>
+</div>
+<div class="full-step-row">
+<div class="full-step-num pu-step-num">3</div>
+<div class="full-step-text" contenteditable="true" data-field="p3-close-step3">Preview: "Next lesson we add pitched glockenspiels and turn our rhythm into a 2-part ostinato — very cool." Dismiss by table group.</div>
+</div>
+<div class="full-cfu-box">
+<div class="nb-label">❓ Exit Reflection</div>
+<div contenteditable="true" data-field="p3-close-exit">Did students demonstrate beat vs rhythm distinction? How many correctly identified ti-ti on the exit clap? Were there any students who need a 1:1 reteach before next lesson?</div>
+</div>
+</div>
+</div>
+<!-- ── WELLBEING & SEL ── -->
+<div class="wellbeing-banner">💚 Wellbeing &amp; Social-Emotional Learning (SEL)</div>
+<div class="three-col" style="margin-bottom:4px;">
+<div class="wellbeing-col">
+<div class="wc-label">Wellbeing Focus</div>
+<div contenteditable="true" data-field="wellbeing-focus" style="font-size:7.5pt;">Growth mindset in music — normalise the difficulty of learning new notation. "Mistakes are how our brain grows." Celebrate risk-taking when students share their created patterns.</div>
+</div>
+<div class="wellbeing-col">
+<div class="wc-label">Social Skill Target</div>
+<div contenteditable="true" data-field="wellbeing-social" style="font-size:7.5pt;">Partner and group work requires respectful listening — model active listening body language. Echo activities build turn-taking. Discuss: what does it feel like to have your partner listen carefully?</div>
+</div>
+<div class="wellbeing-col">
+<div class="wc-label">Emotional Regulation</div>
+<div contenteditable="true" data-field="wellbeing-regulation" style="font-size:7.5pt;">Music volume can escalate quickly at stations. Use the visual stop signal (raised hand) before it becomes dysregulating. Provide a quiet corner with headphones for any student who needs low-stimulus time.</div>
+</div>
+</div>
+<!-- ── INCLUSIVE PRACTICE ── -->
+<div class="inclusive-banner">♿ Inclusive Practice &amp; Adjustments</div>
+<div class="incl-grid">
+<div class="incl-cell">
+<div class="ic-label">EAL/D Students</div>
+<div contenteditable="true" data-field="incl-eald" style="font-size:7.5pt;">EAL/D students (3): visual rhythm cards with ta/ti-ti labels reduce language load. Partner with patient English-proficient peer. Gesture and model rather than verbal explanation where possible.</div>
+</div>
+<div class="incl-cell">
+<div class="ic-label">Learning / Physical Support</div>
+<div contenteditable="true" data-field="incl-learning-support" style="font-size:7.5pt;">2 students with IEPs (fine motor): offer larger drum head instead of claves. Tapping with flat hand is acceptable alternative to clapping. Reduce card set to 5 cards max.</div>
+</div>
+<div class="incl-cell">
+<div class="ic-label">Extension / Gifted</div>
+<div contenteditable="true" data-field="incl-extension" style="font-size:7.5pt;">Extension: 8-beat composition task at Station C. Encourage these students to teach their pattern to others — a strong peer-teaching opportunity within the music context.</div>
+</div>
+<div class="incl-cell">
+<div class="ic-label">Medical / Withdrawal Notes</div>
+<div contenteditable="true" data-field="incl-medical" style="font-size:7.5pt;">Check register: no known hearing impairments this class. Any student returning from illness — reduce percussion volume exposure. One student wears hearing aids — seat away from drum station.</div>
+</div>
+</div>
+<!-- ── ASSESSMENT ── -->
+<div class="assess-banner">📊 Assessment &amp; Evidence</div>
+<div class="two-col" style="margin-bottom:4px;">
+<div class="field-box">
+<div class="fb-label">Assessment Strategy</div>
+<div class="fb-val" contenteditable="true" data-field="assessment-strategy">Observation during stations — clipboard checklist with class list. Look for: steady beat maintained while reading, accurate ti-ti timing, independently reads a new card. Exit clap for whole-class snapshot.</div>
+</div>
+<div class="field-box">
+<div class="fb-label">VC2.0 Links &amp; Documentation</div>
+<div class="fb-val" contenteditable="true" data-field="assessment-docs">VC2MUSC2301 — rhythm descriptor. Record on Music semester observation sheet. Station recording sheets collected as work samples — annotate with date and comments before filing.</div>
+</div>
+</div>
+<!-- ── TEACHER REFLECTION ── -->
+<div class="reflect-banner">🪞 Teacher Reflection (Post-Lesson)</div>
+<div class="reflect-grid" style="margin-bottom:3px;">
+<div class="field-box">
+<div class="fb-label">What Worked Well?</div>
+<div class="fb-val" contenteditable="true" data-field="reflect-worked" style="min-height:28px;"></div>
+</div>
+<div class="field-box">
+<div class="fb-label">What Would I Change?</div>
+<div class="fb-val" contenteditable="true" data-field="reflect-change" style="min-height:28px;"></div>
+</div>
+</div>
+<div class="reflect-grid">
+<div class="field-box">
+<div class="fb-label">Student Data / Patterns Observed</div>
+<div class="fb-val" contenteditable="true" data-field="reflect-data" style="min-height:28px;"></div>
+</div>
+<div class="field-box">
+<div class="fb-label">Adjustments for Next Lesson</div>
+<div class="fb-val" contenteditable="true" data-field="reflect-next" style="min-height:28px;"></div>
+</div>
+</div>
+<div class="page-footer">
+<span contenteditable="true" data-field="p3-footer">WPS Music  |  Year 3/4  |  T2 W3  |  Steady Beat &amp; Rhythm  |  VTLM 2.0</span>
+<span>Page 3 of 3</span>
+</div>
+</div>
+</div><!-- end page-wrapper -->
+<script>
+/**
+ * AUTO-FIT ENGINE v2
+ *
+ * LAYER 1 – Viewport fit:  CSS `zoom` on .page
+ *   zoom changes both visual AND layout size, so flex centering stays
+ *   correct and nothing clips on the left.
+ *
+ * LAYER 2 – Content fit:  transform:scale on .page-inner
+ *   If text would overflow the A4 bottom, content shrinks to fit.
+ *
+ * Text wrap: word-break:break-word so even non-spaced text wraps.
+ */
+
+// ── Extra styles ───────────────────────────────────────────────────────
+const _s = document.createElement('style');
+_s.textContent = `
+  .page-inner {
+    width: 100%;
+    transform-origin: top left;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .page { overflow: hidden !important; }
+  [contenteditable] {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+  @media print { .page { zoom: 1 !important; } }
+`;
+document.head.appendChild(_s);
+
+// ── Helpers ────────────────────────────────────────────────────────────
+function debounce(fn, ms) {
+  let t;
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+let _mmPx;
+function mm2px() {
+  if (_mmPx) return _mmPx;
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;width:10mm;visibility:hidden;pointer-events:none';
+  document.body.appendChild(d);
+  _mmPx = d.offsetWidth / 10;
+  document.body.removeChild(d);
+  return _mmPx;
+}
+
+// ── Layer 1: zoom each .page to fit the viewport ───────────────────────
+function fitViewport() {
+  const pageWpx = 210 * mm2px();
+  const avail   = document.documentElement.clientWidth - 32;
+  const zoom    = Math.min(1, avail / pageWpx);
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.zoom = zoom < 1 ? String(zoom) : '';
+  });
+}
+
+// ── Layer 2: wrap & scale content inside each .page ───────────────────
+function wrapInners() {
+  document.querySelectorAll('.page').forEach(page => {
+    if (page.querySelector('.page-inner')) return;
+    const inner = document.createElement('div');
+    inner.className = 'page-inner';
+    Array.from(page.children).forEach(ch => {
+      if (!ch.classList.contains('page-footer')) inner.appendChild(ch);
+    });
+    page.insertBefore(inner, page.firstChild);
+  });
+}
+
+function fitContent(page) {
+  const inner = page.querySelector('.page-inner');
+  if (!inner) return;
+  inner.style.transform = '';
+  inner.style.width     = '100%';
+  requestAnimationFrame(() => {
+    const avH = page.clientHeight - 22;
+    const avW = page.clientWidth;
+    const cH  = inner.scrollHeight;
+    const cW  = inner.scrollWidth;
+    if (cH <= avH && cW <= avW) return;
+    const scale = Math.min(
+      cH > avH ? avH / cH : 1,
+      cW > avW ? avW / cW : 1
+    );
+    inner.style.transformOrigin = 'top left';
+    inner.style.transform       = `scale(${scale.toFixed(5)})`;
+    inner.style.width           = `${(100 / scale).toFixed(3)}%`;
+  });
+}
+
+function fitAll() {
+  fitViewport();
+  document.querySelectorAll('.page').forEach(fitContent);
+}
+
+// ── Watch edits ────────────────────────────────────────────────────────
+const observer = new MutationObserver(debounce(mutations => {
+  const pages = new Set();
+  mutations.forEach(m => {
+    let el = m.target;
+    while (el && !el.classList?.contains('page')) el = el.parentElement;
+    if (el) pages.add(el);
+  });
+  pages.forEach(fitContent);
+}, 280));
+
+// ── Boot ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  wrapInners();
+  fitAll();
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+});
+window.addEventListener('resize',      debounce(fitAll, 180));
+window.addEventListener('beforeprint', fitAll);
+
+function toggleResSection() {
+  const sec = document.getElementById('res-safety-section');
+  const btn = document.getElementById('res-toggle-btn');
+  if (sec) {
+    sec.classList.toggle('res-hidden');
+    btn.textContent = sec.classList.contains('res-hidden')
+      ? '👁 Show resources section'
+      : '👁 Hide resources section';
+  }
+}
+
+</script>
+</body>
+</html>
