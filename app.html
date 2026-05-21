@@ -6680,6 +6680,9 @@ function generateAll() {
             (l.context ? 'Building on prior learning.' : '');
           buildAndRender({ title: l.title, li: l.li, sc: l.sc, equipment: l.equipment, 
             context: ctx, differentiation: normDiff, exitTicket: l.exitTicket }, res.ai_lesson_id || null);
+        } else if (res && res.error && res.error.toLowerCase().includes('limit')) {
+          showToast('Monthly generation limit reached — upgrade your plan for more AI lessons.', 'error');
+          openPricingModal(true);
         } else {
           if (!window._aiFailedNotified) { window._aiFailedNotified = true; showToast('AI is temporarily unavailable — using pre-built lesson templates.', 'warn'); }
           buildAndRender(generateLesson(state.subject, state.unit, focus, curWeek, weeks, state.yearLevel));
@@ -11550,11 +11553,7 @@ async function saveLessonToCloud(idx, btn) {
   };
   if (btn) { btn.textContent = ' Saving…'; btn.disabled = true; }
   const result = await api('/lessons', { method: 'POST', body: JSON.stringify(row) });
-  if (result.error === 'monthly_limit_reached') {
-    if (btn) { btn.textContent = ' Save'; btn.disabled = false; }
-    showToast('Monthly save limit reached — upgrade to annual for unlimited saves', 'error');
-    openPricingModal(true); // true = open with annual tab highlighted
-  } else if (result.error) {
+  if (result.error) {
     showToast('Save failed: ' + result.error, 'error');
     if (btn) { btn.textContent = ' Save'; btn.disabled = false; }
   } else {
@@ -11591,11 +11590,6 @@ async function saveLesson(lessonData) {
         method: 'POST',
         body: JSON.stringify(lessonData)
       });
-      if (data.error === 'monthly_limit_reached') {
-        showToast('Monthly save limit reached — upgrade to annual for unlimited saves', 'error');
-        openPricingModal(true);
-        return false;
-      }
       if (data.error) {
         console.error('Insert lesson error:', data.error);
         showToast('Error saving lesson', 'error');
