@@ -1,5 +1,36 @@
 # lessonlab — Handover
 
+## ⚡ New session quick-start
+
+> Copy-paste this block at the start of any new chat to restore full context.
+
+```
+Read first: https://github.com/Luck-Dragon-Pty-Ltd/lessonlab/blob/main/docs/HANDOVER.md
+
+Vault: https://asgard-vault.luckdragon.workers.dev  |  PIN: 535554
+  Keys: CF_API_TOKEN_FULLOPS, GITHUB_TOKEN_LESSONLAB
+
+CF account ID: a6f47c17811ee2f8b6caeb8f38768c20
+GitHub repo:   Luck-Dragon-Pty-Ltd/lessonlab  (token from vault GITHUB_TOKEN_LESSONLAB)
+D1 database:   lessonlab  |  UUID: 295203f9-1f60-43f0-91f2-a6fd6b55d069
+
+CRITICAL deploy rule — always include D1 binding in metadata:
+  {"type":"d1","name":"DB","id":"295203f9-1f60-43f0-91f2-a6fd6b55d069"}
+
+Workers: lessonlab-api (23 endpoints, v2.0.0) | lessonlab (frontend proxy)
+
+Next priorities:
+  1. Add Y7-8 / Y9-10 to year picker in app.html
+  2. Add secondary subjects to subject picker in app.html
+  3. Welcome email on signup (Resend wired — add call in POST /auth/signup)
+  4. Upgrade AI to Sonnet for pro tier
+  5. More template lessons (secondary)
+```
+
+---
+
+
+
 **Repo:** [github.com/LuckDragonAsgard/lessonlab](https://github.com/LuckDragonAsgard/lessonlab)
 **Last update:** 2026-05-06 — **v11 generator follow-ups all shipped**: multi-lesson export stitches one combined docx; new `_v11Enrich` helper fills VTLM 2.0 vocab tiers / sentence stems / metacog / cohort prompts / worked example / retrieval plan; new `_v11LegacyMap` adapter ports the 604 v2/v3 ai_lessons forward at export time. Live at lessonlab.com.au.
 
