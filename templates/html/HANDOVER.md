@@ -639,4 +639,4 @@ Lesson plans are stored as **JSON field values**, not full HTML.
 ## Previous Sessions
 
 - **Session 1 (May 2026):** Built initial HTML template (v11), PE Foundation example, established 3-page structure, auto-fit JS engine
-- **Session 2 (May 2026):** Added 125 data-field attributes to blank template v12, optional Resources toggle, built Music/Art/STEM/Italian examples, fixed BeautifulSoup &nbsp; bug, fixed PE content leaking into blank template, set up lessonlab-api worker on luckdragon.workers.dev, renamed CF account subdomain pgallivan → luckdragon, verified all files in Chrome
+- **Session 2 (May 2026):** Added 125 data-field attributes to blank template v12, optional Resources toggle, built Music/Art/STEM/Italian examples, fixed BeautifulSoup &nbsp; bug, fixed PE content leaking into blank template, set up lessonlab-api worker on luckdragon.workers.dev, set up dedicated CF account subdomain for Luck Dragon, verified all files in Chrome
